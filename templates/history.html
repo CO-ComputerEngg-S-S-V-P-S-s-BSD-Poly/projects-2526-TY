@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+<h2>Email History</h2>
+
+<table class="table table-bordered">
+<tr>
+<th>Date</th>
+<th>Sender</th>
+
+<th>Result</th>
+<th>Risk Score</th>
+<th>View</th>
+</tr>
+
+{% for r in rows %}
+<tr>
+<td>{{ r.date }}</td>
+<td>{{ r.sender }}</td>
+
+<td>{{ r.threat }}</td>
+<td>{{ r.final_score }}</td>
+<td>
+<a href="/view/{{ r.id }}" class="view-btn">View</a>
+</td>
+</tr>
+{% endfor %}
+
+</table>
+</div>
+
+{% endblock %}

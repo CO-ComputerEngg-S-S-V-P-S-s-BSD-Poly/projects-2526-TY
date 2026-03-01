@@ -1,0 +1,10 @@
+gmail.com
+yahoo.com
+outlook.com
+hotmail.com
+protonmail.com
+icloud.com
+edu.in
+gov.in
+ac.in
+zoho.com

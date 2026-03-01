@@ -1,0 +1,481 @@
+/* ===== GLOBAL STYLE ===== */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* navbar */
+.custom-navbar{
+    background:orange;
+    height:70px;              /* fixed navbar height */
+    padding:10px 40px;
+    display:flex;
+    align-items:center;
+
+}
+
+.logo{
+    width: auto;
+    height:100px;
+    object-fit:contain;
+
+}
+
+.site-name{
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.nav-link{
+    color:white !important;
+    font-size:16px;
+    margin-left:15px;
+}
+
+.nav-link:hover{
+    color:yellow !important;
+}
+
+/* main space */
+.main-content{
+    padding:40px;
+    flex:1;
+}
+/* ===== FOOTER ===== */
+.footer {
+    background: orange;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+/* ===== HOME SECTION ===== */
+.home-section {
+    padding: 60px;
+    background: #f5f7fb;
+}
+
+.home-container {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home-left {
+    width: 50%;
+}
+
+.home-left h1 {
+    font-size: 38px;
+    color: orange;
+}
+
+.home-left p {
+    font-size: 18px;
+    margin: 20px 0;
+    color: #333;
+}
+
+.check-btn {
+    padding: 12px 25px;
+    background: orange;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+.check-btn:hover {
+    background: #e65c00;
+}
+
+.home-right img {
+    width: 500px;
+    height:500px;
+}
+
+/* ===== FEATURES ===== */
+.features {
+    text-align: center;
+    padding: 60px;
+    background: white;
+}
+
+.feature-title {
+    font-size: 30px;
+    margin-bottom: 40px;
+    color: orange;
+}
+
+.feature-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.feature-box {
+    width: 250px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f1f4fa;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.feature-icon {
+    width: 70px;
+    margin-bottom: 15px;
+}
+
+
+.footer-logo {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+/*---Check Email Page---*/
+.check-container{
+    width: 60%;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.check-container h2{
+    text-align:center;
+    color:orange;
+}
+
+.subtitle{
+    text-align:center;
+    margin-bottom:20px;
+    color:gray;
+}
+
+label{
+    font-weight:bold;
+    margin-top:10px;
+    display:block;
+}
+
+input, textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+.check-btn{
+    width:100%;
+    padding:12px;
+    background:orange;
+    color:white;
+    border:none;
+    border-radius:6px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.check-btn:hover{
+    background:#e65c00;
+}
+
+.result-box{
+    margin-top:20px;
+    padding:15px;
+    background:#f4f6ff;
+    border-left:5px solid #0a2a66;
+}
+
+/* ===== CONTACT PAGE ===== */
+
+
+.contact-hero{
+    padding:80px 0;
+    background:white;
+}
+
+.contact-overlay{
+    width:100%;
+}
+
+.contact-content{
+    width:85%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:60px;
+}
+
+/* IMAGE LEFT */
+.contact-img{
+    flex:1;
+}
+
+.contact-img img{
+    width:100%;
+    max-width:420px;
+    border-radius:15px;
+}
+
+/* TEXT RIGHT */
+.contact-text{
+    flex:1;
+    color:black;
+}
+
+.contact-text h1{
+    font-size:45px;
+    color:orange;
+    margin-bottom:20px;
+}
+
+.contact-text p{
+    font-size:18px;
+
+    margin-bottom:10px;
+}
+
+
+/* ===== Search Box Styling ===== */
+
+.search-box {
+    margin-bottom: 20px;
+    width: 1440px;
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 8px 35px 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+}
+
+.search-container button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* ===== Table Styling ===== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    width:20px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.high-risk {
+    color: red;
+    font-weight: bold;
+}
+
+.low-risk {
+    color: green;
+    font-weight: bold;
+}
+/* ===== Table Styling ===== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    width:20px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.high-risk {
+    color: red;
+    font-weight: bold;
+}
+
+.low-risk {
+    color: green;
+    font-weight: bold;
+}
+
+/* ===== VIEW PAGE ===== */
+
+.view-container{
+    width: 80%;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    font-family: 'Poppins', sans-serif;
+}
+
+.view-container h2{
+    text-align: center;
+    color: #ff6b00;
+    margin-bottom: 25px;
+}
+
+/* info labels */
+.view-box p{
+    font-size: 17px;
+    margin: 10px 0;
+    color: #333;
+}
+
+.view-box b{
+    color: #000;
+}
+
+.view-btn{
+    background-color: orange;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.view-btn:hover{
+    background-color: #e65c00;
+}
+
+
+/* email body box */
+.email-body{
+    border: 1px solid #ddd;
+    padding: 15px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    margin-top: 10px;
+    white-space: pre-wrap;
+}
+
+/* back button */
+.back-btn{
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 18px;
+    background: #ff6b00;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.back-btn:hover{
+    background: #e65c00;
+}
+
+
+
+
+/* ===== VIEW PAGE ===== */
+
+.view-container{
+    width: 70%;
+    margin: 50px auto;
+    background: #ffffff;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.08);
+}
+
+/* title */
+.view-container h2{
+    text-align: center;
+    color: orange;
+    margin-bottom: 25px;
+    font-size: 28px;
+}
+
+/* info box */
+.view-box{
+    font-size: 17px;
+    color: #333;
+    line-height: 1.7;
+}
+
+.view-box p{
+    margin: 10px 0;
+}
+
+.view-box b{
+    color: #000;
+}
+
+/* result color */
+.result-safe{
+    color: green;
+    font-weight: bold;
+}
+
+.result-spam{
+    color: red;
+    font-weight: bold;
+}
+
+/* email body box */
+.email-body{
+    border: 1px solid #ddd;
+    padding: 18px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-top: 10px;
+    white-space: pre-wrap;
+}
+
+/* back button */
+.back-btn{
+    display: block;
+    width: 180px;
+    margin: 30px auto 0;
+    padding: 12px;
+    background: orange;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.back-btn:hover{
+    background: #e65c00;
+}

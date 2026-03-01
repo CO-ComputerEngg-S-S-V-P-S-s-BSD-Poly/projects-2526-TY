@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="contact-hero">
+  <div class="contact-overlay">
+
+    <div class="contact-content">
+
+        <!-- LEFT IMAGE -->
+        <div class="contact-img">
+            <img src="{{ url_for('static', filename='images/contact-bg.jpg') }}" alt="contact">
+        </div>
+
+        <!-- RIGHT TEXT -->
+        <div class="contact-text">
+            <h1>Contact Us</h1>
+            <p>Email: support@email.com</p>
+            <p>Phone: 9876543210</p>
+            <p>Location: </p>
+        </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock %}

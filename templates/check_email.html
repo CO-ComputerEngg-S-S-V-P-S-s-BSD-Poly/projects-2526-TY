@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="check-container">
+    <h2>Check Email for Threats</h2>
+    <p class="subtitle">Paste your email content below to detect spam or malicious links</p>
+
+    <form method="POST" action="/check">
+
+
+
+        <label>Sender Email</label>
+        <input type="email" name="sender" value="{{ sender or '' }}" placeholder="example@gmail.com" required>
+
+
+
+        <label>Email Content</label>
+        <textarea name="body" rows="8" placeholder="Paste full email content here..." required>{{ body or '' }}</textarea>
+
+
+        <button type="submit" class="check-btn">Check Email</button>
+    </form>
+
+    {% if data %}
+<div class="result-box">
+
+    <p><b>Detected Spam Words:</b> {{ data.detected_spam }}</p>
+    <p><b>Spam Score:</b> {{ data.spam_score }}</p>
+    <p><b>Safe Score:</b> {{ data.safe_score }}</p>
+    <p><b>Final Score:</b> {{ data.final_score }}</p>
+    <p><b>Threat Level:</b> {{ data.threat }}</p>
+
+
+
+
+</div>
+{% endif %}
+
+</div>
+
+{% endblock %}
