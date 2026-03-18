@@ -1,14 +1,18 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, session
 from nlp.extract import analyze_email
 from database.db import init_db
 from database.models import save_email, get_all_history
 from datetime import datetime
+import sqlite3
+
 
 
 app = Flask(__name__)
 app.secret_key = "secretkey123"
 
-init_db()
+init_db()# ---------------- ADMIN CREDENTIAL ----------------
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "123"
 
 # ---------------- HOME ----------------
 @app.route("/")
@@ -44,8 +48,45 @@ def check():
 # ---------------- HISTORY PAGE ----------------
 @app.route("/history")
 def history():
+    print("SESSION VALUE:", session.get("admin"))
+
+    if not session.get("admin"):
+        return redirect("/login")
+
     rows = get_all_history()
     return render_template("history.html", rows=rows)
+
+# ---------------- LOGIN ----------------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session["admin"] = True
+            return redirect("/history")
+        else:
+            return render_template("login.html", error="Invalid Username or Password")
+
+    return render_template("login.html")
+
+#---------Logout-----------
+@app.route("/logout")
+def logout():
+    session.pop("admin", None)
+    return redirect(url_for("home"))
+
+@app.route("/delete/<int:id>", methods=["POST"])
+def delete_record(id):
+    conn = sqlite3.connect("email.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM email_history WHERE id=?", (id,))
+    conn.commit()
+    conn.close()
+    return "", 204
+
+
 
 
 @app.route("/view/<int:id>")

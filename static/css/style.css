@@ -241,43 +241,23 @@ input, textarea{
 }
 
 .contact-text p{
+    font-size: 16px;
+    margin: 10px 0;
+    color: #555;
+}
+
+.contact-text strong{
+    color: #000;
+}
+
+.contact-text p{
     font-size:18px;
 
     margin-bottom:10px;
 }
 
 
-/* ===== Search Box Styling ===== */
 
-.search-box {
-    margin-bottom: 20px;
-    width: 1440px;
-}
-
-.search-container {
-    position: relative;
-    width: 100%;
-}
-
-.search-container input {
-    width: 100%;
-    padding: 8px 35px 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    outline: none;
-}
-
-.search-container button {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
 
 /* ===== Table Styling ===== */
 
@@ -363,19 +343,7 @@ th {
     color: #000;
 }
 
-.view-btn{
-    background-color: orange;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 5px;
-    font-size: 14px;
-    text-decoration: none;
-    display: inline-block;
-}
 
-.view-btn:hover{
-    background-color: #e65c00;
-}
 
 
 /* email body box */
@@ -478,4 +446,55 @@ th {
 
 .back-btn:hover{
     background: #e65c00;
+}
+
+
+
+
+
+/* ===login ===== */
+
+.login-wrapper {
+    min-height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Bigger Login Card */
+.login-card {
+    background: #ffffff;
+    padding: 50px;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 500px;   /* 🔥 box bigger */
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+}
+
+/* Input Style */
+.form-control {
+    border-radius: 2px;
+    padding: 12px;
+    font-size: 15px;
+}
+
+.form-control:focus {
+    border-color: #FFC107;
+    box-shadow: 0 0 6px #FFC107;
+}
+
+/* Button */
+.btn-yellow {
+    background: #FFB300;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.btn-yellow:hover {
+    background: none;
+    color: white;
 }

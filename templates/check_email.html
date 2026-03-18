@@ -3,14 +3,15 @@
 
 <div class="check-container">
     <h2>Check Email for Threats</h2>
-    <p class="subtitle">Paste your email content below to detect spam or malicious links</p>
+    <p class="subtitle">Paste your email content below to detect spam or malicious email</p>
 
     <form method="POST" action="/check">
 
 
 
         <label>Sender Email</label>
-        <input type="email" name="sender" value="{{ sender or '' }}" placeholder="example@gmail.com" required>
+        <input type="text" name="sender" value="{{ sender or '' }}" placeholder="example@gmail.com" required>
+
 
 
 
@@ -28,7 +29,8 @@
     <p><b>Spam Score:</b> {{ data.spam_score }}</p>
     <p><b>Safe Score:</b> {{ data.safe_score }}</p>
     <p><b>Final Score:</b> {{ data.final_score }}</p>
-    <p><b>Threat Level:</b> {{ data.threat }}</p>
+    <p><b>Spam Percentage:</b> {{ data.spam_percentage }}%</p>
+    <p><b>Status:</b> {{ data.threat }}</p>
 
 
 
