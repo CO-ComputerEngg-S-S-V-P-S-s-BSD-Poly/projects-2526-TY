@@ -1,0 +1,120 @@
+.about-container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #fff6ec, #ffffff);
+  font-family: "Poppins", sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 50px;
+}
+
+/* MANDALAS – HomePage सारखे */
+.home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.home-mandala {
+  position: absolute;
+  right: -180px;
+  top: 120px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+
+
+/* ABOUT CONTENT */
+.about-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 80px auto 100px;
+  padding: 0 40px;
+  text-align: center;
+}
+
+.about-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #e65100;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.about-title::after {
+  content: "";
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(to right, #ffb347, #ff7a18);
+  display: block;
+  margin: 18px auto 0;
+  border-radius: 10px;
+}
+
+.about-text {
+  font-size: 16px;
+  color: #555;
+  line-height: 1.9;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+/* ABOUT CARDS */
+.about-cards {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 60px;
+  flex-wrap: wrap;
+}
+
+.about-card {
+  width: 280px;
+  padding: 35px 22px;
+  border-radius: 22px;
+  background: linear-gradient(to bottom, #ff9a2f, #ff6a00);
+  color: #fff;
+  /* text-align: center;  <-- remove or override */
+  box-shadow: 0 20px 45px rgba(255,122,24,0.35);
+  transition: all 0.35s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* keep title centered */
+}
+
+.about-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  text-align: center; /* title stays centered */
+}
+
+/* Accordion content inside card */
+.about-card ul,
+.about-card p {
+  text-align: left;  /* content aligns left */
+  margin: 10px 0 0 0;
+  padding-left: 20px; /* indent bullets nicely */
+  color: #fff; /* keep white text on gradient */
+  opacity: 0.95;
+}
+
+
+.about-card:hover {
+  transform: translateY(-10px) scale(1.05);
+}
+/* Make the content inside accordion left-aligned */
+.about-card > div,
+.about-card ul,
+.about-card ol,
+.about-card p {
+  align-self: stretch; /* fill width of card */
+  text-align: left;    /* left-align text */
+  padding-left: 20px;  /* optional for bullets */
+}

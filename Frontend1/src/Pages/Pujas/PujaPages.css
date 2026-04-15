@@ -1,0 +1,382 @@
+.puja-desktop-container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #fff, #fff6ec);
+  position: relative;
+  overflow: hidden;
+  padding: 80px 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.puja-mandala-left {
+  position: absolute;
+  left: -200px;
+  top: 0;
+  width: 700px;
+  opacity: 0.12;
+}
+
+.puja-mandala-right {
+  position: absolute;
+  right: -200px;
+  top: 0;
+  width: 700px;
+  opacity: 0.12;
+}
+
+.puja-desktop-content {
+  max-width: 1100px;
+  margin: auto;
+  background: white;
+  padding: 60px;
+  border-radius: 22px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+  position: relative;
+  z-index: 2;
+}
+
+.puja-desktop-content h1 {
+  font-size: 34px;
+  color: #e65100;
+  margin-bottom: 10px;
+}
+
+.watch-video-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 20px 0;
+  padding: 10px 22px;
+  border-radius: 25px;
+  background: #777;
+  color: white;
+  font-size: 15px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.watch-video-btn:hover {
+  background: #555;
+}
+
+.puja-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #555;
+  margin-bottom: 35px;
+}
+
+.puja-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.puja-info-card {
+  border: 2px solid #ffb347;
+  border-radius: 18px;
+  padding: 25px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ff7a18;
+  background: #fffaf2;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.puja-info-card:hover {
+  background: #fff2dc;
+  transform: translateY(-5px);
+}
+
+/* FAQ */
+.faq-title {
+  margin-top: 40px;
+  font-size: 26px;
+  color: #333;
+}
+
+.faq-item {
+  margin-top: 15px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.faq-question {
+  padding: 15px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+}
+
+.faq-answer {
+  padding: 15px;
+  font-size: 14px;
+  background: #fff6ec;
+}
+
+.book-btn-desktop {
+  width: 100%;
+  margin-top: 40px;
+  padding: 14px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(to right, #ff9a2f, #ff6a00);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255,122,24,0.4);
+  transition: 0.3s;
+}
+
+.book-btn-desktop:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(255,122,24,0.6);
+}
+
+/* ================= MODAL FINAL ================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #fffaf2;
+  padding: 35px 30px 25px 30px;
+  border-radius: 20px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+  position: relative;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-box h3 {
+  color: #e65100;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.modal-box p {
+  color: #444;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* CLOSE BUTTON top-right */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ff7a18;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+} and /* Main Wrapper */
+.puja-wrapper {
+  background-color: #e8d6b9;
+  padding: 60px 0;
+}
+
+/* Main Card Container */
+.puja-container {
+  width: 75%;
+  margin: auto;
+  background: #d9d9d9;
+  padding: 50px;
+  border-radius: 25px;
+}
+
+/* Title */
+.puja-title {
+  color: #b34700;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Watch Button */
+.watch-btn {
+  background: #666;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: none;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+/* Description */
+.puja-description {
+  margin-bottom: 30px;
+}
+
+/* Card Section */
+.puja-card-section {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.puja-card {
+  flex: 1;
+  background: transparent;
+  border: 2px solid #ff6600;
+  padding: 25px;
+  border-radius: 20px;
+}
+
+.puja-card h3 {
+  color: #ff6600;
+  margin-bottom: 10px;
+}
+
+.click-link {
+  color: #ff6600;
+  cursor: pointer;
+}
+
+/* FAQ Section */
+.faq-section h3 {
+  margin-bottom: 15px;
+}
+
+.faq-item {
+  background: #eee;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* Book Button */
+.book-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to right, #ff8c1a, #ff6600);
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 30px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 30px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: #ff6600;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+table th {
+  background: #ff9933;
+  color: white;
+}
+
+
+/* try kar rahu hu hojaye bas */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.form-group input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+  outline: none;
+  transition: 0.2s;
+  background: #fafafa;
+}
+
+/* focus effect */
+.form-group input:focus {
+  border-color: #ff9800;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(255,152,0,0.2);
+}
+
+/* placeholder */
+.form-group input::placeholder {
+  color: #999;
+  font-size: 12px;
+}

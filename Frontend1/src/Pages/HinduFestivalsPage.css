@@ -1,0 +1,215 @@
+/* .festival-wrapper {
+  padding: 40px;
+}
+
+.festival-heading {
+  color: #fd7906;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.festival-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.festival-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s;
+}
+
+.festival-card:hover {
+  transform: translateY(-5px);
+}
+
+.festival-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.festival-card h3 {
+  margin: 15px 0 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fd7906;
+}
+
+.festival-card p {
+  font-size: 14px;
+  color: #444;
+}
+
+.festival-card button {
+  margin-top: 15px;
+  padding: 10px 22px;
+  border-radius: 25px;
+  border: 2px solid #fd7906;
+  background: transparent;
+  color: #fd7906;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.festival-card button:hover {
+  background: #fd7906;
+  color: #fff;
+}
+/* LEFT TOP MANDALA */
+/* .home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+} */
+
+/* RIGHT BOTTOM MANDALA (already there) */
+/* .home-mandala {
+  position: absolute;
+  right: -180px;
+  top: -50px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}  */
+
+
+
+
+
+
+
+/* ================= FESTIVAL SECTION ================= */
+
+.festival-wrapper {
+  padding: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.festival-heading {
+  color: #fd7906;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+}
+.festival-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  row-gap: 40px;     /* 🔥 वर-खाली distance */
+  column-gap: 25px; /* side gap */
+  position: relative;
+  z-index: 2;
+}
+
+
+
+/* ================= FESTIVAL CARD ================= */
+
+.festival-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 35px;   /* ✅ हेच MAIN fix आहे */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.festival-card:hover {
+  transform: translateY(-6px);
+}
+
+/* ================= IMAGE ================= */
+
+.festival-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* ================= TITLE ================= */
+
+.festival-card h3 {
+  margin: 15px 0 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fd7906;
+  text-align: center;
+}
+
+/* ================= DESCRIPTION ================= */
+
+.festival-card p {
+  font-size: 14px;
+  color: #444;
+  min-height: 42px;   /* 🔥 ALL CARDS SAME HEIGHT */
+  text-align: center;
+}
+
+/* ================= BUTTON ================= */
+
+.festival-card button {
+  margin-top: auto;
+  padding: 10px 22px;
+  border-radius: 25px;
+  border: 2px solid #fd7906;
+  background: transparent;
+  color: #fd7906;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: center;
+}
+
+.festival-card button:hover {
+  background: #fd7906;
+  color: #ffffff;
+}
+
+/* ================= MANDALA BACKGROUND ================= */
+
+/* LEFT TOP MANDALA */
+.home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+/* RIGHT TOP MANDALA */
+.home-mandala {
+  position: absolute;
+  right: -180px;
+  top: -50px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .festival-heading {
+    font-size: 28px;
+  }
+
+  .festival-card img {
+    height: 160px;
+  }
+}

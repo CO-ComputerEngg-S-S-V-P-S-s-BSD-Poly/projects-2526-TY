@@ -1,0 +1,133 @@
+.allpujas-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #fff, #fff6ec);
+  padding: 0 40px;
+  font-family: "Segoe UI", sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Mandalas */
+.home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.home-mandala {
+  position: absolute;
+  right: -180px;
+  top: -50px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+/* Title */
+.allpujas-title {
+  text-align: center;
+  font-size: 36px;
+  margin-top: 100px;
+  margin-bottom: 50px;
+  color: #e65100;
+  font-weight: 700;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 2;
+}
+
+.allpujas-title::after {
+  content: "";
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(to right, #ffb347, #ff7a18);
+  display: block;
+  margin: 20px auto 0;
+  border-radius: 10px;
+}
+
+/* GRID – 4 cards per row */
+.allpujas-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* FIX 4 CARDS */
+  gap: 65px;
+  max-width: 1400px;
+  margin: auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* CARD */
+.allpuja-card {
+  width: 100%;
+  padding: 45px 25px;
+  border-radius: 22px;
+  background: linear-gradient(to bottom, #ff9a2f, #ff6a00);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(255,122,24,0.35);
+  transition: all 0.35s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.allpuja-card:hover {
+  transform: translateY(-10px) scale(1.05);
+}
+
+/* OM symbol */
+.allpuja-symbol {
+  font-size: 180px;
+  font-weight: 700;
+  opacity: 0.15;
+  position: absolute;
+  top: -10px;
+  left: 30px;
+  z-index: 0;
+  pointer-events: none;
+  color: #fff;
+}
+
+/* Text */
+.allpuja-card h2 {
+  color: #fff;
+  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+}
+
+.allpuja-card p {
+  color: #fff;
+  font-size: 14px;
+  opacity: 0.9;
+  line-height: 1.6;
+  position: relative;
+  z-index: 2;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .allpujas-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .allpujas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .allpujas-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

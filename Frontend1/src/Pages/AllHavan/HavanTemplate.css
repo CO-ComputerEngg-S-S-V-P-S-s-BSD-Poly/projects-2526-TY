@@ -1,0 +1,96 @@
+.havan-detail-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff5e6, #ffe0b3);
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.havan-detail-card {
+  background: #f3f3f3;
+  width: 100%;
+  max-width: 1000px;
+  padding: 50px;
+  border-radius: 25px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.havan-detail-title {
+  font-size: 32px;
+  color: #b34700;
+  margin-bottom: 15px;
+}
+
+.watch-btn {
+  background: #666;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.havan-description {
+  color: #663300;
+  margin-bottom: 30px;
+}
+
+.info-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.info-box {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid #ff9933;
+}
+
+.info-box h3 {
+  color: #ff6600;
+  margin-bottom: 10px;
+}
+
+.faq-title {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.faq-item {
+  margin-bottom: 15px;
+}
+
+.faq-question {
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+}
+
+.faq-answer {
+  padding: 10px;
+  color: #555;
+}
+
+.book-btn {
+  margin-top: 30px;
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to right, #ff9933, #ff6600);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .info-container {
+    grid-template-columns: 1fr;
+  }
+}

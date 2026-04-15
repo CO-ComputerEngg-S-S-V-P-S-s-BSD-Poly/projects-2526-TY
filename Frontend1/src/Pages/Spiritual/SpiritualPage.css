@@ -1,0 +1,45 @@
+.spiritual-container {
+  padding: 80px 50px;
+  max-width: 900px;
+  margin: auto;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.8;
+}
+
+.spiritual-title {
+  text-align: center;
+  font-size: 36px;
+  color: #e65100;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.accordion-item {
+  border: 1px solid #ff9a2f;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accordion-title {
+ background: linear-gradient(to right, #ffb347, #ff7a18);
+   color: #fff;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.accordion-title:hover {
+  background: linear-gradient(to right, #ff9a2f, #ff6a00);
+}
+
+.accordion-content {
+  padding: 15px 20px;
+  background-color: #fff6ec;
+  color: #333;
+  font-size: 16px;
+}
