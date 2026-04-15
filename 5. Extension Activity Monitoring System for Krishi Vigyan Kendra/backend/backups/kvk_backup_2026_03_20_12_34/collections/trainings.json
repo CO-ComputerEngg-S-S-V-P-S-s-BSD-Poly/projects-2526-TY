@@ -1,0 +1,79 @@
+[
+  {
+    "_id": "698d9f0a956856117da29cea",
+    "name": "Farmer Training",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-12T09:36:10.635Z",
+    "updatedAt": "2026-02-12T09:36:10.635Z",
+    "__v": 0
+  },
+  {
+    "_id": "698d9f2b956856117da29cee",
+    "name": "Rural Youth Training",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-12T09:36:43.507Z",
+    "updatedAt": "2026-02-12T09:36:43.507Z",
+    "__v": 0
+  },
+  {
+    "_id": "698d9f62956856117da29cf2",
+    "name": "Extension Functionaries Training",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-12T09:37:38.664Z",
+    "updatedAt": "2026-02-12T09:37:38.664Z",
+    "__v": 0
+  },
+  {
+    "_id": "698d9f70956856117da29cf6",
+    "name": "Vocational Training",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-12T09:37:52.780Z",
+    "updatedAt": "2026-02-12T09:37:52.780Z",
+    "__v": 0
+  },
+  {
+    "_id": "698d9fb4956856117da29cfa",
+    "name": "Skill Developement Training",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-12T09:39:00.054Z",
+    "updatedAt": "2026-02-12T09:39:00.054Z",
+    "__v": 0
+  },
+  {
+    "_id": "69a5bda582822fa2615fd088",
+    "name": "abcd",
+    "description": null,
+    "isDeleted": true,
+    "deletedAt": "2026-03-14T09:32:07.766Z",
+    "deleteReason": "By mistake",
+    "createdAt": "2026-03-02T16:41:09.411Z",
+    "updatedAt": "2026-03-14T09:32:07.769Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c00d39deb12562232485bb",
+    "name": "bdbdb",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-03-22T15:39:37.485Z",
+    "updatedAt": "2026-03-22T15:39:37.485Z",
+    "__v": 0
+  }
+]

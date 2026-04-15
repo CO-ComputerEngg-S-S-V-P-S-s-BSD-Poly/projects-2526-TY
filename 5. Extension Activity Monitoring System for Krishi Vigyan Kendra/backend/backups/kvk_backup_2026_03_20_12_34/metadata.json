@@ -1,0 +1,118 @@
+{
+  "displayName": "KVK",
+  "databaseName": "kvk_backup_2026_03_20_12_34",
+  "createdDate": "2026-03-20",
+  "createdTime": "12:34",
+  "type": "manual",
+  "collections": [
+    {
+      "name": "dataentries",
+      "records": 919
+    },
+    {
+      "name": "commondatas",
+      "records": 0
+    },
+    {
+      "name": "yearlocks",
+      "records": 0
+    },
+    {
+      "name": "trainings",
+      "records": 7
+    },
+    {
+      "name": "extensionactivities",
+      "records": 15
+    },
+    {
+      "name": "systemconfigs",
+      "records": 4
+    },
+    {
+      "name": "disciplines",
+      "records": 6
+    },
+    {
+      "name": "users",
+      "records": 10
+    }
+  ],
+  "history": [
+    {
+      "timestamp": "2026-03-20T07:04:07.423Z",
+      "type": "initial",
+      "recordsAdded": 954,
+      "details": "20/3/2026 — Initial Backup — 954 records added"
+    },
+    {
+      "timestamp": "2026-03-20T07:20:16.891Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "20/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-20T07:39:56.181Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "20/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-20T07:55:34.199Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "20/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-20T08:28:16.476Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "20/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-20T08:29:10.164Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "20/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-20T09:04:15.668Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "20/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-22T06:27:22.489Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "22/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-22T07:33:10.602Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "22/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-22T09:52:41.615Z",
+      "type": "incremental",
+      "recordsAdded": 1,
+      "details": "22/3/2026 — Incremental Backup — 1 records added"
+    },
+    {
+      "timestamp": "2026-03-22T15:40:06.529Z",
+      "type": "incremental",
+      "recordsAdded": 2,
+      "details": "22/3/2026 — Incremental Backup — 2 records added"
+    }
+  ],
+  "timeline": [
+    {
+      "date": "2026-03-22",
+      "time": "9:10 PM",
+      "recordsAdded": 2,
+      "size": "1.48 MB",
+      "type": "manual"
+    }
+  ]
+}
