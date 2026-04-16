@@ -1,0 +1,188 @@
+/* ═══════════════════════════════════════════════════
+   Navbar.css  —  Songir Handcrafted Portal
+   Updated for consistent display across all devices
+═══════════════════════════════════════════════════ */
+
+/* Global resets */
+* {
+  box-sizing: border-box;
+}
+
+/* Push page content below fixed navbar + announcement bar */
+body {
+  padding-top: 0;
+  scroll-behavior: smooth;
+  margin: 0;
+}
+
+/* Fix: page content offset for sticky nav */
+#root {
+  /* Announcement bar ≈ 36px + Navbar ≈ 60px = 96px */
+  padding-top: 96px;
+}
+
+/* When announcement bar is hidden, adjust offset */
+body.no-announcement #root {
+  padding-top: 60px;
+}
+
+/* Mobile: slightly reduced offset */
+@media (max-width: 768px) {
+  #root {
+    padding-top: 88px;
+  }
+  body.no-announcement #root {
+    padding-top: 56px;
+  }
+}
+
+/* Smooth mega-menu hover bridge — prevents menu closing gap */
+.nav-item-hover-bridge {
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  right: -20px;
+  height: 14px;
+  background: transparent;
+}
+
+/* Custom scrollbar inside mega menus and navbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(201, 148, 61, 0.35);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 148, 61, 0.6);
+}
+
+/* Focus ring for accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(201, 164, 76, 0.7);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Prevent text selection on nav items */
+nav button,
+nav a {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Active nav underline animation */
+@keyframes underlineGrow {
+  from { width: 0; }
+  to   { width: calc(100% - 1.8rem); }
+}
+
+/* Mobile optimization: prevent horizontal overflow */
+@media (max-width: 1024px) {
+  html {
+    overflow-x: hidden;
+  }
+  
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Mobile: Add subtle scroll hint for horizontal navigation */
+@media (max-width: 1024px) {
+  nav::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to left, rgba(30, 11, 2, 0.8), transparent);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Utility classes */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Smooth transitions for all interactive elements */
+nav a,
+nav button {
+  transition: all 0.2s ease;
+}
+
+/* Ensure dropdown menus don't cause scrollbars on desktop */
+@media (min-width: 1025px) {
+  nav {
+    overflow: visible;
+  }
+}
+
+/* Print styles */
+@media print {
+  nav {
+    display: none;
+  }
+  
+  #root {
+    padding-top: 0 !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  nav {
+    border-bottom: 2px solid currentColor;
+  }
+  
+  nav button,
+  nav a {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile touch optimization */
+@media (max-width: 1024px) {
+  nav button,
+  nav a {
+    /* Increase touch target size */
+    min-height: 44px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+/* Fix for iOS Safari bottom bar */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 1024px) {
+    #root {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+}
