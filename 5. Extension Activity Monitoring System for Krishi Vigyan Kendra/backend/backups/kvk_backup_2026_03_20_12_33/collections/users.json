@@ -1,0 +1,346 @@
+[
+  {
+    "_id": "6985e5771c4d92fb2b532278",
+    "name": "KVK Dhule Admin",
+    "email": "kvkadmin@gmail.com",
+    "phone": "9876543212",
+    "password": "$2a$10$TJxp4l3XfDogC44PViO/JeRiIjT28ypq1XZNIKuF3nWo3JxyePpeC",
+    "role": "admin",
+    "designation": "KVK Administrator",
+    "joiningDate": "2024-01-01T00:00:00.000Z",
+    "isActive": true,
+    "status": "approved",
+    "gender": "male",
+    "assignedDisciplines": [
+      "agronomy",
+      "horticulture",
+      "animal_husbandry",
+      "home_science",
+      "plant_protection",
+      "agricultural_engineering"
+    ],
+    "permissions": {
+      "agronomy": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "data_entry",
+        "import",
+        "export"
+      ],
+      "horticulture": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "data_entry",
+        "import",
+        "export"
+      ],
+      "animal_husbandry": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "data_entry",
+        "import",
+        "export"
+      ],
+      "home_science": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "data_entry",
+        "import",
+        "export"
+      ],
+      "plant_protection": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "data_entry",
+        "import",
+        "export"
+      ],
+      "agricultural_engineering": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "data_entry",
+        "import",
+        "export"
+      ]
+    },
+    "createdAt": "2026-02-06T12:58:31.382Z",
+    "updatedAt": "2026-02-07T06:07:45.451Z",
+    "dateOfBirth": "1993-02-05T00:00:00.000Z"
+  },
+  {
+    "_id": "698628a44294cfac8337ef26",
+    "name": "Om Hire",
+    "email": "omhire2007@gmail.com",
+    "phone": "9123456789",
+    "password": "$2a$10$osqkN/s5D/F3rxDjrzrx2.IEcmCJPdsy.8zPzC7pwqBCDrs8oSWXi",
+    "gender": "male",
+    "dateOfBirth": "2007-02-05T00:00:00.000Z",
+    "discipline": "agronomy",
+    "role": "scientist",
+    "designation": "SMS(Agronomy)",
+    "joiningDate": "2026-02-06T00:00:00.000Z",
+    "isActive": false,
+    "status": "approved",
+    "assignedDisciplines": [
+      "agronomy"
+    ],
+    "permissions": {
+      "agronomy": [
+        "create",
+        "view",
+        "update",
+        "delete"
+      ]
+    },
+    "createdAt": "2026-02-06T17:45:08.577Z",
+    "updatedAt": "2026-03-05T20:35:22.499Z",
+    "__v": 2,
+    "blockReason": "Retired",
+    "dataEntryEnabled": false
+  },
+  {
+    "_id": "698643a999d1844a896d7ed5",
+    "name": "hemant mali",
+    "email": "omhire2008@gmail.com",
+    "phone": "9789456123",
+    "password": "$2a$10$9eYcHEEvE0CAZ9lCCkKNhuvCCN6DzSigFGnUEPcndLLU9eecUsEx.",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": "plant_protection",
+    "role": "scientist",
+    "designation": "SMS(Plant Protection)",
+    "joiningDate": "2026-02-13T00:00:00.000Z",
+    "isActive": false,
+    "status": "approved",
+    "blockReason": "Not a part of the system",
+    "assignedDisciplines": [
+      "plant_protection"
+    ],
+    "permissions": {
+      "plant_protection": [
+        "create",
+        "delete"
+      ]
+    },
+    "createdAt": "2026-02-06T19:40:25.882Z",
+    "updatedAt": "2026-03-05T20:34:52.842Z",
+    "__v": 7,
+    "dataEntryEnabled": false
+  },
+  {
+    "_id": "698d98ee956856117da29c07",
+    "name": "Mr. R. V. Kadu",
+    "email": "rohitkadu@1234.gmail.com",
+    "phone": "9822313282",
+    "password": "$2a$10$fZhn/hBWeUnWcLkCpLjj1e3LV1n9OQTeqAjn/BFpWvem.JlNnVXlu",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": "horticulture",
+    "role": "scientist",
+    "designation": "SMS(Horticulture)",
+    "joiningDate": "2015-02-12T00:00:00.000Z",
+    "isActive": true,
+    "status": "approved",
+    "blockReason": null,
+    "assignedDisciplines": [
+      "horticulture"
+    ],
+    "permissions": {
+      "horticulture": [
+        "create",
+        "view",
+        "update",
+        "delete"
+      ]
+    },
+    "createdAt": "2026-02-12T09:10:06.825Z",
+    "updatedAt": "2026-02-12T09:10:07.068Z",
+    "__v": 1
+  },
+  {
+    "_id": "698d999b956856117da29c31",
+    "name": "Mrs. A. A. Raut",
+    "email": "amrutaraut@1234.gmail.com",
+    "phone": "9604576835",
+    "password": "$2a$10$I23IDXD8CA2Aosx0UggenujuSLoCY/tFSadgjaXjQu0SNF3fJivQm",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": "agril_process_engg",
+    "role": "scientist",
+    "designation": "SMS(Agril. Process Engg)",
+    "joiningDate": "2026-02-12T00:00:00.000Z",
+    "isActive": true,
+    "status": "approved",
+    "blockReason": "chjscj",
+    "assignedDisciplines": [
+      "agril_process_engg"
+    ],
+    "permissions": {
+      "agril_process_engg": [
+        "create",
+        "view",
+        "update",
+        "delete"
+      ]
+    },
+    "createdAt": "2026-02-12T09:12:59.900Z",
+    "updatedAt": "2026-03-05T10:10:41.562Z",
+    "__v": 1,
+    "dataEntryEnabled": false
+  },
+  {
+    "_id": "698d9a82956856117da29c5b",
+    "name": "Dr. A. A. Patil",
+    "email": "atishpatil@123.gmail.com",
+    "phone": "9922817018",
+    "password": "$2a$10$mYzEQvzAPFMq54hGTXu/su5s9Id04kk3S0DUD29rZAWWgt44lgCGG",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": "soil_science_and_agril_chemistry",
+    "role": "scientist",
+    "designation": "SMS(Soil Sci & Agril Chem)",
+    "joiningDate": "2015-06-12T00:00:00.000Z",
+    "isActive": true,
+    "status": "approved",
+    "blockReason": null,
+    "assignedDisciplines": [
+      "soil_science_and_agril_chemistry"
+    ],
+    "permissions": {
+      "soil_science_and_agril_chemistry": [
+        "create",
+        "view",
+        "update",
+        "delete"
+      ]
+    },
+    "createdAt": "2026-02-12T09:16:50.159Z",
+    "updatedAt": "2026-02-12T09:16:50.361Z",
+    "__v": 1
+  },
+  {
+    "_id": "698d9d4a956856117da29ca1",
+    "name": "Dr. D.M. Choudhary",
+    "email": "choudhary@123.gmail.com",
+    "phone": "9657963091",
+    "password": "$2a$10$b77yc.t9Kt2zMvO8dUttwu8Z40cocby8E1ek/9ortZEVmSJmiwmtS",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": "animal_husbandary",
+    "role": "scientist",
+    "designation": "SMS(Animal Husbandary)",
+    "joiningDate": "2014-01-12T00:00:00.000Z",
+    "isActive": true,
+    "status": "approved",
+    "blockReason": null,
+    "assignedDisciplines": [
+      "animal_husbandary",
+      "plant_protection"
+    ],
+    "permissions": {
+      "animal_husbandary": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "data_entry"
+      ],
+      "plant_protection": [
+        "view",
+        "update"
+      ]
+    },
+    "createdAt": "2026-02-12T09:28:42.760Z",
+    "updatedAt": "2026-03-02T16:20:12.101Z",
+    "__v": 4,
+    "dataEntryEnabled": true
+  },
+  {
+    "_id": "69a14f29d9f1647054b69aa1",
+    "name": "Dr. Pankaj Patil",
+    "email": "pankajpatil@123.gmail.com",
+    "phone": "9578461230",
+    "password": "$2a$10$.2gV/2O6vUy79F5PBPWOV.CCWaV9V.AEhNYHByJx2vEvWWj/mLiGe",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": "plant_protection",
+    "role": "scientist",
+    "designation": "SMS(Plant protection)",
+    "joiningDate": "2006-01-27T00:00:00.000Z",
+    "isActive": true,
+    "status": "approved",
+    "blockReason": "retired",
+    "assignedDisciplines": [
+      "plant_protection"
+    ],
+    "permissions": {
+      "plant_protection": [
+        "create",
+        "view",
+        "update",
+        "delete",
+        "import"
+      ]
+    },
+    "createdAt": "2026-02-27T08:00:41.072Z",
+    "updatedAt": "2026-03-05T20:47:01.257Z",
+    "__v": 2,
+    "dataEntryEnabled": false
+  },
+  {
+    "_id": "69a15244e222e1065b485de1",
+    "name": "Prachi Kale",
+    "email": "prachikale@123.gmail.com",
+    "phone": "9874563210",
+    "password": "$2a$10$/lJcUFnt6vlJ8BHbuLTs5erwl4yi6zLNpVz25nGUllD4Vr7pEORZO",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": null,
+    "role": "program_assistant",
+    "designation": "Program Assistant",
+    "joiningDate": "2026-02-27T00:00:00.000Z",
+    "isActive": true,
+    "status": "approved",
+    "blockReason": "dhbjs",
+    "assignedDisciplines": [],
+    "permissions": {},
+    "createdAt": "2026-02-27T08:13:56.424Z",
+    "updatedAt": "2026-03-05T10:09:54.095Z",
+    "__v": 0,
+    "dataEntryEnabled": true
+  },
+  {
+    "_id": "69a9428b2d065fb4f34974ae",
+    "name": "Om hire",
+    "email": "omhire2001@gmail.com",
+    "phone": "9874563201",
+    "password": "$2a$10$MtQ4bD4rty/qbdf.wmDYBewLDcFIGN77/.mqHhXiQ9ZEGCwMT9d6G",
+    "gender": null,
+    "dateOfBirth": null,
+    "discipline": null,
+    "role": "program_assistant",
+    "designation": null,
+    "joiningDate": null,
+    "isActive": false,
+    "status": "rejected",
+    "blockReason": "bdcbd",
+    "dataEntryEnabled": false,
+    "assignedDisciplines": [],
+    "permissions": {},
+    "createdAt": "2026-03-05T08:44:59.929Z",
+    "updatedAt": "2026-03-05T09:12:25.881Z",
+    "__v": 0
+  }
+]

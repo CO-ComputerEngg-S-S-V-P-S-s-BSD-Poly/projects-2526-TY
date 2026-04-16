@@ -1,0 +1,80 @@
+[
+  {
+    "_id": "698968d3941573ea6da79ca7",
+    "name": "Agronomy",
+    "code": "agronomy",
+    "color": "#567C8D",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-09T04:55:47.177Z",
+    "updatedAt": "2026-03-12T14:08:12.747Z",
+    "__v": 0
+  },
+  {
+    "_id": "69896ad1941573ea6da79d0a",
+    "name": "Horticulture",
+    "code": "horticulture",
+    "color": "#90c1df",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-09T05:04:17.962Z",
+    "updatedAt": "2026-02-09T12:34:55.918Z",
+    "__v": 0
+  },
+  {
+    "_id": "6989d9a87ad75db8159b35cd",
+    "name": "Animal Husbandary",
+    "code": "animal_husbandary",
+    "color": "#9fb4cb",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-09T12:57:12.303Z",
+    "updatedAt": "2026-03-02T13:49:09.058Z",
+    "__v": 0
+  },
+  {
+    "_id": "698a26e9e56a99a384c3d811",
+    "name": "Plant Protection",
+    "code": "plant_protection",
+    "color": "#e4a595",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-09T18:26:49.727Z",
+    "updatedAt": "2026-02-09T18:26:49.727Z",
+    "__v": 0
+  },
+  {
+    "_id": "698d9935956856117da29c22",
+    "name": "Agril. Process Engg",
+    "code": "agril_process_engg",
+    "color": "#45B7D1",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-12T09:11:17.157Z",
+    "updatedAt": "2026-02-12T09:11:17.157Z",
+    "__v": 0
+  },
+  {
+    "_id": "698d99dc956856117da29c4c",
+    "name": "Soil Science & Agril Chemistry",
+    "code": "soil_science_and_agril_chemistry",
+    "color": "#FF6B6B",
+    "description": null,
+    "isDeleted": false,
+    "deletedAt": null,
+    "deleteReason": null,
+    "createdAt": "2026-02-12T09:14:04.142Z",
+    "updatedAt": "2026-03-14T09:28:39.436Z",
+    "__v": 0
+  }
+]
