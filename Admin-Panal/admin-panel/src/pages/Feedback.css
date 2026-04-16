@@ -1,0 +1,72 @@
+/* Main content area */
+.admin-content{
+    margin-left: 20px;
+    padding: 40px;
+    background: #f1f5f9;
+    min-height: 100vh;
+}
+
+/* Heading */
+.admin-content h2{
+    font-size: 26px;
+    margin-bottom: 25px;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+/* Feedback grid */
+.feedback-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+    gap: 20px;
+}
+
+/* Feedback card */
+.feedback-item-card{
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Hover effect */
+.feedback-item-card:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* Rating stars */
+.rating{
+    margin-bottom: 10px;
+}
+
+/* Comment */
+.feedback-item-card p{
+    font-size: 14px;
+    color: #334155;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+/* Date */
+.feedback-item-card small{
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* Responsive */
+@media(max-width:768px){
+
+.admin-content{
+    margin-left: 200px;
+    padding: 25px;
+}
+
+.feedback-list{
+    grid-template-columns: 1fr;
+}
+
+}

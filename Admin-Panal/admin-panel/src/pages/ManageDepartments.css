@@ -1,0 +1,212 @@
+/* Main container */
+
+.admin-main{
+
+    padding:50px;
+    min-height:100vh;
+    background:#f4f7fb;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+
+.admin-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.admin-header h2{
+    font-size:26px;
+    color:#1e293b;
+}
+
+/* Search box */
+
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:white;
+    padding:8px 14px;
+    border-radius:8px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.05);
+}
+
+.search-box input{
+    border:none;
+    outline:none;
+    font-size:14px;
+}
+
+/* Form */
+
+.department-form{
+    display:flex;
+    gap:15px;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+}
+
+.department-form input{
+    padding:10px 12px;
+    border:1px solid #ddd;
+    border-radius:6px;
+    width:220px;
+}
+
+.add-btn{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:500;
+    transition:0.2s;
+}
+
+.add-btn:hover{
+    background:#1d4ed8;
+}
+
+/* Table container */
+
+.table-container{
+    background:white;
+    border-radius:10px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.05);
+    overflow:hidden;
+}
+
+/* Table */
+
+.complaint-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.complaint-table thead{
+    background:#f1f5f9;
+}
+
+.complaint-table th{
+    padding:14px;
+    text-align:left;
+    font-size:14px;
+    color:#334155;
+}
+
+.complaint-table td{
+    padding:14px;
+    border-top:1px solid #eee;
+}
+
+.complaint-table tr:hover{
+    background:#f8fafc;
+}
+
+/* Actions */
+
+.actions-cell{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+}
+
+/* Buttons */
+
+.edit-btn{
+    background:#facc15;
+    border:none;
+    padding:6px 10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.delete-btn{
+    background:#ef4444;
+    border:none;
+    padding:6px 10px;
+    border-radius:5px;
+    cursor:pointer;
+    color:white;
+}
+
+.save-btn{
+    background:#22c55e;
+    border:none;
+    padding:6px 10px;
+    border-radius:5px;
+    cursor:pointer;
+    color:white;
+}
+
+.cancel-btn{
+    background:#64748b;
+    border:none;
+    padding:6px 10px;
+    border-radius:5px;
+    cursor:pointer;
+    color:white;
+}
+
+.edit-btn:hover{
+    background:#eab308;
+}
+
+.delete-btn:hover{
+    background:#dc2626;
+}
+
+.save-btn:hover{
+    background:#16a34a;
+}
+
+.cancel-btn:hover{
+    background:#475569;
+}
+
+/* Inputs inside edit mode */
+
+.complaint-table input{
+    width:100%;
+    padding:6px;
+    border:1px solid #ddd;
+    border-radius:4px;
+}
+
+/* Loader */
+
+.loader{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:30px;
+    font-size:16px;
+}
+
+.spinner{
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    0%{transform:rotate(0deg)}
+    100%{transform:rotate(360deg)}
+}
+
+/* Responsive */
+
+@media (max-width:900px){
+
+.admin-main{
+    margin-left:0;
+}
+
+.department-form{
+    flex-direction:column;
+}
+
+}

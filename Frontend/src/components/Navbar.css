@@ -1,0 +1,111 @@
+/* NAVBAR CONTAINER */
+
+/* NAVBAR */
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 8%;
+  position:sticky;
+  top:0;
+  z-index:1000;
+
+  /* Gradient Background */
+  background:linear-gradient(135deg,#1e3a8a,#2563eb,#3b82f6);
+  box-shadow:0 6px 20px rgba(0,0,0,0.15);
+}
+
+
+/* LOGO */
+
+.nav-logo h2{
+  font-size:26px;
+  font-weight:700;
+  color:white;
+  letter-spacing:1px;
+}
+
+
+/* LINKS */
+
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:25px;
+  list-style:none;
+}
+
+.nav-links li{
+  display:flex;
+  align-items:center;
+}
+
+
+/* LINK STYLE */
+
+.nav-links a{
+  text-decoration:none;
+  color:white;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:0.3s;
+}
+
+
+/* HOVER EFFECT */
+
+.nav-links a:hover{
+  color:#fbbf24;
+  transform:translateY(-2px);
+}
+
+
+/* LOGIN BUTTON */
+
+.login-btn{
+  background:white;
+  color:#2563eb !important;
+  padding:8px 16px;
+  border-radius:6px;
+  font-weight:600;
+  transition:0.3s;
+}
+
+.login-btn:hover{
+  background:#f1f5f9;
+  transform:translateY(-2px);
+}
+
+
+/* LOGOUT BUTTON */
+
+.logout-link{
+  background:#ef4444;
+  color:white;
+  padding:8px 14px;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:0.3s;
+}
+
+.logout-link:hover{
+  background:#dc2626;
+}
+
+
+/* THEME TOGGLE */
+
+.theme-toggle-btn{
+  padding:6px;
+  border-radius:50%;
+  transition:0.3s;
+}
+
+.theme-toggle-btn:hover{
+  background:rgba(255,255,255,0.2);
+}

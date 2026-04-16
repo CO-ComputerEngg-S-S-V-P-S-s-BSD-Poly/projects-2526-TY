@@ -1,0 +1,54 @@
+/* --- CSS Variables (Theme Control) --- */
+:root {
+  /* Light Mode Colors */
+  --bg-main: #ffffff;
+  --bg-card: #f8fafc;
+  --text-main: #1e293b;
+  --text-sub: #64748b;
+  --nav-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --accent-color: #2563eb;
+}
+
+[data-theme='dark'] {
+  /* Dark Mode Colors */
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --text-main: #f1f5f9;
+  --text-sub: #94a3b8;
+  --nav-bg: #1e293b;
+  --border-color: #334155;
+  --accent-color: #60a5fa;
+}
+
+/* --- Global Styles --- */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-main); /* Variable use kiya */
+  color: var(--text-main);           /* Variable use kiya */
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif; */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Smooth transition jab theme badle */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* --- Link Styles --- */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* --- Smooth Scrolling --- */
+html {
+  scroll-behavior: smooth;
+}
