@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Basic Information"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#E0E0E0"/>
+
+        <EditText
+            android:id="@+id/cropNameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Crop Name *"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/soilTypeET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Soil Type (e.g., Black Cotton) *"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/temperatureET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Temperature Range (e.g., 20-30°C) *"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/fertilizerET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Fertilizer Type *"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/durationET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Duration (e.g., 120-150 days) *"
+            android:padding="12dp"/>
+
+        <Spinner
+            android:id="@+id/seasonSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"/>
+
+        <EditText
+            android:id="@+id/imageUrlET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Image URL (optional)"
+            android:padding="12dp"/>
+
+        <!-- STEP 1: PRE-SOWING -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="STEP 1: PRE-SOWING (THE FOUNDATION)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/soilTypeDetailedET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Soil Type Detailed (e.g., Black Cotton Soil)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/phRangeET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="pH Range (e.g., 6.5 - 7.5)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/basalDoseET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Basal Dose (Initial fertilizers)"
+            android:padding="12dp"
+            android:lines="2"/>
+
+        <EditText
+            android:id="@+id/climateET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Climate (Min/Max Temp thresholds)"
+            android:padding="12dp"/>
+
+        <!-- STEP 2: SOWING MANAGEMENT -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="STEP 2: SOWING MANAGEMENT (THE PROTOCOL)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#FF9800"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/sowingWindowET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Sowing Window (e.g., June 15 – July 10)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/seedRateET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seed Rate (kg per acre/hectare)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/spacingET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Spacing (Row × Plant in cm)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/seedTreatmentET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Seed Treatment (Fungicide/dosage)"
+            android:padding="12dp"/>
+
+        <!-- STEP 3: NUTRIENT & WATER SCHEDULE -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="STEP 3: NUTRIENT and WATER SCHEDULE (THE TIMELINE)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#2196F3"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/fertilizerSplitET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Fertilizer Split (DAS and N-P-K dosage)"
+            android:padding="12dp"
+            android:lines="3"/>
+
+        <EditText
+            android:id="@+id/irrigationPointsET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Irrigation Points (Critical stages)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/micronutrientsET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Micronutrients (Zinc/Boron requirements)"
+            android:padding="12dp"/>
+
+        <!-- STEP 4: CROP PROTECTION -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="STEP 4: CROP PROTECTION (THE DIAGNOSTICS)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#F44336"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/pestNameET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Pest Name (Common and Scientific)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/visualSymptomsET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Visual Symptoms (3-4 bullet points)"
+            android:padding="12dp"
+            android:lines="3"/>
+
+        <EditText
+            android:id="@+id/chemicalSolutionET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Chemical Solution (Active ingredient and dilution)"
+            android:padding="12dp"/>
+
+        <!-- STEP 5: STORAGE -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="STEP 5: STORAGE (THE FINANCIAL SHIELD)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:background="#9C27B0"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/harvestMoistureET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Harvest Moisture (Ideal % at harvest)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/storageTempET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Storage Temperature (Celsius)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/relativeHumidityET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Relative Humidity (%)"
+            android:padding="12dp"/>
+
+        <EditText
+            android:id="@+id/baggingET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Bagging (Material type and stacking limits)"
+            android:padding="12dp"
+            android:lines="2"/>
+
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Crop"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:padding="12dp"/>
+
+    </LinearLayout>
+</ScrollView>
