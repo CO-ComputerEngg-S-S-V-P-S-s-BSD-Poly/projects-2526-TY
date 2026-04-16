@@ -1543,65 +1543,6 @@ body {
   max-height: calc(100vh - 40px);
 }
 
-.manage-disciplines-container .me-modal .me-table-wrap {
-  width: 100%;
-  max-width: 100%;
-  margin-top: 8px;
-  border-radius: 12px;
-  min-height: 0;
-}
-
-.manage-disciplines-container .me-modal .me-table {
-  width: 100%;
-  table-layout: fixed;
-}
-
-.manage-disciplines-container .me-modal .me-table th,
-.manage-disciplines-container .me-modal .me-table td {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.manage-disciplines-container .me-modal .me-table th:nth-child(1),
-.manage-disciplines-container .me-modal .me-table td:nth-child(1) {
-  width: 40%;
-}
-
-.manage-disciplines-container .me-modal .me-table th:nth-child(2),
-.manage-disciplines-container .me-modal .me-table td:nth-child(2) {
-  width: 20%;
-}
-
-.manage-disciplines-container .me-modal .me-table th:nth-child(3),
-.manage-disciplines-container .me-modal .me-table td:nth-child(3) {
-  width: 25%;
-}
-
-.manage-disciplines-container .me-modal .me-table th:nth-child(4),
-.manage-disciplines-container .me-modal .me-table td:nth-child(4) {
-  width: 15%;
-}
-
-@media (max-width: 576px) {
-  .manage-disciplines-container .me-modal .me-table th:nth-child(1),
-  .manage-disciplines-container .me-modal .me-table td:nth-child(1) {
-    width: 50%;
-  }
-  .manage-disciplines-container .me-modal .me-table th:nth-child(2),
-  .manage-disciplines-container .me-modal .me-table td:nth-child(2) {
-    width: 20%;
-  }
-  .manage-disciplines-container .me-modal .me-table th:nth-child(3),
-  .manage-disciplines-container .me-modal .me-table td:nth-child(3) {
-    width: 20%;
-  }
-  .manage-disciplines-container .me-modal .me-table th:nth-child(4),
-  .manage-disciplines-container .me-modal .me-table td:nth-child(4) {
-    width: 10%;
-  }
-}
-
 /* Modal footer - matching ManageEmployee style */
 .me-modal-footer {
   padding: 20px 24px;
@@ -1812,8 +1753,7 @@ body {
 
 /* View modal timeline + users */
 .md-modal-view {
-  width: 95%;
-  max-width: 900px;
+  max-width: 520px;
 }
 
 .md-view-timeline {

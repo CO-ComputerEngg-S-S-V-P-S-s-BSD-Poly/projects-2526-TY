@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/ManageEmployee.me.css';
 import '../../styles/DataEntry.css';
-import { Upload, Plus, Filter as FunnelIcon } from 'lucide-react';
+import { Upload, Download, Plus } from 'lucide-react';
 
 const DEHeader = ({ onImportClick, onExportClick, onManualClick, selectedYear, onYearChange }) => {
   const currentYear = new Date().getFullYear();
@@ -15,25 +15,26 @@ const DEHeader = ({ onImportClick, onExportClick, onManualClick, selectedYear, o
           <p className="da-page-subtitle">Import or add records manually</p>
         </div>
         <div className="da-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div className="dh-header-year-filter">
-            <div className="ap-control-group">
-              <FunnelIcon size={16} className="ap-control-icon" />
-              <span className="ap-control-label">Select Year:</span>
-              <select
-                className="dh-filter-select dh-year-select"
-                value={selectedYear}
-                onChange={(e) => onYearChange(e.target.value)}
-              >
-                {years.map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
+          <div className="da-filter" style={{ minWidth: '150px' }}>
+            <span style={{ fontWeight: '700', color: 'var(--me-primary-medium)' }}>Year</span>
+            <select 
+              className="da-select" 
+              value={selectedYear} 
+              onChange={(e) => onYearChange(e.target.value)}
+              style={{ border: 'none', background: 'transparent', width: '100%', fontWeight: '700' }}
+            >
+              {years.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
           </div>
 
           <button className="da-btn da-btn-light" onClick={onImportClick} title="Import">
             <Upload size={16} />
             Import
+          </button>
+
+          <button className="da-btn da-btn-light" onClick={onExportClick} title="Export to Excel">
+            <Download size={16} />
+            Export
           </button>
           
           <button className="da-btn da-btn-primary" onClick={onManualClick} title="Manual Entry">
@@ -47,3 +48,4 @@ const DEHeader = ({ onImportClick, onExportClick, onManualClick, selectedYear, o
 };
 
 export default DEHeader;
+

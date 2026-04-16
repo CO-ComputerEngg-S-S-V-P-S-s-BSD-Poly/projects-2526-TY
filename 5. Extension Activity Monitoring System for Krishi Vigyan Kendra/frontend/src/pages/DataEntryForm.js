@@ -5,12 +5,12 @@ import '../styles/ManageEmployee.me.css';
 import '../styles/DataEntry.css';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { disciplineAPI, trainingAPI, extensionActivityAPI, authAPI, adminAPI, yearLockAPI } from '../services/api';
+import { disciplineAPI, trainingAPI, extensionActivityAPI, authAPI, adminAPI } from '../services/api';
 import { dataEntryAPI } from '../services/dataEntryApi';
 import { commonDataAPI } from '../services/commonDataApi';
-import { Info, ChevronDown, AlertCircle, Plus, Calendar, CheckCircle2 } from 'lucide-react';
+import { Info, ChevronDown, AlertCircle, Plus } from 'lucide-react';
 
-const CustomDropdown = ({ value, values = [], multiple = false, options, onSelect, onSelectMultiple, placeholder, required, disabled, hasError, isOtherSelected, onKeyDown, className, ghostText, truncateLength }) => {
+const CustomDropdown = ({ value, options, onSelect, placeholder, required, disabled, hasError, isOtherSelected, onKeyDown, className, ghostText }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openUp, setOpenUp] = useState(false);
   const dropdownRef = useRef(null);
@@ -29,27 +29,12 @@ const CustomDropdown = ({ value, values = [], multiple = false, options, onSelec
     if (disabled) return;
 
     if (!isOpen) {
+      // Check space before opening
       if (dropdownRef.current) {
         const rect = dropdownRef.current.getBoundingClientRect();
         const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceAbove = rect.top;
-        const menuHeight = 190;
-        const container = dropdownRef.current.closest('.da-table-wrap');
-        
-        if (container) {
-          const cRect = container.getBoundingClientRect();
-          const spaceBelowInContainer = cRect.bottom - rect.bottom;
-          const spaceAboveInContainer = rect.top - cRect.top;
-          
-          // If space below is tight but space above is better, open up
-          if (spaceBelowInContainer < menuHeight && spaceAboveInContainer > spaceBelowInContainer) {
-            setOpenUp(true);
-          } else {
-            setOpenUp(false);
-          }
-        } else {
-          setOpenUp(spaceBelow < menuHeight && spaceAbove > spaceBelow);
-        }
+        const menuHeight = 250; // max-height of the menu
+        setOpenUp(spaceBelow < menuHeight);
       }
     }
     setIsOpen(!isOpen);
@@ -57,24 +42,9 @@ const CustomDropdown = ({ value, values = [], multiple = false, options, onSelec
 
   const displayValue = isOtherSelected ? 'Other (Enter manually)' : (value || '');
   const selectedOption = options.find(o => (typeof o === 'object' ? o.value : o) === value);
-  const multiLabels = multiple
-    ? options
-        .filter(o => {
-          const ov = typeof o === 'object' ? o.value : o;
-          return (values || []).includes(ov);
-        })
-        .map(o => (typeof o === 'object' ? o.label : o))
-    : [];
-  const displayLabel = multiple
-    ? (multiLabels.length
-        ? (multiLabels.length > 2 ? `${multiLabels.slice(0, 2).join(', ')} …` : multiLabels.join(', '))
-        : (placeholder || 'Select'))
-    : (selectedOption
-        ? (typeof selectedOption === 'object' ? selectedOption.label : selectedOption)
-        : (ghostText && !value && !isOtherSelected ? '' : (displayValue || placeholder)));
-  const finalDisplayLabel = (!multiple && typeof displayLabel === 'string' && truncateLength && displayLabel.length > truncateLength)
-    ? (displayLabel.slice(0, truncateLength) + ' …')
-    : displayLabel;
+  const displayLabel = selectedOption
+    ? (typeof selectedOption === 'object' ? selectedOption.label : selectedOption)
+    : (ghostText && !value && !isOtherSelected ? '' : (displayValue || placeholder));
 
   return (
     <div className={`da-custom-dropdown-container ${isOpen ? 'is-open' : ''} ${className || ''}`} ref={dropdownRef}>
@@ -108,8 +78,8 @@ const CustomDropdown = ({ value, values = [], multiple = false, options, onSelec
               <span style={{ fontSize: '0.75rem', marginLeft: '8px', opacity: 0.7 }}>(Tab)</span>
             </span>
           )}
-          <span style={{ color: value || isOtherSelected || (multiple && (values || []).length) ? 'inherit' : '#a0aec0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {finalDisplayLabel}
+          <span style={{ color: value || isOtherSelected ? 'inherit' : '#a0aec0' }}>
+            {displayLabel}
           </span>
         </div>
         <ChevronDown size={16} style={{
@@ -136,7 +106,7 @@ const CustomDropdown = ({ value, values = [], multiple = false, options, onSelec
           {options.map((opt, i) => {
             const optVal = typeof opt === 'object' ? opt.value : opt;
             const optLabel = typeof opt === 'object' ? opt.label : opt;
-            const isActive = multiple ? (values || []).includes(optVal) : (!isOtherSelected && (value === optVal));
+            const isActive = !isOtherSelected && (value === optVal);
             const optDisabled = typeof opt === 'object' ? !!opt.disabled : false;
 
             return (
@@ -146,24 +116,13 @@ const CustomDropdown = ({ value, values = [], multiple = false, options, onSelec
                 className={`da-custom-dropdown-item ${isActive ? 'active' : ''}`}
                 disabled={optDisabled}
                 onClick={() => {
-                  if (optDisabled) return;
-                  if (multiple) {
-                    const current = new Set(values || []);
-                    if (current.has(optVal)) current.delete(optVal);
-                    else current.add(optVal);
-                    onSelectMultiple && onSelectMultiple(Array.from(current));
-                  } else {
+                  if (!optDisabled) {
                     onSelect(optVal);
                     setIsOpen(false);
                   }
                 }}
               >
-                {multiple ? (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                    <input type="checkbox" checked={isActive} readOnly />
-                    {optLabel}
-                  </span>
-                ) : optLabel}
+                {optLabel}
               </button>
             );
           })}
@@ -200,40 +159,24 @@ const emptyForm = {
   chiefGuestRemark: '',
   postEventDetails: '',
   // Tab 6: Participation
+  genMale: '',
+  genFemale: '',
   scMale: '',
   scFemale: '',
-  scTotal: '',
   stMale: '',
   stFemale: '',
-  stTotal: '',
   otherMale: '',
   otherFemale: '',
-  otherTotal: '',
   efMale: '',
   efFemale: '',
-  efTotal: '',
-  totalMale: '',
-  totalFemale: '',
-  grandTotal: '',
   mediaCoverage: ''
 };
 
-const DataEntryForm = ({ 
-  disciplineCode: propDisciplineCode, 
-  id: propId, 
-  mode: propMode, 
-  onClose,
-  isModal = false 
-}) => {
+const DataEntryForm = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const params = useParams();
+  const { disciplineCode, id, mode } = useParams();
   const location = useLocation();
-
-  const disciplineCode = propDisciplineCode || params.disciplineCode;
-  const id = propId || params.id;
-  const mode = propMode || params.mode;
-
   const navRecord = location.state && location.state.record;
   const [form, setForm] = useState(emptyForm);
   const [activeSection, setActiveSection] = useState('tab1');
@@ -244,78 +187,14 @@ const DataEntryForm = ({
   const [errors, setErrors] = useState({});
   const [contacts, setContacts] = useState([{ contactPerson: '', designation: '', discipline: '', email: '', mobile: '', landline: '' }]);
   const [activeContactIndex, setActiveContactIndex] = useState(0);
-  const [statusModal, setStatusModal] = useState(null); // { title, message, type, onOk }
   const [contactAnim, setContactAnim] = useState(false);
   const contactAnimTimerRef = useRef(null);
   const [loadingRecord, setLoadingRecord] = useState(false);
   const [originalMeta, setOriginalMeta] = useState({ sourceModule: null, createdByName: null });
-  const [lockedYears, setLockedYears] = useState(new Set());
-
-  // Function to reset the form to initial state
-  const resetForm = () => {
-    setForm(emptyForm);
-    setContacts([{ contactPerson: '', designation: '', discipline: '', email: '', mobile: '', landline: '' }]);
-    setActiveContactIndex(0);
-    setSelectedDisciplines([]);
-    setBasicContactsByDisc({});
-    setErrors({});
-    setActiveSection('tab1');
-    setIsOtherContactPerson(false);
-    setCustomContactPerson('');
-    setIsOtherTargetGroup(false);
-    setCustomTargetGroup('');
-    setIsOtherTaluka(false);
-    setCustomTaluka('');
-    setIsOtherDistrict(false);
-    setCustomDistrict('');
-    setIsOtherMedia(false);
-    setCustomMedia('');
-    
-    // If in discipline module, re-apply self contact details
-    if (isInDisciplineModule && user && mode !== 'view' && mode !== 'edit' && !id) {
-      const selfName = user.name || '';
-      const selfDiscipline = user.discipline || disciplineCode || '';
-      const selfDesignation = user.designation || '';
-      const selfMobile = String(user.phone || user.mobile || '').trim();
-
-      setContacts([{
-        contactPerson: selfName,
-        discipline: selfDiscipline,
-        designation: selfDesignation,
-        mobile: selfMobile,
-        email: '',
-        landline: ''
-      }]);
-      setForm({
-        ...emptyForm,
-        contactPerson: selfName,
-        discipline: selfDiscipline,
-        designation: selfDesignation,
-        mobile: selfMobile,
-      });
-      setSelectedDisciplines([selfDiscipline]);
-    }
-  };
 
   // Ghost text for Tab 4 auto-fill
   const defaultEmail = 'pckvkdhule@gmail.com';
   const defaultLandline = '2562299165';
-
-  // Fetch Year Locks
-  useEffect(() => {
-    const fetchLocks = async () => {
-      try {
-        const locks = await yearLockAPI.getAll().catch(() => []);
-        setLockedYears(new Set((locks || []).filter(l => l.isLocked).map(l => l.year)));
-      } catch (err) {
-        console.error('Failed to fetch year locks:', err);
-      }
-    };
-    fetchLocks();
-  }, []);
-
-  const isAdmin = (user?.role || '').toLowerCase() === 'admin';
-  const isViewMode = mode === 'view';
 
   // Determine if we're in discipline-module mode (came from sidebar discipline link)
   const isInDisciplineModule = Boolean(disciplineCode);
@@ -331,110 +210,10 @@ const DataEntryForm = ({
       mobile: String(user.phone || user.mobile || '').trim(),
     };
   }, [isInDisciplineModule, user, disciplineCode]);
-  const [selectedDisciplines, setSelectedDisciplines] = useState([]);
-  const [basicContactsByDisc, setBasicContactsByDisc] = useState({});
-
-  useEffect(() => {
-    if (selectedDisciplines.length === 0) {
-      if (isInDisciplineModule && disciplineCode && disciplineCode !== 'all') {
-        setSelectedDisciplines([disciplineCode]);
-      } else if (form.discipline) {
-        setSelectedDisciplines(Array.isArray(form.discipline) ? form.discipline : [form.discipline]);
-      }
-    }
-  }, [form.discipline, selectedDisciplines.length, isInDisciplineModule, disciplineCode]);
-
-  useEffect(() => {
-    // In pure view mode we should NEVER rewrite the contacts array from
-    // discipline selections, otherwise we lose the original imported
-    // per-person details (discipline, designation, etc.).
-    if (isViewMode) return;
-    if (!selectedDisciplines.length) return;
-    const next = (() => {
-      const prevContacts = contacts || [];
-      const out = [];
-
-      const defaultEmail = 'pckvkdhule@gmail.com';
-      const defaultLandline = '2562299165';
-
-      // If "All KVK" is selected, it takes precedence and gives exactly one blank contact
-      if (selectedDisciplines.includes('all_kvk')) {
-        return prevContacts.length === 1 && prevContacts[0].discipline === 'all_kvk'
-          ? prevContacts
-          : [{ contactPerson: '', designation: '', discipline: 'all_kvk', email: defaultEmail, mobile: '', landline: defaultLandline }];
-      }
-
-      // Process regular disciplines
-      selectedDisciplines.forEach((dCode) => {
-        if (dCode === 'other') {
-          // Add a blank contact for 'Other' if it doesn't already exist
-          const existing = prevContacts.find(c => c.discipline === 'other') || { contactPerson: '', designation: '', discipline: 'other', email: defaultEmail, mobile: '', landline: defaultLandline };
-          out.push(existing);
-          return;
-        }
-
-        const chosenNames = basicContactsByDisc[dCode] || [];
-        chosenNames.forEach((name) => {
-          // try to find existing contact for same discipline+name to preserve edits
-          const existing = prevContacts.find(c => c.discipline === dCode && c.contactPerson === name) || { contactPerson: name, designation: '', discipline: dCode, email: defaultEmail, mobile: '', landline: defaultLandline };
-          // Find user by name and check if they belong to this discipline (primary or assigned)
-          const u = users.find(u => 
-            u.name === name && (
-              (u.discipline || '').trim() === dCode || 
-              (Array.isArray(u.assignedDisciplines) && u.assignedDisciplines.includes(dCode))
-            )
-          );
-          out.push({
-            ...existing,
-            discipline: dCode,
-            contactPerson: name,
-            designation: u ? (u.designation || existing.designation || '') : (existing.designation || ''),
-            mobile: u ? String(u.phone || u.mobile || '').trim() : (existing.mobile || ''),
-            email: existing.email || defaultEmail,
-            landline: existing.landline || defaultLandline
-          });
-        });
-      });
-
-      // Reorder: if 'other' is in the disciplines, it should be first
-      out.sort((a, b) => {
-        if (a.discipline === 'other' && b.discipline !== 'other') return -1;
-        if (a.discipline !== 'other' && b.discipline === 'other') return 1;
-        return 0;
-      });
-
-      return out;
-    })();
-    setContacts(next);
-    setActiveContactIndex(prev => Math.min(prev, Math.max(0, next.length - 1)));
-    const current = next[Math.min(activeContactIndex, Math.max(0, next.length - 1))];
-    if (current) {
-      setForm(p => ({
-        ...p,
-        contactPerson: current.contactPerson || '',
-        designation: current.designation || '',
-        discipline: current.discipline || '',
-        email: current.email || '',
-        mobile: current.mobile || '',
-        landline: current.landline || ''
-      }));
-    } else {
-      setForm(p => ({
-        ...p,
-        contactPerson: '',
-        designation: '',
-        discipline: '',
-        email: '',
-        mobile: '',
-        landline: ''
-      }));
-    }
-  }, [selectedDisciplines, basicContactsByDisc]);
 
   // Is the current contact the locked contact-1 in discipline mode?
   const isContact1Locked = isInDisciplineModule && activeContactIndex === 0 && mode !== 'view';
   const [isOtherContactPerson, setIsOtherContactPerson] = useState(false);
-  const isManualEntryAllowed = selectedDisciplines.includes('all_kvk') || form.discipline === 'other' || isOtherContactPerson;
   const [customContactPerson, setCustomContactPerson] = useState('');
   const [isOtherTargetGroup, setIsOtherTargetGroup] = useState(false);
   const [customTargetGroup, setCustomTargetGroup] = useState('');
@@ -444,167 +223,6 @@ const DataEntryForm = ({
   const [customTaluka, setCustomTaluka] = useState('');
   const [isOtherDistrict, setIsOtherDistrict] = useState(false);
   const [customDistrict, setCustomDistrict] = useState('');
-  const [isOtherMedia, setIsOtherMedia] = useState(false);
-  const [customMedia, setCustomMedia] = useState('');
-
-  // --- DUPLICATE CHECK FEATURES ---
-  const [duplicateModal, setDuplicateModal] = useState(null); // { type: 'exact'|'similar', record: existingRecord }
-  
-  // Basic string similarity (Levenshtein + Token Overlap hybrid)
-   const getStringSimilarity = (s1, s2) => {
-     if (!s1 || !s2) return 0;
-     const str1 = String(s1).toLowerCase().trim();
-     const str2 = String(s2).toLowerCase().trim();
-     if (str1 === str2) return 1.0;
-
-     // 1. Levenshtein Distance (Character based)
-     const levenshtein = (a, b) => {
-       const s1 = a.replace(/[^a-z0-9]/g, '');
-       const s2 = b.replace(/[^a-z0-9]/g, '');
-       if (s1 === s2) return 1.0;
-       if (s1.length === 0 || s2.length === 0) return 0;
-       const len1 = s1.length;
-       const len2 = s2.length;
-       const matrix = Array.from({ length: len1 + 1 }, () => new Int32Array(len2 + 1));
-       for (let i = 0; i <= len1; i++) matrix[i][0] = i;
-       for (let j = 0; j <= len2; j++) matrix[0][j] = j;
-       for (let i = 1; i <= len1; i++) {
-         for (let j = 1; j <= len2; j++) {
-           const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
-           matrix[i][j] = Math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost);
-         }
-       }
-       return 1.0 - matrix[len1][len2] / Math.max(len1, len2);
-     };
-
-     // 2. Token Overlap (Word based - handles missing words/word order)
-     const tokenOverlap = (a, b) => {
-       const t1 = new Set(a.split(/\s+/).filter(t => t.length > 2));
-       const t2 = new Set(b.split(/\s+/).filter(t => t.length > 2));
-       if (t1.size === 0 || t2.size === 0) return 0;
-       const intersection = new Set([...t1].filter(x => t2.has(x)));
-       return (2.0 * intersection.size) / (t1.size + t2.size);
-     };
-
-     const levScore = levenshtein(str1, str2);
-     const tokenScore = tokenOverlap(str1, str2);
-
-     // Take the higher of the two or a weighted average
-     return Math.max(levScore, tokenScore);
-   };
-
-  // Check for duplicates
-  const checkDuplicates = async (newRecord) => {
-    try {
-      // Helper to normalize date strings to YYYY-MM-DD
-      const normalizeDate = (d) => {
-        if (!d) return '';
-        try {
-          const dateObj = new Date(d);
-          if (isNaN(dateObj.getTime())) return String(d).split('T')[0];
-          return dateObj.toISOString().split('T')[0];
-        } catch (e) {
-          return String(d).split('T')[0];
-        }
-      };
-
-      // 1. Fetch all records for the same year to compare
-      // We use a small timeout to ensure the API has time to respond if it's the first call
-      const existingRecords = await dataEntryAPI.get(newRecord.year);
-      if (!existingRecords || !Array.isArray(existingRecords)) {
-        console.warn("No existing records found or error fetching records for year:", newRecord.year);
-        return null;
-      }
-
-      // Filter out the current record if we are in edit mode
-      const others = id ? existingRecords.filter(r => r._id !== id) : existingRecords;
-
-      let bestSimilar = null;
-      let highestScore = 0;
-
-      const newDate = normalizeDate(newRecord.startDate);
-      const newEventName = (newRecord.eventName || '').trim().toLowerCase();
-      const newVenuePlace = (newRecord.venuePlace || '').trim().toLowerCase();
-      const newEventType = (newRecord.eventType || '').trim().toLowerCase();
-      const newEventCategory = (newRecord.eventCategory || '').trim().toLowerCase();
-      const newTargetGroup = (newRecord.targetGroup || '').trim().toLowerCase();
-
-      // Handle contact person comparison carefully as it's often in the contacts array
-      const getRecordContact = (record) => {
-        if (record.contactPerson) return String(record.contactPerson).trim().toLowerCase();
-        if (record.contacts && record.contacts.length > 0) return String(record.contacts[0].contactPerson).trim().toLowerCase();
-        return '';
-      };
-
-      const newContact = getRecordContact(newRecord);
-
-      for (const r of others) {
-        const rDate = normalizeDate(r.startDate);
-        const rEventName = (r.eventName || '').trim().toLowerCase();
-        const rVenuePlace = (r.venuePlace || '').trim().toLowerCase();
-        const rEventType = (r.eventType || '').trim().toLowerCase();
-        const rEventCategory = (r.eventCategory || '').trim().toLowerCase();
-        const rTargetGroup = (r.targetGroup || '').trim().toLowerCase();
-        const rContact = getRecordContact(r);
-
-        // 1. EXACT/HIGHLY SIMILAR MATCH (Core fields)
-        // If event name, date, and venue are practically identical, it's an exact match
-        const nameSim = getStringSimilarity(rEventName, newEventName);
-        const venueSim = getStringSimilarity(rVenuePlace, newVenuePlace);
-        
-        const isExactMatch = (
-          nameSim > 0.98 && 
-          rDate === newDate && 
-          venueSim > 0.98 &&
-          rEventType === newEventType &&
-          rEventCategory === newEventCategory
-        );
-
-        if (isExactMatch) {
-          console.log("Exact match found with record ID:", r._id);
-          return { type: 'exact', record: r };
-        }
-
-        // 2. SIMILARITY SCORING (For fuzzy matching)
-        const contactSim = getStringSimilarity(rContact, newContact);
-        const targetSim = getStringSimilarity(rTargetGroup, newTargetGroup);
-        const dateMatch = rDate === newDate ? 1.0 : 0;
-        
-        // Weights for similarity scoring
-        const scores = [
-          nameSim * 0.5,      // Event Name is most important
-          dateMatch * 0.25,    // Date is very important
-          venueSim * 0.15,     // Venue is important
-          contactSim * 0.1     // Contact is secondary
-        ];
-
-        const totalScore = scores.reduce((a, b) => a + b, 0);
-        
-        // Logic for "Highly Similar": 
-        // Either the name is an exact match and date matches, 
-        // OR the overall score is high (above 0.75 now instead of 0.85)
-        const isHighlySimilar = (nameSim > 0.95 && dateMatch === 1.0) || totalScore > 0.75;
-
-        if (isHighlySimilar) {
-          if (totalScore > highestScore) {
-            highestScore = totalScore;
-            bestSimilar = r;
-          }
-        }
-      }
-
-      if (bestSimilar) {
-        console.log("Similar match found with score:", highestScore);
-        return { type: 'similar', record: bestSimilar, score: highestScore };
-      }
-
-      return null;
-    } catch (err) {
-      console.error("Duplicate check error:", err);
-      return null;
-    }
-  };
-  // --------------------------------
 
   // Find selected user's details for ghost text
   const selectedUserDetails = useMemo(() => {
@@ -643,11 +261,11 @@ const DataEntryForm = ({
           commonDataAPI.get('district').catch(() => []),
           commonDataAPI.get('targetGroup').catch(() => [])
         ]);
-        setTalukaOptions(t.length ? t : ['Dhule', 'Sakri', 'Shirpur', 'Shindkheda']);
+        setTalukaOptions(t.length ? t : ['Dhule', 'Sakri', 'Shirpur', 'Sindkheda']);
         setDistrictOptions(d.length ? d : ['Dhule']);
         setTargetGroups(tg.length ? tg : initialTargetGroups);
       } catch {
-        setTalukaOptions(['Dhule', 'Sakri', 'Shirpur', 'Shindkheda']);
+        setTalukaOptions(['Dhule', 'Sakri', 'Shirpur', 'Sindkheda']);
         setDistrictOptions(['Dhule']);
         setTargetGroups(initialTargetGroups);
       }
@@ -703,16 +321,18 @@ const DataEntryForm = ({
   }, [user?.name, user?.discipline, user?.designation, user?.phone, isInDisciplineModule, id]);
 
   useEffect(() => {
-    const normalizeDate = (value) => {
+    const normalizeDateForInput = (value) => {
       if (!value) return '';
+      
+      // If it's DD/MM/YYYY format
+      if (typeof value === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+        const [day, month, year] = value.split('/');
+        return `${year}-${month}-${day}`;
+      }
+
       const d = new Date(value);
       if (Number.isNaN(d.getTime())) return '';
-      
-      // Use local date components to avoid timezone shifts
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+      return d.toISOString().slice(0, 10);
     };
 
     const applyRecordToForm = (record) => {
@@ -734,8 +354,8 @@ const DataEntryForm = ({
       setForm((p) => ({
         ...p,
         ...rest,
-        startDate: normalizeDate(startDate || record.startDate || p.startDate),
-        endDate: normalizeDate(endDate || record.endDate || p.endDate),
+        startDate: normalizeDateForInput(startDate || record.startDate || p.startDate),
+        endDate: normalizeDateForInput(endDate || record.endDate || p.endDate),
         // For the form state, we use the first contact's details as initial values
         contactPerson: firstContact.contactPerson || '',
         designation: firstContact.designation || '',
@@ -745,35 +365,8 @@ const DataEntryForm = ({
         landline: firstContact.landline || ''
       }));
 
-      // Seed contacts so Contact Details tab can show all persons, including imported ones
       setContacts(contactList);
       setActiveContactIndex(0);
-
-      // Also seed Basic Info tab's discipline and contact selectors from the loaded record,
-      // so view/edit mode reflects saved data instead of showing them as empty.
-      const disciplineCodes = Array.isArray(recordDiscipline)
-        ? recordDiscipline
-        : (recordDiscipline ? [recordDiscipline] : []);
-      if (disciplineCodes.length) {
-        setSelectedDisciplines(disciplineCodes);
-      }
-
-      if (contactList.length) {
-        const byDisc = {};
-        contactList.forEach((c) => {
-          const dCode = (c.discipline || '').trim();
-          const name = (c.contactPerson || '').trim();
-          if (!dCode || !name) return;
-          if (!byDisc[dCode]) byDisc[dCode] = [];
-          if (!byDisc[dCode].includes(name)) {
-            byDisc[dCode].push(name);
-          }
-        });
-        if (Object.keys(byDisc).length) {
-          setBasicContactsByDisc(byDisc);
-        }
-      }
-
       // Preserve original meta for edits
       setOriginalMeta({
         sourceModule: record.sourceModule || null,
@@ -787,9 +380,7 @@ const DataEntryForm = ({
         return;
       }
 
-      if (!id) {
-        return;
-      }
+      if (!id) return;
       setLoadingRecord(true);
       try {
         const record = await dataEntryAPI.getById(id);
@@ -882,57 +473,7 @@ const DataEntryForm = ({
       }
     }
 
-    // Validation: Year Lock Check
-    if (k === 'startDate' && val) {
-      const inputYear = new Date(val).getFullYear();
-      
-      // Check for lock status immediately
-      if (!isAdmin && lockedYears.has(inputYear)) {
-        errorMsg = 'This year is locked by the admin. Please select a different date or contact the administrator.';
-      }
-    }
-
-    // Validation: End date cannot be before start date
-    if (k === 'endDate' && val && form.startDate) {
-      if (new Date(val) < new Date(form.startDate)) {
-        errorMsg = 'End date cannot be before start date';
-      }
-    }
-
-    setForm((p) => {
-      const next = { ...p, [k]: val };
-
-      // Row-wise total validation: if male + female > total, update total
-      const checkRowTotal = (prefix) => {
-        const m = parseInt(next[`${prefix}Male`]) || 0;
-        const f = parseInt(next[`${prefix}Female`]) || 0;
-        const t = parseInt(next[`${prefix}Total`]) || 0;
-        if (m + f > t) {
-          next[`${prefix}Total`] = String(m + f);
-        }
-      };
-
-      if (['scMale', 'scFemale', 'scTotal'].includes(k)) checkRowTotal('sc');
-      if (['stMale', 'stFemale', 'stTotal'].includes(k)) checkRowTotal('st');
-      if (['otherMale', 'otherFemale', 'otherTotal'].includes(k)) checkRowTotal('other');
-      if (['efMale', 'efFemale', 'efTotal'].includes(k)) checkRowTotal('ef');
-
-      return next;
-    });
-
-    // Real-time cross-validation: if start date changes, re-validate end date
-    if (k === 'startDate') {
-      const newStartDate = val;
-      setErrors((prev) => {
-        const next = { ...prev };
-        if (form.endDate && newStartDate && new Date(form.endDate) < new Date(newStartDate)) {
-          next.endDate = 'End date cannot be before start date';
-        } else if (next.endDate === 'End date cannot be before start date') {
-          delete next.endDate;
-        }
-        return next;
-      });
-    }
+    setForm((p) => ({ ...p, [k]: val }));
     if (['contactPerson', 'designation', 'discipline', 'email', 'mobile', 'landline'].includes(k)) {
       setContacts((prev) => {
         const next = [...prev];
@@ -997,9 +538,8 @@ const DataEntryForm = ({
   const loadContactAt = (idx) => {
     setActiveContactIndex(idx);
 
-    // In discipline module mode, Contact 1 (index 0) always shows self details.
-    // Only enforce this in create/edit mode, never in pure view mode.
-    if (!isViewMode && isInDisciplineModule && idx === 0 && selfContactDetails) {
+    // In discipline module mode, Contact 1 (index 0) always shows self details
+    if (isInDisciplineModule && idx === 0 && selfContactDetails) {
       setIsOtherContactPerson(false);
       setCustomContactPerson('');
       setForm((p) => ({
@@ -1056,26 +596,6 @@ const DataEntryForm = ({
     }
   };
 
-  const handleCancel = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    
-    if (isModal && onClose) {
-      onClose(false);
-      return;
-    }
-    
-    navigate(cancelPath || '/dashboard', {
-      state: {
-        restoreFilters: {
-          ...restoreFilters
-        }
-      }
-    });
-  };
-
   const validate = (tabId = null) => {
     const e = { ...errors }; // Start with existing errors to preserve other tabs
 
@@ -1091,37 +611,10 @@ const DataEntryForm = ({
       if (!form.eventName) e.eventName = 'Event name/sub category is mandatory';
       else delete e.eventName;
       if (!form.startDate) e.startDate = 'Start date is mandatory';
-      else {
-        const inputYear = new Date(form.startDate).getFullYear();
-        if (!isAdmin && lockedYears.has(inputYear)) {
-          e.startDate = 'This year is locked by the admin. Please select a different date or contact the administrator.';
-        } else if (inputYear < 2017 || inputYear > new Date().getFullYear()) {
-          e.startDate = 'Selected year is outside the allowed dashboard year range.';
-        } else {
-          delete e.startDate;
-        }
-      }
-      if ((selectedDisciplines || []).length === 0) e.discipline = 'Select at least one discipline';
-      else delete e.discipline;
-      const missingForAnyDiscipline = selectedDisciplines.includes('all_kvk')
-        ? false
-        : (selectedDisciplines || []).some((d) => {
-            const arr = basicContactsByDisc[d] || [];
-            return arr.length === 0;
-          });
-      if (missingForAnyDiscipline) e.contactPerson = 'Select contact for each selected discipline';
-      else delete e.contactPerson;
+      else delete e.startDate;
 
-      if (form.endDate && form.startDate) {
-        const startD = new Date(form.startDate);
-        const endD = new Date(form.endDate);
-        if (endD < startD) {
-          e.endDate = 'End date cannot be before start date';
-        } else if (endD.getFullYear() < 2017 || endD.getFullYear() > new Date().getFullYear()) {
-          e.endDate = 'Selected year is outside the allowed dashboard year range.';
-        } else {
-          delete e.endDate;
-        }
+      if (form.endDate && form.startDate && new Date(form.endDate) < new Date(form.startDate)) {
+        e.endDate = 'End date cannot be before start date';
       } else {
         delete e.endDate;
       }
@@ -1142,6 +635,13 @@ const DataEntryForm = ({
 
     // Tab 4: Contact
     if (shouldValidate('tab4')) {
+      const finalContactPerson = isOtherContactPerson ? customContactPerson : form.contactPerson;
+      if (!finalContactPerson) {
+        e.contactPerson = 'Contact person is mandatory';
+      } else {
+        delete e.contactPerson;
+      }
+
       // Mobile validation only for manual entries or custom entries
       if (form.mobile && form.mobile.length !== 10) {
         e.mobile = 'Mobile number must be exactly 10 digits';
@@ -1187,10 +687,10 @@ const DataEntryForm = ({
 
     // If we're validating a specific tab, check only that tab's errors
     if (tabId) {
-      if (tabId === 'tab1') return !e.eventType && !e.eventCategory && !e.eventName && !e.startDate && !e.endDate && !e.contactPerson;
+      if (tabId === 'tab1') return !e.eventType && !e.eventCategory && !e.eventName && !e.startDate && !e.endDate;
       if (tabId === 'tab2') return !e.venuePlace;
       if (tabId === 'tab3') return !e.targetGroup;
-      if (tabId === 'tab4') return !e.mobile && !e.email && !e.landline && !e.designation;
+      if (tabId === 'tab4') return !e.contactPerson && !e.mobile && !e.email && !e.landline && !e.designation;
       if (tabId === 'tab6') return !e.mediaCoverage;
       return true; // tab 5 has no mandatory fields
     }
@@ -1200,23 +700,23 @@ const DataEntryForm = ({
 
   const hasTabError = (tabId) => {
     const errorKeys = Object.keys(errors);
-    if (tabId === 'tab1') return errorKeys.some(k => ['eventType', 'eventCategory', 'eventName', 'startDate', 'discipline', 'contactPerson'].includes(k));
+    if (tabId === 'tab1') return errorKeys.some(k => ['eventType', 'eventCategory', 'eventName', 'startDate'].includes(k));
     if (tabId === 'tab2') return errorKeys.includes('venuePlace');
     if (tabId === 'tab3') return errorKeys.includes('targetGroup');
-    if (tabId === 'tab4') return errorKeys.some(k => ['mobile', 'email', 'landline', 'designation'].includes(k));
+    if (tabId === 'tab4') return errorKeys.some(k => ['contactPerson', 'mobile', 'email', 'landline', 'designation'].includes(k));
     if (tabId === 'tab6') return errorKeys.includes('mediaCoverage');
     return false;
   };
 
-  const save = async (ev, skipCheck = false) => {
-    if (ev) ev.preventDefault();
+  const save = async (ev) => {
+    ev.preventDefault();
     if (!validate()) {
       // Find which tab has the first error and switch to it
       const errorKeys = Object.keys(errors);
-      if (errorKeys.some(k => ['eventType', 'eventCategory', 'eventName', 'startDate', 'discipline', 'contactPerson'].includes(k))) setActiveSection('tab1');
+      if (errorKeys.some(k => ['eventType', 'eventCategory', 'eventName', 'startDate'].includes(k))) setActiveSection('tab1');
       else if (errorKeys.includes('venuePlace')) setActiveSection('tab2');
       else if (errorKeys.includes('targetGroup')) setActiveSection('tab3');
-      else if (errorKeys.some(k => ['mobile', 'email', 'landline', 'designation'].includes(k))) setActiveSection('tab4');
+      else if (errorKeys.some(k => ['contactPerson', 'mobile', 'email', 'landline', 'designation'].includes(k))) setActiveSection('tab4');
       else if (errorKeys.includes('mediaCoverage')) setActiveSection('tab6');
       return;
     }
@@ -1237,24 +737,18 @@ const DataEntryForm = ({
       commonDataAPI.add('district', customDistrict);
     }
 
-    const finalMediaCoverage = isOtherMedia ? customMedia : form.mediaCoverage;
-    if (isOtherMedia && customMedia) {
-      commonDataAPI.add('mediaCoverage', customMedia);
-    }
-
-    // Collect all unique disciplines from contacts
-    let allDisciplines = Array.from(new Set(
+    // Collect all unique disciplines from contacts (stored in lowercase for consistency)
+    const allDisciplines = Array.from(new Set(
       contacts
         .map(c => c.discipline)
         .filter(Boolean)
+        .map(d => String(d).trim().toLowerCase())
     ));
 
-    // Special case: if "All KVK" was selected in Basic Info, ensure it's preserved
-    if (selectedDisciplines.includes('all_kvk')) {
-      allDisciplines = ['all_kvk'];
-    } else if (allDisciplines.length === 0) {
-      // If no discipline in contacts, fallback to the current module's discipline or 'General'
-      allDisciplines.push(disciplineCode || form.discipline || 'General');
+    // If no discipline in contacts, fallback to the current module's discipline or 'General'
+    if (allDisciplines.length === 0) {
+      const fallback = (disciplineCode || form.discipline || 'general').toLowerCase();
+      allDisciplines.push(fallback);
     }
 
     // Determine the source module label (preserve on edit)
@@ -1274,140 +768,46 @@ const DataEntryForm = ({
       createdByName = user?.name || 'Unknown user';
     }
 
-    // Prepare contacts for saving
-    const finalContacts = contacts.map(c => {
-      const isAllKvk = selectedDisciplines.includes('all_kvk') || c.discipline === 'all_kvk';
-      return {
-        ...c,
-        contactPerson: c.contactPerson || (isAllKvk ? 'All KVK Staff' : ''),
-        designation: c.designation || (isAllKvk ? 'KVK Staff' : ''),
-        discipline: c.discipline || (isAllKvk ? 'all_kvk' : ''),
-        email: c.email || 'pckvkdhule@gmail.com',
-        landline: c.landline || '2562299165'
-      };
-    });
+    // Helper to format date for backend storage
+    const formatDateForStorage = (value) => {
+      if (!value) return '';
+      // If it's YYYY-MM-DD
+      if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        const [year, month, day] = value.split('-');
+        return `${day}/${month}/${year}`;
+      }
+      return value;
+    };
 
-    // Derive the actual year from the form data, not just the module selection
-    const derivedYear = form.startDate ? new Date(form.startDate).getFullYear() : new Date().getFullYear();
-    
-    // Prepare totals for saving
-    const scT = parseInt(form.scTotal) || ((parseInt(form.scMale) || 0) + (parseInt(form.scFemale) || 0));
-    const stT = parseInt(form.stTotal) || ((parseInt(form.stMale) || 0) + (parseInt(form.stFemale) || 0));
-    const otherT = parseInt(form.otherTotal) || ((parseInt(form.otherMale) || 0) + (parseInt(form.otherFemale) || 0));
-    const efT = parseInt(form.efTotal) || ((parseInt(form.efMale) || 0) + (parseInt(form.efFemale) || 0));
-
-    const finalTotalMale = (parseInt(form.scMale) || 0) + (parseInt(form.stMale) || 0) + (parseInt(form.otherMale) || 0) + (parseInt(form.efMale) || 0);
-    const finalTotalFemale = (parseInt(form.scFemale) || 0) + (parseInt(form.stFemale) || 0) + (parseInt(form.otherFemale) || 0) + (parseInt(form.efFemale) || 0);
-    const finalGrandTotal = scT + stT + otherT + efT;
-
-    const { genMale, genFemale, ...restForm } = form;
+    const finalStartDate = formatDateForStorage(form.startDate);
+    const finalEndDate = formatDateForStorage(form.endDate);
+    const recordYear = location.state?.selectedYear || (form.startDate ? parseInt(form.startDate.split('-')[0]) : new Date().getFullYear());
 
     const record = {
-      ...restForm,
-      scTotal: String(scT),
-      stTotal: String(stT),
-      otherTotal: String(otherT),
-      efTotal: String(efT),
-      totalMale: String(finalTotalMale),
-      totalFemale: String(finalTotalFemale),
-      grandTotal: String(finalGrandTotal),
-      year: derivedYear,
+      ...form,
+      year: recordYear,
+      startDate: finalStartDate,
+      endDate: finalEndDate,
       targetGroup: finalTargetGroup,
-      contactPerson: finalContactPerson || (selectedDisciplines.includes('all_kvk') ? 'All KVK Staff' : ''),
-      designation: form.designation || (selectedDisciplines.includes('all_kvk') ? 'KVK Staff' : ''),
+      contactPerson: finalContactPerson,
       venueTal: finalTaluka,
       venueDist: finalDistrict,
       discipline: allDisciplines,
-      email: form.email || 'pckvkdhule@gmail.com',
-      landline: form.landline || '2562299165',
-      contacts: finalContacts,
+      contacts,
       sourceModule,
-      createdByName,
-      mediaCoverage: finalMediaCoverage
+      createdByName
     };
 
-    // --- Perform Duplicate Check ---
-    if (!skipCheck) {
-      const duplicate = await checkDuplicates(record);
-      if (duplicate) {
-        setDuplicateModal({ ...duplicate, yourEntry: record });
-        return;
-      }
+    if (id) {
+      await dataEntryAPI.update(id, record);
+    } else {
+      await dataEntryAPI.create(record);
     }
-
-    // Year Lock Check: block save if the record's year is locked (non-admin)
-    if (!isAdmin && record.year && lockedYears.has(Number(record.year))) {
-      setStatusModal({
-        title: 'Action Blocked',
-        message: `This record is locked by the admin. To import the data related to this year, please contact the admin.`,
-        type: 'error'
-      });
-      return;
-    }
-
-    // Also check if the original year (if editing) was locked
-    if (!isAdmin && id && navRecord && navRecord.year && lockedYears.has(navRecord.year)) {
-      setStatusModal({
-        title: 'Action Blocked',
-        message: `The original record for year ${navRecord.year} is locked. This record is locked by the admin. To import the data related to this year, please contact the admin.`,
-        type: 'error'
-      });
-      return;
-    }
-
-    try {
-      if (id) {
-        await dataEntryAPI.update(id, record);
-        setStatusModal({
-          title: 'Success',
-          message: 'Record updated successfully.',
-          type: 'success',
-          onOk: () => {
-            if (isModal && onClose) {
-              onClose(true);
-            } else {
-              navigate(cancelPath || '/dashboard', {
-                state: { restoreFilters }
-              });
-            }
-          }
-        });
-      } else {
-        await dataEntryAPI.create(record);
-        setStatusModal({
-          title: 'Success',
-          message: 'Record saved successfully.',
-          type: 'success',
-          onOk: () => {
-            resetForm();
-            setStatusModal(null);
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Save error:', error);
-      if (error.response?.status === 409 || error.isDuplicate) {
-        setStatusModal({
-          title: 'Duplicate Record Found',
-          message: 'A record with these exact details already exists in the database. Please check your data and try again.',
-          type: 'warning'
-        });
-      } else {
-        setStatusModal({
-          title: 'Error Saving Record',
-          message: error.message || 'An unexpected error occurred while saving. Please try again.',
-          type: 'error'
-        });
-      }
-    }
+    navigate('/dashboard/data-entry');
   };
 
+  const isViewMode = mode === 'view';
   const isEditMode = mode === 'edit';
-  const returnToPath = (location.state && location.state.returnToPath) || null;
-  const restoreFilters = (location.state && location.state.restoreFilters) || {};
-  const cancelPath = returnToPath
-    ? returnToPath
-    : (disciplineCode ? `/dashboard/discipline/${disciplineCode}` : '/dashboard');
   const pageTitle = isViewMode
     ? 'View Event Record'
     : isEditMode && id
@@ -1420,7 +820,15 @@ const DataEntryForm = ({
       : 'Create a new event record';
 
   return (
-    <div className={`da-manage-employee-container data-entry-page ${isModal ? 'is-modal' : ''}`}>
+    <div className="da-manage-employee-container data-entry-page">
+      <div className="da-employee-header">
+        <div className="da-header-content">
+          <div>
+            <h1 className="da-page-title">{pageTitle}</h1>
+            <p className="da-page-subtitle">{pageSubtitle}</p>
+          </div>
+        </div>
+      </div>
 
       {loadingRecord && id ? (
         <div className="da-section">
@@ -1460,200 +868,81 @@ const DataEntryForm = ({
           {activeSection === 'tab1' && (
             <div className="da-section de-panel">
               <h3 className="da-section-title">Basic Info</h3>
-              <div style={{ display: 'flex', gap: 16 }}>
-                <div className={`da-table-wrap ${contactAnim ? 'contact-switch-anim' : ''}`} style={{ flex: 1 }}>
-                  <table className="da-table"><tbody>
-                    <tr>
-                      <th style={{ width: 260 }}>Event Type <span style={{ color: 'var(--me-danger)' }}>*</span></th>
-                      <td>
-                        <div style={{ display: 'flex', gap: 16 }}>
-                          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                            <input
-                              type="radio"
-                              name="eventType"
-                              value="Extension Activities"
-                              checked={form.eventType === 'Extension Activities'}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setForm((p) => ({ ...p, eventType: val, eventCategory: '', eventName: '' }));
-                                if (errors.eventType) {
-                                  setErrors(prev => {
-                                    const ne = { ...prev };
-                                    delete ne.eventType;
-                                    return ne;
-                                  });
-                                }
-                              }}
-                              disabled={isViewMode}
-                            />
-                            <span>Extension Activities</span>
-                          </label>
-                          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                            <input
-                              type="radio"
-                              name="eventType"
-                              value="Training"
-                              checked={form.eventType === 'Training'}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setForm((p) => ({ ...p, eventType: val, eventCategory: '', eventName: '' }));
-                                if (errors.eventType) {
-                                  setErrors(prev => {
-                                    const ne = { ...prev };
-                                    delete ne.eventType;
-                                    return ne;
-                                  });
-                                }
-                              }}
-                              disabled={isViewMode}
-                            />
-                            <span>Training</span>
-                          </label>
-                        </div>
-                        {errors.eventType && <div className="da-error">{errors.eventType}</div>}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Event Category <span style={{ color: 'var(--me-danger)' }}>*</span></th>
-                      <td>
-                        <CustomDropdown
-                          value={form.eventCategory}
-                          options={eventCategoryOptions}
-                          onSelect={(val) => {
-                            setForm(p => ({ ...p, eventCategory: val }));
-                            if (errors.eventCategory) {
-                              setErrors(prev => {
-                                const ne = { ...prev };
-                                delete ne.eventCategory;
-                                return ne;
-                              });
-                            }
-                          }}
-                          placeholder={form.eventType ? 'Select Category' : 'Select event type first'}
-                          required
-                          disabled={isViewMode || !form.eventType}
-                          hasError={!!errors.eventCategory}
-                        />
-                        {errors.eventCategory && <div className="da-error">{errors.eventCategory}</div>}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Event Name / Sub Category <span style={{ color: 'var(--me-danger)' }}>*</span></th>
-                      <td>
-                        <input className="da-input" value={form.eventName} onChange={update('eventName')} required placeholder="Enter event name or sub category" readOnly={isViewMode} />
-                        {errors.eventName && <div className="da-error">{errors.eventName}</div>}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>Start Date <span style={{ color: 'var(--me-danger)' }}>*</span></th>
-                      <td>
-                        <div className="da-date-input-wrapper">
-                          <input className="da-input da-date-input" type="date" value={form.startDate} onChange={update('startDate')} required readOnly={isViewMode} />
-                          <Calendar size={18} className="da-date-icon" />
-                        </div>
-                        {errors.startDate && <div className="da-error">{errors.startDate}</div>}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>End Date</th>
-                      <td>
-                        <div className="da-date-input-wrapper">
-                          <input className="da-input da-date-input" type="date" value={form.endDate} onChange={update('endDate')} readOnly={isViewMode} />
-                          <Calendar size={18} className="da-date-icon" />
-                        </div>
-                        {errors.endDate && <div className="da-error">{errors.endDate}</div>}
-                      </td>
-                    </tr>
-                  </tbody></table>
-                </div>
-                <div className="da-table-wrap" style={{ flex: 1 }}>
-                  <table className="da-table"><tbody>
-                    <tr>
-                      <th style={{ width: 260 }}>Disciplines <span style={{ color: 'var(--me-danger)' }}>*</span></th>
-                      <td>
-                        <CustomDropdown
-                          multiple
-                          values={selectedDisciplines}
-                          options={[
-                            { value: 'all_kvk', label: 'All disciplines of KVK' },
-                            ...disciplines.map(d => ({ value: d.code, label: d.name })),
-                            { value: 'other', label: 'Other' }
-                          ]}
-                          onSelectMultiple={(vals) => {
-                            if (vals.includes('all_kvk')) {
-                              // If "all_kvk" was just added, clear others.
-                              // If it was already there and we clicked something else, 
-                              // we need to see if "all_kvk" was unselected or if others were added.
-                              const previouslySelected = selectedDisciplines.includes('all_kvk');
-                              if (!previouslySelected) {
-                                setSelectedDisciplines(['all_kvk']);
-                                setBasicContactsByDisc({});
-                                return;
-                              }
-                              // If "all_kvk" was already selected and user clicked another one,
-                              // we remove "all_kvk" and keep only the new ones.
-                              const others = vals.filter(v => v !== 'all_kvk');
-                              if (others.length > 0) {
-                                setSelectedDisciplines(others);
-                                return;
-                              }
-                            }
-                            
-                            // Normal multi-select logic
-                            let nextVals = [...vals];
-                            if (isInDisciplineModule && disciplineCode !== 'all' && !nextVals.includes(disciplineCode)) {
-                              nextVals.push(disciplineCode);
-                            }
-                            setSelectedDisciplines(nextVals);
-                          }}
-                          placeholder="Select Disciplines"
-                          disabled={isViewMode}
-                          truncateLength={20}
-                        />
-                        {errors.discipline && <div className="da-error">{errors.discipline}</div>}
-                      </td>
-                    </tr>
-                    {!selectedDisciplines.includes('all_kvk') && selectedDisciplines.filter(d => d !== 'other').map((dCode, idx) => {
-                      const dName = disciplines.find(d => d.code === dCode)?.name || dCode;
-                      const options = users
-                        .filter(u => 
-                          (u.discipline || '').trim() === dCode || 
-                          (Array.isArray(u.assignedDisciplines) && u.assignedDisciplines.includes(dCode))
-                        )
-                        .map(u => ({ value: u.name, label: u.name }));
-                      const valuesForDisc = basicContactsByDisc[dCode] || [];
-                      return (
-                        <tr key={dCode}>
-                          <th>Contact person {idx + 1} <span style={{ color: 'var(--me-danger)' }}>*</span> <div style={{ fontSize: '0.8rem', color: '#667', fontWeight: 500 }}>({dName})</div></th>
-                          <td>
-                            <CustomDropdown
-                              multiple
-                              values={valuesForDisc}
-                              options={options}
-                              onSelectMultiple={(vals) => {
-                                setBasicContactsByDisc(prev => ({ ...prev, [dCode]: vals }));
-                              }}
-                              placeholder="Select contact person"
-                              required
-                              disabled={isViewMode}
-                              truncateLength={30}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                    {errors.contactPerson && (
-                      <tr>
-                        <td colSpan={2}><div className="da-error">{errors.contactPerson}</div></td>
-                      </tr>
-                    )}
-                    {selectedDisciplines.length === 0 && (
-                      <tr>
-                        <td colSpan={2} style={{ color: '#888' }}>Select at least one discipline to add contact persons</td>
-                      </tr>
-                    )}
-                  </tbody></table>
-                </div>
+              <div className={`da-table-wrap ${contactAnim ? 'contact-switch-anim' : ''}`}>
+                <table className="da-table"><tbody>
+                  <tr>
+                    <th style={{ width: 260 }}>Event Type <span style={{ color: 'var(--me-danger)' }}>*</span></th>
+                    <td>
+                      <CustomDropdown
+                        value={form.eventType}
+                        options={[
+                          { value: 'Extension Activities', label: 'Extension Activities' },
+                          { value: 'Training', label: 'Training' }
+                        ]}
+                        onSelect={(val) => {
+                          setForm((p) => ({ ...p, eventType: val, eventCategory: '', eventName: '' }));
+                          if (errors.eventType) {
+                            setErrors(prev => {
+                              const ne = { ...prev };
+                              delete ne.eventType;
+                              return ne;
+                            });
+                          }
+                        }}
+                        placeholder="Select Event Type"
+                        required
+                        hasError={!!errors.eventType}
+                        disabled={isViewMode}
+                      />
+                      {errors.eventType && <div className="da-error">{errors.eventType}</div>}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Event Category <span style={{ color: 'var(--me-danger)' }}>*</span></th>
+                    <td>
+                      <CustomDropdown
+                        value={form.eventCategory}
+                        options={eventCategoryOptions}
+                        onSelect={(val) => {
+                          setForm(p => ({ ...p, eventCategory: val }));
+                          if (errors.eventCategory) {
+                            setErrors(prev => {
+                              const ne = { ...prev };
+                              delete ne.eventCategory;
+                              return ne;
+                            });
+                          }
+                        }}
+                        placeholder={form.eventType ? 'Select Category' : 'Select event type first'}
+                        required
+                        disabled={isViewMode || !form.eventType}
+                        hasError={!!errors.eventCategory}
+                      />
+                      {errors.eventCategory && <div className="da-error">{errors.eventCategory}</div>}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Event Name / Sub Category <span style={{ color: 'var(--me-danger)' }}>*</span></th>
+                    <td>
+                      <input className="da-input" value={form.eventName} onChange={update('eventName')} required placeholder="Enter event name or sub category" readOnly={isViewMode} />
+                      {errors.eventName && <div className="da-error">{errors.eventName}</div>}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Start Date <span style={{ color: 'var(--me-danger)' }}>*</span></th>
+                    <td>
+                      <input className="da-input" type="date" value={form.startDate} onChange={update('startDate')} required readOnly={isViewMode} />
+                      {errors.startDate && <div className="da-error">{errors.startDate}</div>}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>End Date</th>
+                    <td>
+                      <input className="da-input" type="date" value={form.endDate} onChange={update('endDate')} readOnly={isViewMode} />
+                      {errors.endDate && <div className="da-error">{errors.endDate}</div>}
+                    </td>
+                  </tr>
+                </tbody></table>
               </div>
             </div>
           )}
@@ -1864,99 +1153,276 @@ const DataEntryForm = ({
 
           {activeSection === 'tab4' && (
             <div className="da-section de-panel">
-              <div className="da-section-header">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 className="da-section-title">Contact Details</h3>
-                <div />
+                <button
+                  type="button"
+                  className="da-btn da-btn-light"
+                  onClick={addNewContact}
+                  disabled={isViewMode}
+                  aria-label="Add more contact"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+                >
+                  <Plus size={16} /> Add more contact
+                </button>
               </div>
+
+              {/* Info banner shown when Contact 1 is auto-locked in discipline module mode */}
+              {isContact1Locked && activeContactIndex === 0 && (
+                <div style={{
+                  background: 'rgba(86, 124, 141, 0.10)',
+                  border: '1px solid rgba(86, 124, 141, 0.25)',
+                  borderRadius: '10px',
+                  padding: '10px 14px',
+                  marginBottom: '12px',
+                  color: 'var(--me-primary-dark)',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8
+                }}>
+                  <span style={{ color: 'var(--me-primary-medium)', flexShrink: 0 }}>🔒</span>
+                  <span>
+                    <strong>Contact 1</strong> is automatically set to your profile details. To add other contacts, click <em>"Add more contact"</em>.
+                  </span>
+                </div>
+              )}
 
               <div className="da-table-wrap">
                 <table className="da-table"><tbody>
                   <tr>
-                    <th style={{ width: 260 }}>Contact person</th>
+                    <th style={{ width: 260 }}>Contact person <span style={{ color: 'var(--me-danger)' }}>*</span></th>
                     <td>
-                      <input
-                        className="da-input"
-                        value={form.contactPerson}
-                        onChange={update('contactPerson')}
-                        readOnly={isViewMode || !isManualEntryAllowed}
-                        style={(!isManualEntryAllowed) ? { background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' } : {}}
-                        title={(!isManualEntryAllowed) ? "Auto-filled from Basic Info" : ""}
-                        placeholder={selectedDisciplines.includes('all_kvk') ? "All kvk staff" : "Enter contact person name"}
-                      />
+                      {/* LOCKED for Contact 1 in discipline module mode */}
+                      {isContact1Locked && activeContactIndex === 0 ? (
+                        <input
+                          className="da-input"
+                          value={form.contactPerson}
+                          readOnly
+                          style={{ background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' }}
+                          title="Auto-filled from your profile"
+                        />
+                      ) : (
+                        <>
+                          <CustomDropdown
+                            value={form.contactPerson}
+                            isOtherSelected={isOtherContactPerson}
+                            options={[
+                              ...users.map(u => {
+                                const usedElsewhere = contacts.some((c, i) => i !== activeContactIndex && c.contactPerson === u.name);
+                                return { value: u.name, label: u.name, disabled: usedElsewhere };
+                              }),
+                              { value: 'other', label: 'Other (Enter manually)' }
+                            ]}
+                            onSelect={(val) => {
+                              if (val === 'other') {
+                                setIsOtherContactPerson(true);
+                                setForm(p => ({ ...p, contactPerson: '' }));
+                              } else {
+                                setIsOtherContactPerson(false);
+                                setForm(p => ({ ...p, contactPerson: val }));
+                              }
+                              setContacts((prev) => {
+                                const next = [...prev];
+                                next[activeContactIndex] = { ...next[activeContactIndex], contactPerson: val === 'other' ? '' : val };
+                                return next;
+                              });
+                              if (errors.contactPerson) {
+                                setErrors(prev => {
+                                  const ne = { ...prev };
+                                  delete ne.contactPerson;
+                                  return ne;
+                                });
+                              }
+                            }}
+                            placeholder="Select Contact Person"
+                            required
+                            hasError={!!errors.contactPerson}
+                            disabled={isViewMode}
+                          />
+
+                          {isOtherContactPerson && (
+                            <div style={{ marginTop: '10px' }}>
+                              <input
+                                className="da-input"
+                                value={customContactPerson}
+                                onChange={(e) => {
+                                  setCustomContactPerson(e.target.value);
+                                  setContacts((prev) => {
+                                    const next = [...prev];
+                                    next[activeContactIndex] = { ...next[activeContactIndex], contactPerson: e.target.value };
+                                    return next;
+                                  });
+                                  if (errors.contactPerson) {
+                                    setErrors(prev => {
+                                      const ne = { ...prev };
+                                      delete ne.contactPerson;
+                                      return ne;
+                                    });
+                                  }
+                                }}
+                                placeholder="Enter contact person manually"
+                                readOnly={isViewMode}
+                                required
+                              />
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {errors.contactPerson && <div className="da-error">{errors.contactPerson}</div>}
                     </td>
                   </tr>
                   <tr>
                     <th>Designation</th>
                     <td>
-                      <input
-                        className="da-input"
-                        value={form.designation}
-                        onChange={update('designation')}
-                        readOnly={isViewMode || !isManualEntryAllowed}
-                        style={(!isManualEntryAllowed) ? { background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' } : {}}
-                        title={(!isManualEntryAllowed) ? "Auto-filled from Basic Info" : ""}
-                        placeholder={selectedDisciplines.includes('all_kvk') ? "All kvk staff" : "Enter designation"}
-                      />
+                      {/* LOCKED for Contact 1 in discipline module mode */}
+                      {isContact1Locked && activeContactIndex === 0 ? (
+                        <input
+                          className="da-input"
+                          value={form.designation}
+                          readOnly
+                          style={{ background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' }}
+                          title="Auto-filled from your profile"
+                        />
+                      ) : (
+                        <div className="da-input-ghost-wrapper">
+                          {!form.designation && selectedUserDetails.designation && (
+                            <div className="da-input-ghost-text">
+                              {selectedUserDetails.designation}
+                              <span className="da-ghost-hint">Press Tab to fill</span>
+                            </div>
+                          )}
+                          <input
+                            className="da-input da-input-ghost"
+                            value={form.designation}
+                            onChange={update('designation')}
+                            onKeyDown={handleGhostKeyDown('designation', selectedUserDetails.designation)}
+                            readOnly={isViewMode}
+                            placeholder={!selectedUserDetails.designation ? "Enter designation" : ""}
+                          />
+                        </div>
+                      )}
                       {errors.designation && <div className="da-error">{errors.designation}</div>}
                     </td>
                   </tr>
                   <tr>
                     <th>Discipline</th>
                     <td>
-                      <input
-                        className="da-input"
-                        value={(() => {
-                          const d = disciplines.find(d => d.code === form.discipline);
-                          const name = d ? d.name : (form.discipline || '');
-                          return name;
-                        })()}
-                        onChange={update('discipline')}
-                        readOnly={isViewMode || !isManualEntryAllowed}
-                        style={(!isManualEntryAllowed) ? { background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' } : {}}
-                        title={(!isManualEntryAllowed) ? "Auto-filled from Basic Info" : ""}
-                        placeholder={selectedDisciplines.includes('all_kvk') ? "all_kvk" : "Enter discipline"}
-                      />
+                      {/* LOCKED for Contact 1 in discipline module mode */}
+                      {isContact1Locked && activeContactIndex === 0 ? (
+                        <input
+                          className="da-input"
+                          value={disciplines.find(d => d.code === form.discipline)?.name || form.discipline || ''}
+                          readOnly
+                          style={{ background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' }}
+                          title="Auto-filled from your profile"
+                        />
+                      ) : (
+                        <CustomDropdown
+                          value={form.discipline}
+                          options={disciplines.map(d => ({ value: d.code, label: d.name }))}
+                          onSelect={(val) => {
+                            setForm(p => ({ ...p, discipline: val }));
+                            setContacts((prev) => {
+                              const next = [...prev];
+                              next[activeContactIndex] = { ...next[activeContactIndex], discipline: val };
+                              return next;
+                            });
+                            if (errors.discipline) {
+                              setErrors(prev => {
+                                const ne = { ...prev };
+                                delete ne.discipline;
+                                return ne;
+                              });
+                            }
+                          }}
+                          placeholder="Select Discipline"
+                          className="da-input-ghost"
+                          ghostText={!form.discipline ? selectedUserDetails.disciplineName : ''}
+                          onKeyDown={isViewMode ? undefined : handleGhostKeyDown('discipline', selectedUserDetails.discipline)}
+                          disabled={isViewMode}
+                        />
+                      )}
                     </td>
                   </tr>
                   <tr>
                     <th>Email</th>
                     <td>
-                      <input
-                        className="da-input"
-                        type="email"
-                        value={form.email}
-                        onChange={update('email')}
-                        readOnly={isViewMode}
-                        placeholder="pckvkdhule@gmail.com"
-                      />
+                      <div className="da-input-ghost-wrapper">
+                        {!form.email && (
+                          <div className="da-input-ghost-text">
+                            {defaultEmail}
+                            <span className="da-ghost-hint">Press Tab to fill</span>
+                          </div>
+                        )}
+                        <input
+                          className="da-input da-input-ghost"
+                          type="email"
+                          value={form.email}
+                          onChange={update('email')}
+                          onKeyDown={isViewMode ? undefined : handleGhostKeyDown('email', defaultEmail)}
+                          readOnly={isViewMode}
+                          placeholder={!form.email ? "" : "Enter email address"}
+                        />
+                      </div>
                       {errors.email && <div className="da-error">{errors.email}</div>}
                     </td>
                   </tr>
                   <tr>
                     <th>Mobile NO</th>
                     <td>
-                      <input
-                        className="da-input"
-                        value={form.mobile}
-                        onChange={update('mobile')}
-                        readOnly={isViewMode || !isManualEntryAllowed}
-                        style={(!isManualEntryAllowed) ? { background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' } : {}}
-                        title={(!isManualEntryAllowed) ? "Auto-filled from Basic Info" : ""}
-                        placeholder={selectedDisciplines.includes('all_kvk') ? "" : "Enter mobile number"}
-                      />
+                      {/* LOCKED for Contact 1 in discipline module mode */}
+                      {isContact1Locked && activeContactIndex === 0 ? (
+                        <input
+                          className="da-input"
+                          value={form.mobile}
+                          readOnly
+                          style={{ background: 'rgba(86,124,141,0.07)', cursor: 'not-allowed' }}
+                          title="Auto-filled from your profile"
+                        />
+                      ) : (
+                        <div className="da-input-ghost-wrapper">
+                          {!form.mobile && selectedUserDetails.mobile && (
+                            <div className="da-input-ghost-text">
+                              {selectedUserDetails.mobile}
+                              <span className="da-ghost-hint">Press Tab to fill</span>
+                            </div>
+                          )}
+                          <input
+                            className="da-input da-input-ghost"
+                            type="tel"
+                            value={form.mobile}
+                            onChange={update('mobile')}
+                            onKeyDown={isViewMode ? undefined : handleGhostKeyDown('mobile', selectedUserDetails.mobile)}
+                            readOnly={isViewMode}
+                            placeholder={!selectedUserDetails.mobile ? "Enter 10-digit mobile number" : ""}
+                          />
+                        </div>
+                      )}
                       {errors.mobile && <div className="da-error">{errors.mobile}</div>}
                     </td>
                   </tr>
                   <tr>
                     <th>Landline no</th>
                     <td>
-                      <input
-                        className="da-input"
-                        value={form.landline}
-                        onChange={update('landline')}
-                        readOnly={isViewMode}
-                        placeholder="2562299165"
-                      />
+                      <div className="da-input-ghost-wrapper">
+                        {!form.landline && (
+                          <div className="da-input-ghost-text">
+                            {defaultLandline}
+                            <span className="da-ghost-hint">Press Tab to fill</span>
+                          </div>
+                        )}
+                        <input
+                          className="da-input da-input-ghost"
+                          value={form.landline}
+                          onChange={update('landline')}
+                          onKeyDown={isViewMode ? undefined : handleGhostKeyDown('landline', defaultLandline)}
+                          readOnly={isViewMode}
+                          placeholder={!form.landline ? "" : "Enter landline number"}
+                        />
+                      </div>
                       {errors.landline && <div className="da-error">{errors.landline}</div>}
                     </td>
                   </tr>
@@ -1971,7 +1437,7 @@ const DataEntryForm = ({
                     onClick={() => loadContactAt(i)}
                     title={`Switch to Contact ${i + 1}`}
                   >
-                    {c.discipline === 'other' ? 'Contact 1 (Other)' : `Contact ${i + 1}${c.contactPerson ? ` - ${c.contactPerson}` : ''}${isInDisciplineModule && i === 0 ? ' ' : ''}`}
+                    {`Contact ${i + 1}${c.contactPerson ? ` - ${c.contactPerson}` : ''}${isInDisciplineModule && i === 0 ? ' 🔒' : ''}`}
                   </button>
                 ))}
               </div>
@@ -2010,65 +1476,31 @@ const DataEntryForm = ({
                       <th>SC</th>
                       <td><input className="da-input" type="number" min="0" value={form.scMale} onChange={update('scMale')} placeholder="0" readOnly={isViewMode} /></td>
                       <td><input className="da-input" type="number" min="0" value={form.scFemale} onChange={update('scFemale')} placeholder="0" readOnly={isViewMode} /></td>
-                      <td>
-                        <input
-                          className="da-input"
-                          type="number"
-                          min="0"
-                          value={form.scTotal}
-                          onChange={update('scTotal')}
-                          readOnly={isViewMode}
-                          placeholder={(parseInt(form.scMale) || 0) + (parseInt(form.scFemale) || 0)}
-                        />
-                      </td>
+                      <td><input className="da-input" disabled value={(parseInt(form.scMale) || 0) + (parseInt(form.scFemale) || 0)} /></td>
                     </tr>
                     <tr>
                       <th>ST</th>
                       <td><input className="da-input" type="number" min="0" value={form.stMale} onChange={update('stMale')} placeholder="0" readOnly={isViewMode} /></td>
                       <td><input className="da-input" type="number" min="0" value={form.stFemale} onChange={update('stFemale')} placeholder="0" readOnly={isViewMode} /></td>
-                      <td>
-                        <input
-                          className="da-input"
-                          type="number"
-                          min="0"
-                          value={form.stTotal}
-                          onChange={update('stTotal')}
-                          readOnly={isViewMode}
-                          placeholder={(parseInt(form.stMale) || 0) + (parseInt(form.stFemale) || 0)}
-                        />
-                      </td>
+                      <td><input className="da-input" disabled value={(parseInt(form.stMale) || 0) + (parseInt(form.stFemale) || 0)} /></td>
+                    </tr>
+                    <tr>
+                      <th>General</th>
+                      <td><input className="da-input" type="number" min="0" value={form.genMale} onChange={update('genMale')} placeholder="0" readOnly={isViewMode} /></td>
+                      <td><input className="da-input" type="number" min="0" value={form.genFemale} onChange={update('genFemale')} placeholder="0" readOnly={isViewMode} /></td>
+                      <td><input className="da-input" disabled value={(parseInt(form.genMale) || 0) + (parseInt(form.genFemale) || 0)} /></td>
                     </tr>
                     <tr>
                       <th>Other</th>
                       <td><input className="da-input" type="number" min="0" value={form.otherMale} onChange={update('otherMale')} placeholder="0" readOnly={isViewMode} /></td>
                       <td><input className="da-input" type="number" min="0" value={form.otherFemale} onChange={update('otherFemale')} placeholder="0" readOnly={isViewMode} /></td>
-                      <td>
-                        <input
-                          className="da-input"
-                          type="number"
-                          min="0"
-                          value={form.otherTotal}
-                          onChange={update('otherTotal')}
-                          readOnly={isViewMode}
-                          placeholder={(parseInt(form.otherMale) || 0) + (parseInt(form.otherFemale) || 0)}
-                        />
-                      </td>
+                      <td><input className="da-input" disabled value={(parseInt(form.otherMale) || 0) + (parseInt(form.otherFemale) || 0)} /></td>
                     </tr>
                     <tr>
                       <th>EF</th>
                       <td><input className="da-input" type="number" min="0" value={form.efMale} onChange={update('efMale')} placeholder="0" readOnly={isViewMode} /></td>
                       <td><input className="da-input" type="number" min="0" value={form.efFemale} onChange={update('efFemale')} placeholder="0" readOnly={isViewMode} /></td>
-                      <td>
-                        <input
-                          className="da-input"
-                          type="number"
-                          min="0"
-                          value={form.efTotal}
-                          onChange={update('efTotal')}
-                          readOnly={isViewMode}
-                          placeholder={(parseInt(form.efMale) || 0) + (parseInt(form.efFemale) || 0)}
-                        />
-                      </td>
+                      <td><input className="da-input" disabled value={(parseInt(form.efMale) || 0) + (parseInt(form.efFemale) || 0)} /></td>
                     </tr>
                     <tr style={{ background: '#f0f4f0', fontWeight: 'bold' }}>
                       <th style={{ color: 'var(--me-primary-dark)' }}>Grand Total</th>
@@ -2080,6 +1512,7 @@ const DataEntryForm = ({
                           value={
                             (parseInt(form.scMale) || 0) +
                             (parseInt(form.stMale) || 0) +
+                            (parseInt(form.genMale) || 0) +
                             (parseInt(form.otherMale) || 0) +
                             (parseInt(form.efMale) || 0)
                           }
@@ -2093,6 +1526,7 @@ const DataEntryForm = ({
                           value={
                             (parseInt(form.scFemale) || 0) +
                             (parseInt(form.stFemale) || 0) +
+                            (parseInt(form.genFemale) || 0) +
                             (parseInt(form.otherFemale) || 0) +
                             (parseInt(form.efFemale) || 0)
                           }
@@ -2104,10 +1538,11 @@ const DataEntryForm = ({
                           disabled
                           style={{ fontWeight: 'bold', background: 'var(--me-primary-light)', color: 'white' }}
                           value={
-                            (form.scTotal ? parseInt(form.scTotal) : ((parseInt(form.scMale) || 0) + (parseInt(form.scFemale) || 0))) +
-                            (form.stTotal ? parseInt(form.stTotal) : ((parseInt(form.stMale) || 0) + (parseInt(form.stFemale) || 0))) +
-                            (form.otherTotal ? parseInt(form.otherTotal) : ((parseInt(form.otherMale) || 0) + (parseInt(form.otherFemale) || 0))) +
-                            (form.efTotal ? parseInt(form.efTotal) : ((parseInt(form.efMale) || 0) + (parseInt(form.efFemale) || 0)))
+                            (parseInt(form.scMale) || 0) + (parseInt(form.scFemale) || 0) +
+                            (parseInt(form.stMale) || 0) + (parseInt(form.stFemale) || 0) +
+                            (parseInt(form.genMale) || 0) + (parseInt(form.genFemale) || 0) +
+                            (parseInt(form.otherMale) || 0) + (parseInt(form.otherFemale) || 0) +
+                            (parseInt(form.efMale) || 0) + (parseInt(form.efFemale) || 0)
                           }
                         />
                       </td>
@@ -2117,23 +1552,15 @@ const DataEntryForm = ({
                       <td colSpan={3}>
                         <CustomDropdown
                           value={form.mediaCoverage}
-                          isOtherSelected={isOtherMedia}
                           options={[
-                            'Social Media',
-                            'Print Media',
-                            'Social & Print Media',
-                            'TV / Radio',
-                            'Other'
+                            { value: 'Social Media', label: 'Social Media' },
+                            { value: 'Print Media', label: 'Print Media' },
+                            { value: 'Social & Print Media', label: 'Social & Print Media' },
+                            { value: 'TV / Radio', label: 'TV / Radio' },
+                            { value: 'Other', label: 'Other' }
                           ]}
                           onSelect={(val) => {
-                            if (val === 'Other') {
-                              setIsOtherMedia(true);
-                              setForm(p => ({ ...p, mediaCoverage: '' }));
-                            } else {
-                              setIsOtherMedia(false);
-                              setCustomMedia('');
-                              setForm(p => ({ ...p, mediaCoverage: val }));
-                            }
+                            setForm(p => ({ ...p, mediaCoverage: val }));
                             if (errors.mediaCoverage) {
                               setErrors(prev => {
                                 const ne = { ...prev };
@@ -2147,19 +1574,6 @@ const DataEntryForm = ({
                           hasError={!!errors.mediaCoverage}
                           disabled={isViewMode}
                         />
-                        {isOtherMedia && !isViewMode && (
-                          <div style={{ marginTop: '10px' }}>
-                            <input
-                              className="da-input"
-                              value={customMedia}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                setCustomMedia(val);
-                              }}
-                              placeholder="Enter media coverage manually"
-                            />
-                          </div>
-                        )}
                         {errors.mediaCoverage && <div className="da-error">{errors.mediaCoverage}</div>}
                       </td>
                     </tr>
@@ -2173,13 +1587,7 @@ const DataEntryForm = ({
             <div className="da-section-header">
               <div />
               <div>
-                <button
-                  type="button"
-                  className="da-btn da-btn-light"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
+                <button type="button" className="da-btn da-btn-light" onClick={() => navigate(form.discipline ? `/dashboard/data-entry/${form.discipline}` : '/dashboard/data-entry')}>Cancel</button>
                 {activeSection !== 'tab1' && (
                   <button type="button" className="da-btn da-btn-light" style={{ marginLeft: 8 }} onClick={handleBack}>Back</button>
                 )}
@@ -2193,205 +1601,6 @@ const DataEntryForm = ({
             </div>
           </div>
         </form>
-      )}
-
-      {statusModal && (
-        <div className="me-modal-overlay">
-          <div className="me-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="me-modal-header">
-              <div className="me-modal-title">
-                {statusModal.type === 'success' ? (
-                  <CheckCircle2 size={20} style={{ color: 'var(--me-success, #27ae60)' }} />
-                ) : statusModal.type === 'error' ? (
-                  <AlertCircle size={20} style={{ color: 'var(--me-danger, #e74c3c)' }} />
-                ) : (
-                  <Info size={20} style={{ color: 'var(--me-warning, #f39c12)' }} />
-                )}
-                {statusModal.title}
-              </div>
-              <button
-                type="button"
-                className="me-icon-btn"
-                onClick={() => {
-                  if (statusModal.onOk) statusModal.onOk();
-                  else setStatusModal(null);
-                }}
-              >
-                <Plus size={20} style={{ transform: 'rotate(45deg)' }} />
-              </button>
-            </div>
-            <div className="me-modal-body">
-              <p className="me-modal-message">{statusModal.message}</p>
-            </div>
-            <div className="me-modal-footer">
-              <button
-                type="button"
-                className={`me-btn ${statusModal.type === 'success' ? 'me-btn-primary' : 'me-btn-light'}`}
-                onClick={() => {
-                  if (statusModal.onOk) statusModal.onOk();
-                  else setStatusModal(null);
-                }}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {duplicateModal && (
-        <div className="me-modal-overlay">
-          <div className="me-modal" style={{ maxWidth: '600px' }} onClick={(e) => e.stopPropagation()}>
-            <div className="me-modal-header">
-              <div className="me-modal-title" style={{ color: duplicateModal.type === 'exact' ? 'var(--me-danger)' : 'var(--me-warning)' }}>
-                <AlertCircle size={20} />
-                {duplicateModal.type === 'exact' ? 'Exact Record Already Exists' : 'Similar Record Already Exists'}
-              </div>
-              <button type="button" className="me-icon-btn" onClick={() => setDuplicateModal(null)}>
-                <Plus size={20} style={{ transform: 'rotate(45deg)' }} />
-              </button>
-            </div>
-            <div className="me-modal-body">
-              <div style={{ marginBottom: '16px', padding: '12px', background: '#fff9f0', borderLeft: '4px solid #f39c12', borderRadius: '4px' }}>
-                <p style={{ fontWeight: 600, marginBottom: '8px' }}>
-                  {duplicateModal.type === 'exact' 
-                    ? 'This record already exists with exact matching details.' 
-                    : 'A record with very similar details was found. Please verify to avoid duplicates.'}
-                </p>
-                <div style={{ fontSize: '0.9rem', color: '#666' }}>
-                  <div><strong>Entered on:</strong> {new Date(duplicateModal.record.createdAt || duplicateModal.record.date).toLocaleDateString()}</div>
-                  <div><strong>Entered by:</strong> {duplicateModal.record.createdByName || 'Unknown'}</div>
-                </div>
-              </div>
-
-              <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: '4px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', border: '1px solid #ddd' }}>
-                  <thead style={{ background: '#f8f9fa' }}>
-                    <tr>
-                      <th style={{ padding: '8px', textAlign: 'left', borderBottom: '2px solid #ddd', borderRight: '1px solid #ddd' }}>Field</th>
-                      <th style={{ padding: '8px', textAlign: 'left', borderBottom: '2px solid #ddd', borderRight: '1px solid #ddd' }}>Existing Record</th>
-                      <th style={{ padding: '8px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Your Entry</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(() => {
-                      const fields = [
-                        { label: 'Event Type', key: 'eventType' },
-                        { label: 'Event Category', key: 'eventCategory' },
-                        { label: 'Event Name / Sub Category', key: 'eventName' },
-                        { label: 'Start Date', key: 'startDate', isDate: true },
-                        { label: 'End Date', key: 'endDate', isDate: true },
-                        { label: 'Place', key: 'venuePlace' },
-                        { label: 'Taluka', key: 'venueTal' },
-                        { label: 'District', key: 'venueDist' },
-                        { label: 'Objective', key: 'objectives' },
-                        { label: 'About Event', key: 'aboutEvent' },
-                        { label: 'Target Group', key: 'targetGroup' },
-                        { label: 'Contact Person', key: 'contactPerson', isContact: true },
-                        { label: 'Designation', key: 'designation', isContact: true },
-                        { label: 'Discipline', key: 'discipline', isArray: true, isDiscipline: true },
-                        { label: 'Email', key: 'email', isContact: true },
-                        { label: 'Mobile', key: 'mobile', isContact: true },
-                        { label: 'Landline', key: 'landline', isContact: true },
-                        { label: 'Guest Category', key: 'chiefGuestCategory' },
-                        { label: 'Guest Name', key: 'chiefGuest' },
-                        { label: 'Guest Remark', key: 'chiefGuestRemark' },
-                        { label: 'Post Event', key: 'postEventDetails' },
-                        { label: 'SC Male', key: 'scMale', isNumber: true },
-                        { label: 'SC Female', key: 'scFemale', isNumber: true },
-                        { label: 'SC Total', key: 'scTotal', isNumber: true },
-                        { label: 'ST Male', key: 'stMale', isNumber: true },
-                        { label: 'ST Female', key: 'stFemale', isNumber: true },
-                        { label: 'ST Total', key: 'stTotal', isNumber: true },
-                        { label: 'Other Male', key: 'otherMale', isNumber: true },
-                        { label: 'Other Female', key: 'otherFemale', isNumber: true },
-                        { label: 'Other Total', key: 'otherTotal', isNumber: true },
-                        { label: 'EF Male', key: 'efMale', isNumber: true },
-                        { label: 'EF Female', key: 'efFemale', isNumber: true },
-                        { label: 'EF Total', key: 'efTotal', isNumber: true },
-                        { label: 'Grand Total', key: 'grandTotal', isNumber: true },
-                        { label: 'Media Coverage', key: 'mediaCoverage' }
-                      ];
-
-                      const getFormattedValue = (rec, field) => {
-                        if (!rec) return '-';
-
-                        // Dynamic calculation for old records missing calculated totals
-                        if (field.key === 'grandTotal' && rec.grandTotal === undefined) {
-                          const sc = parseInt(rec.scTotal) || ((parseInt(rec.scMale) || 0) + (parseInt(rec.scFemale) || 0));
-                          const st = parseInt(rec.stTotal) || ((parseInt(rec.stMale) || 0) + (parseInt(rec.stFemale) || 0));
-                          const other = parseInt(rec.otherTotal) || ((parseInt(rec.otherMale) || 0) + (parseInt(rec.otherFemale) || 0));
-                          const ef = parseInt(rec.efTotal) || ((parseInt(rec.efMale) || 0) + (parseInt(rec.efFemale) || 0));
-                          return String(sc + st + other + ef);
-                        }
-
-                        let val = rec[field.key];
-                        if (field.isContact && (val === undefined || val === null || val === '')) {
-                          if (Array.isArray(rec.contacts) && rec.contacts.length > 0) val = rec.contacts[0][field.key];
-                        }
-                        if (field.isArray) {
-                          const arr = Array.isArray(val) ? val : [];
-                          if (field.isDiscipline) {
-                            return arr.map(code => {
-                              if (code === 'all_kvk') return 'All disciplines of KVK';
-                              const d = disciplines.find(item => item.code === code);
-                              return d ? d.name : code;
-                            }).join(', ') || '-';
-                          }
-                          return arr.join(', ') || '-';
-                        }
-                        if (field.isDate) return val ? new Date(val).toLocaleDateString() : '-';
-                        if (field.isNumber) return (val !== undefined && val !== null && val !== '') ? String(val) : '0';
-                        return (val !== undefined && val !== null && val !== '') ? String(val) : '-';
-                      };
-
-                      const results = fields.map(f => {
-                        const existingVal = getFormattedValue(duplicateModal.record, f);
-                        const yourVal = getFormattedValue(duplicateModal.yourEntry, f);
-                        const isDifferent = getStringSimilarity(String(existingVal), String(yourVal)) < 0.95;
-                        return { ...f, existingVal, yourVal, isDifferent };
-                      });
-
-                      const hasDifferences = results.some(r => r.isDifferent);
-                      duplicateModal._hasDifferences = hasDifferences; // Store for footer
-
-                      const sortedResults = [...results].sort((a, b) => {
-                        if (a.isDifferent && !b.isDifferent) return -1;
-                        if (!a.isDifferent && b.isDifferent) return 1;
-                        return 0;
-                      });
-
-                      return sortedResults.map(res => (
-                        <tr key={res.key} style={{ background: res.isDifferent ? '#fff5f5' : 'transparent' }}>
-                          <td style={{ padding: '8px', fontWeight: 600, borderBottom: '1px solid #ddd', borderRight: '1px solid #ddd' }}>{res.label}</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #ddd', borderRight: '1px solid #ddd', color: res.isDifferent ? '#c0392b' : '#27ae60' }}>{res.existingVal}</td>
-                          <td style={{ padding: '8px', borderBottom: '1px solid #ddd', color: res.isDifferent ? '#c0392b' : '#27ae60' }}>{res.yourVal}</td>
-                        </tr>
-                      ));
-                    })()}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="me-modal-footer">
-              <button type="button" className="me-btn me-btn-light" onClick={() => setDuplicateModal(null)}>
-                {!duplicateModal._hasDifferences ? 'Close' : 'Cancel'}
-              </button>
-              {duplicateModal._hasDifferences && (
-                <button 
-                  type="button" 
-                  className="me-btn me-btn-primary" 
-                  onClick={() => {
-                    setDuplicateModal(null);
-                    save(null, true); // Save anyway
-                  }}
-                >
-                  Save Anyway
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );

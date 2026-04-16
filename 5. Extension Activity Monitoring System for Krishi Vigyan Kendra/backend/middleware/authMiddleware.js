@@ -14,22 +14,7 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       // Get user from token
-      try {
-        req.user = await User.findById(decoded.id).select('-password');
-      } catch (err) {
-        console.error('Auth middleware user lookup failed (DB might be down):', err);
-      }
-
-      // If user not in DB (disaster recovery), use token payload
-      if (!req.user && decoded.role) {
-        req.user = {
-          _id: decoded.id,
-          id: decoded.id,
-          role: decoded.role,
-          name: 'Admin (Recovery Mode)',
-          email: 'admin@recovery.mode'
-        };
-      }
+      req.user = await User.findById(decoded.id).select('-password');
 
       if (!req.user) {
         return res.status(401).json({ message: 'User not found' });
@@ -50,15 +35,6 @@ const adminOnly = (req, res, next) => {
     next();
   } else {
     res.status(403).json({ message: 'Access denied. Admin only.' });
-  }
-};
-
-// Admin or Program Assistant only middleware
-const adminOrProgramAssistant = (req, res, next) => {
-  if (req.user && (req.user.role === 'admin' || req.user.role === 'program_assistant')) {
-    next();
-  } else {
-    res.status(403).json({ message: 'Access denied. Admin or Program Assistant only.' });
   }
 };
 
@@ -100,18 +76,4 @@ const checkPermission = (discipline, permission) => {
   };
 };
 
-// Optional auth - reads JWT if present, does NOT block unauthenticated requests.
-const optionalProtect = async (req, res, next) => {
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      const token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
-    } catch (error) {
-      // Token invalid – proceed without user
-    }
-  }
-  next();
-};
-
-module.exports = { protect, adminOnly, adminOrProgramAssistant, checkDisciplineAccess, checkPermission, optionalProtect };
+module.exports = { protect, adminOnly, checkDisciplineAccess, checkPermission };

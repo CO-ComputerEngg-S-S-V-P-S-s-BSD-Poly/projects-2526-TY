@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_BASE_URL = `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api`;
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // Generic helper for making API requests
 const apiRequest = async (endpoint, options = {}) => {
@@ -77,27 +77,13 @@ export const adminAPI = {
   },
 
   // Get all users
-  getAllUsers: async (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiRequest(`/admin/users${query ? `?${query}` : ''}`, { method: 'GET' });
+  getAllUsers: async () => {
+    return apiRequest('/admin/users', { method: 'GET' });
   },
 
   // Get pending users
   getPendingUsers: async () => {
     return apiRequest('/admin/pending-users', { method: 'GET' });
-  },
-
-  // Get deleted users
-  getDeletedUsers: async () => {
-    return apiRequest('/admin/deleted-users', { method: 'GET' });
-  },
-
-  // Recover user
-  recoverUser: async (userId, adminPassword) => {
-    return apiRequest(`/admin/recover-user/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ adminPassword })
-    });
   },
 
   // Approve user
@@ -109,10 +95,10 @@ export const adminAPI = {
   },
 
   // Reject user with reason
-  rejectUser: async (userId, reason, adminPassword) => {
+  rejectUser: async (userId, reason) => {
     return apiRequest(`/admin/reject/${userId}`, {
       method: 'PUT',
-      body: JSON.stringify({ reason, adminPassword })
+      body: JSON.stringify({ reason })
     });
   },
 
@@ -132,14 +118,6 @@ export const adminAPI = {
     });
   },
 
-  // Inactivate user (keep approved, set isActive=false)
-  inactivateUser: async (userId, { reason, adminPassword }) => {
-    return apiRequest(`/admin/inactivate/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ reason, adminPassword })
-    });
-  },
-
   // Unblock user; adminPassword required
   unblockUser: async (userId, adminPassword) => {
     return apiRequest(`/admin/unblock/${userId}`, {
@@ -148,85 +126,16 @@ export const adminAPI = {
     });
   },
 
-  // Activate user; adminPassword required
-  activateUser: async (userId, adminPassword) => {
-    return apiRequest(`/admin/activate/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ adminPassword })
-    });
-  },
-
   // Permanently delete user
   permanentlyDeleteUser: async (userId) => {
     return apiRequest(`/admin/users/${userId}/permanent`, { method: 'DELETE' });
-  },
-
-  // Create database backup
-  createBackup: async (existingDbName = null, displayName = null, recordActions = null) => {
-    return apiRequest('/admin/create-backup', { 
-      method: 'POST',
-      body: JSON.stringify({ existingDbName, displayName, recordActions })
-    });
-  },
-
-  // Get incremental backup preview
-  getIncrementalBackupPreview: async (dbName) => {
-    return apiRequest(`/admin/backups/${dbName}/incremental-preview`, { method: 'GET' });
-  },
-
-  // Get backup history
-  getBackupHistory: async () => {
-    return apiRequest('/admin/backups', { method: 'GET' });
-  },
-
-  // Get backup preview
-  getBackupPreview: async (dbName) => {
-    return apiRequest(`/admin/backups/${dbName}/preview`, { method: 'GET' });
-  },
-
-  // Restore backup
-  restoreBackup: async (backupDbName, adminPassword, recordActions = null) => {
-    return apiRequest('/admin/restore-backup', {
-      method: 'POST',
-      body: JSON.stringify({ backupDbName, adminPassword, recordActions })
-    });
-  },
-
-  // Delete backup
-  deleteBackup: async (backupDbName, adminPassword) => {
-    return apiRequest(`/admin/backups/${backupDbName}`, {
-      method: 'DELETE',
-      body: JSON.stringify({ adminPassword })
-    });
-  },
-
-  // Verify admin password
-  verifyAdminPassword: async (adminPassword) => {
-    return apiRequest('/admin/verify-password', {
-      method: 'POST',
-      body: JSON.stringify({ adminPassword })
-    });
-  },
-
-  // Get auto backup config
-  getAutoBackupConfig: async () => {
-    return apiRequest('/admin/auto-backup-config', { method: 'GET' });
-  },
-
-  // Update auto backup config
-  updateAutoBackupConfig: async (enabled, dbName) => {
-    return apiRequest('/admin/auto-backup-config', {
-      method: 'PUT',
-      body: JSON.stringify({ enabled, dbName })
-    });
   }
 };
 
 // Discipline API calls
 export const disciplineAPI = {
-  list: async (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiRequest(`/disciplines${query ? `?${query}` : ''}`, { method: 'GET' });
+  list: async () => {
+    return apiRequest('/disciplines', { method: 'GET' });
   },
   listDeleted: async () => {
     return apiRequest('/disciplines/deleted', { method: 'GET' });
@@ -265,9 +174,8 @@ export const disciplineAPI = {
 
 // Extension Activity API calls
 export const extensionActivityAPI = {
-  list: async (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiRequest(`/extension-activities${query ? `?${query}` : ''}`, { method: 'GET' });
+  list: async () => {
+    return apiRequest('/extension-activities', { method: 'GET' });
   },
   listDeleted: async () => {
     return apiRequest('/extension-activities/deleted', { method: 'GET' });
@@ -309,9 +217,8 @@ export const extensionActivityAPI = {
 
 // Training API calls
 export const trainingAPI = {
-  list: async (params = {}) => {
-    const query = new URLSearchParams(params).toString();
-    return apiRequest(`/trainings${query ? `?${query}` : ''}`, { method: 'GET' });
+  list: async () => {
+    return apiRequest('/trainings', { method: 'GET' });
   },
   listDeleted: async () => {
     return apiRequest('/trainings/deleted', { method: 'GET' });
@@ -347,25 +254,6 @@ export const trainingAPI = {
     return apiRequest(`/trainings/${id}/permanent`, {
       method: 'DELETE',
       body: JSON.stringify({ adminPassword })
-    });
-  }
-};
-
-// Year Lock API calls
-export const yearLockAPI = {
-  getAll: async () => {
-    return apiRequest('/year-lock');
-  },
-  lock: async (year, password) => {
-    return apiRequest(`/year-lock/${year}/lock`, {
-      method: 'PUT',
-      body: JSON.stringify({ password })
-    });
-  },
-  unlock: async (year, password) => {
-    return apiRequest(`/year-lock/${year}/unlock`, {
-      method: 'PUT',
-      body: JSON.stringify({ password })
     });
   }
 };

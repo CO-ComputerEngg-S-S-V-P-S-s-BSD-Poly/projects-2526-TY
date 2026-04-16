@@ -22,7 +22,7 @@
   border-right: 1px solid rgba(24, 2, 2, 0.186);
   display: flex;
   flex-direction: column;
-  z-index: 20001;
+  z-index: 1002;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
   transition: width 0.3s ease;
   overflow: hidden;
@@ -335,66 +335,6 @@
   border-radius: 0 3px 3px 0;
 }
 
-.subitem-toggle {
-  background: none;
-  border: none;
-  color: #C9D8C0;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.subitem-toggle.expanded {
-  transform: rotate(180deg);
-}
-
-.sidebar-sub-nav {
-  display: flex;
-  flex-direction: column;
-  padding-left: 44px;
-  margin-top: 2px;
-  margin-bottom: 4px;
-  gap: 2px;
-}
-
-.sidebar-sub-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: #F2F6EE;
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.sidebar-sub-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #FFFFFF;
-}
-
-.sidebar-sub-item.active {
-  background: rgba(255, 255, 255, 0.1);
-  color: #FFFFFF;
-}
-
-.sub-item-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.8;
-}
-
-.sidebar-sub-item.active .sub-item-icon {
-  opacity: 1;
-  color: #b3c870;
-}
-
 /* Collapsed State */
 .kvk-sidebar.collapsed .sidebar-nav-item {
   padding: 5px;
@@ -664,10 +604,6 @@
   margin-left: -2px;
 }
 
-.sidebar-toggle-btn.collapsed {
-  left: 65px;
-}
-
 .sidebar-toggle-btn:hover {
   background: #6E8649;
   transform: scale(1.1);
@@ -678,32 +614,9 @@
   outline-offset: 2px;
 }
 
-.backup-reminder-badge {
-   position: absolute;
-   right: 12px;
-   top: 50%;
-   transform: translateY(-50%);
-   font-size: 14px;
-   animation: badge-fade 1.5s infinite;
- }
- 
- .backup-reminder-dot {
-   position: absolute;
-   right: 8px;
-   top: 8px;
-   width: 8px;
-   height: 8px;
-   background-color: #ef4444;
-   border-radius: 50%;
-   border: 1px solid white;
-   animation: badge-fade 1.5s infinite;
- }
- 
- @keyframes badge-fade {
-   0% { opacity: 0.6; }
-   50% { opacity: 1; }
-   100% { opacity: 0.6; }
- }
+.sidebar-toggle-btn.collapsed {
+  left: 70px;
+}
 
 /* Link Styles */
 a {

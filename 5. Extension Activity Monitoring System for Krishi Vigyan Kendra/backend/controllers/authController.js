@@ -2,8 +2,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-const generateToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d'
   });
 };
@@ -23,29 +23,6 @@ const registerUser = async (req, res) => {
 
     const userExists = await User.findOne({ email: email.toLowerCase() });
     if (userExists) {
-      if (userExists.status === 'rejected' || userExists.isDeleted) {
-        userExists.name = name;
-        userExists.phone = phone;
-        userExists.password = password;
-        userExists.status = 'pending';
-        userExists.isActive = false;
-        userExists.blockReason = null;
-        userExists.isDeleted = false;
-        userExists.deletedAt = null;
-        await userExists.save();
-        return res.status(200).json({
-          success: true,
-          message: 'Registration successful! Please wait for admin approval.',
-          user: {
-            _id: userExists._id,
-            name: userExists.name,
-            email: userExists.email,
-            phone: userExists.phone,
-            status: userExists.status,
-            isActive: userExists.isActive
-          }
-        });
-      }
       return res
         .status(400)
         .json({ message: 'User already exists with this email' });
@@ -62,7 +39,7 @@ const registerUser = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Registration successful! Please wait for admin approval.',
+      message: 'Registration successful! Please complete your profile and wait for admin approval.',
       user: {
         _id: user._id,
         name: user.name,
@@ -85,7 +62,7 @@ const registerUser = async (req, res) => {
 // @access  Public
 const loginUser = async (req, res) => {
   try {
-    const { email, password, loginType } = req.body;
+    const { email, password } = req.body;  // Removed loginType - unified login
 
     if (!email || !password) {
       return res
@@ -98,27 +75,10 @@ const loginUser = async (req, res) => {
     );
 
     // case: email not found
-    if (!user || user.isDeleted) {
+    if (!user) {
       return res
         .status(401)
         .json({ message: 'No account found with this email' });
-    }
-
-    // Role-based login restrictions
-    if (loginType === 'Program Coordinator') {
-      // Program Coordinator login ONLY allows admin role
-      if (user.role !== 'admin') {
-        return res.status(401).json({ 
-          message: 'No account found with this email' 
-        });
-      }
-    } else if (loginType === 'Staff') {
-      // Staff login ONLY allows scientist and program_assistant roles
-      if (user.role === 'admin' || !['scientist', 'program_assistant'].includes(user.role)) {
-        return res.status(401).json({ 
-          message: 'No account found with this email' 
-        });
-      }
     }
 
     const isMatch = await user.matchPassword(password);
@@ -126,6 +86,14 @@ const loginUser = async (req, res) => {
     // case: password incorrect
     if (!isMatch) {
       return res.status(401).json({ message: 'Incorrect password' });
+    }
+
+    // Check if user is active (for all roles except admin during seeding)
+    if (!user.isActive && user.role !== 'admin') {
+      return res.status(403).json({
+        message: 'Your account is currently inactive. Please contact admin.',
+        status: 'inactive'
+      });
     }
 
     // Status checks for non-admin users
@@ -138,14 +106,8 @@ const loginUser = async (req, res) => {
       }
       if (user.status === 'rejected') {
         return res.status(403).json({
-          message: 'Your request has been rejected by the admin please register again',
+          message: 'Your account has been rejected. Please contact admin.',
           status: 'rejected'
-        });
-      }
-      if (!user.isActive) {
-        return res.status(403).json({
-          message: 'Your account is currently inactive. Please contact admin.',
-          status: 'inactive'
         });
       }
     }
@@ -158,7 +120,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    const token = generateToken(user._id, user.role);
+    const token = generateToken(user._id);
 
     return res.json({
       _id: user._id,

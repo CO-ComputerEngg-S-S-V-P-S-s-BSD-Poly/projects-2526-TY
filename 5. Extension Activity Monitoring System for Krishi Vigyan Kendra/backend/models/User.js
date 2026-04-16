@@ -47,9 +47,6 @@ const userSchema = new mongoose.Schema(
     blockReason: { type: String, trim: true, maxlength: 500, default: null },
     dataEntryEnabled: { type: Boolean, default: false },
 
-    isDeleted: { type: Boolean, default: false },
-    deletedAt: { type: Date, default: null },
-
     // Multiple disciplines array (stores Discipline.code values)
     assignedDisciplines: [{ type: String, trim: true, lowercase: true }],
     permissions: {

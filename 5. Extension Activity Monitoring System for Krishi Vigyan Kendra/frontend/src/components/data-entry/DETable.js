@@ -1,36 +1,65 @@
 import React, { useMemo, useState } from 'react';
 import '../../styles/ManageEmployee.me.css';
-import { Eye, Edit, Trash2, Info, ChevronDown } from 'lucide-react';
-import { Upload, Plus, Printer } from 'lucide-react';
+import { Eye, Edit, Trash2, Info } from 'lucide-react';
 
 const fmt = (v) => (v === undefined || v === null || v === '' ? '—' : v);
+const fmtDate = (v) => {
+  if (!v || v === '—') return '—';
+  
+  let dateObj;
+  // If it's a DD/MM/YYYY string, parse it into a Date object
+  if (typeof v === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+    const [day, month, year] = v.split('/');
+    dateObj = new Date(year, month - 1, day);
+  } else {
+    // Try standard Date parsing
+    dateObj = new Date(v);
+  }
 
-const renderCell = (v) => {
-  const s = v == null ? '' : String(v);
-  if (!s) return '—';
-  return <div className="da-cell-content">{s}</div>;
+  // If conversion to Date type fails, return the raw value
+  if (isNaN(dateObj.getTime())) return fmt(v);
+  
+  // Format the Date object back to a user-friendly string (DD/MM/YYYY)
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const year = dateObj.getFullYear();
+  return `${day}/${month}/${year}`;
 };
 
-const fmtDate = (v) => {
-  if (!v) return '—';
-  try {
-    const d = new Date(v);
-    if (isNaN(d.getTime())) return renderCell(v);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  } catch {
-    return renderCell(v);
+// Helper to convert DD/MM/YYYY string to Date for sorting
+const parseDateForSort = (v) => {
+  if (!v) return 0;
+  if (typeof v === 'string' && /^\d{2}\/\d{2}\/\d{4}$/.test(v)) {
+    const [day, month, year] = v.split('/');
+    return new Date(year, month - 1, day).getTime();
   }
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+};
+
+const chunkText = (v, size = 50) => {
+  const s = v == null ? '' : String(v);
+  if (!s) return '—';
+  if (s.length <= size) return s;
+  const parts = s.match(new RegExp(`.{1,${size}}`, 'g')) || [s];
+  return (
+    <>
+      {parts.map((p, i) => (
+        <span key={i}>
+          {i > 0 && <br />}
+          {p}
+        </span>
+      ))}
+    </>
+  );
 };
 
 const uniqueBy = (arr, norm) => {
   const seen = new Set();
   const out = [];
   for (const v of arr) {
-    const n = norm(v);
-    if (!n) continue;
+    const n = norm ? norm(v) : v;
+    if (!n && n !== 0) continue;
     if (!seen.has(n)) {
       seen.add(n);
       out.push(v);
@@ -41,15 +70,15 @@ const uniqueBy = (arr, norm) => {
 
 const CatHeader = ({ label }) => (
   <div className="da-cat-cell">
-    <div className="da-cat-title"><HeaderWithWrap label={label} /></div>
-    <div className="da-cat-sub"><span>Male</span><span>Female</span><span>Total</span></div>
+    <div className="da-cat-title">{label}</div>
+    <div className="da-cat-sub"><span>Male</span><span>Female</span></div>
   </div>
 );
 
-const CatCell = ({ m, f, t }) => (
+const CatCell = ({ m, f }) => (
   <div className="da-cat-cell">
     <div className="da-cat-title"></div>
-    <div className="da-cat-sub"><span>{m}</span><span>{f}</span><span>{t}</span></div>
+    <div className="da-cat-sub"><span>{m}</span><span>{f}</span></div>
   </div>
 );
 
@@ -104,44 +133,6 @@ const getEntryMeta = (row, disciplines = []) => {
   };
 };
 
-const HeaderWithWrap = ({ label }) => {
-  if (!label) return null;
-  // If label contains a slash, split it
-  if (label.includes('/')) {
-    const parts = label.split('/');
-    return (
-      <div className="da-header-wrap">
-        <span>{parts[0]}/</span>
-        <span>{parts[1]}</span>
-      </div>
-    );
-  }
-  // If label contains "Sub Category", split it
-  if (label.includes('Sub Category')) {
-    const parts = label.split('Sub Category');
-    return (
-      <div className="da-header-wrap">
-        <span>{parts[0]}</span>
-        <span>Sub Category {parts[1]}</span>
-      </div>
-    );
-  }
-  // If label is very long (e.g. more than 15 chars), split at space if possible
-  if (label.length > 15 && label.includes(' ')) {
-    const mid = Math.floor(label.length / 2);
-    const spaceIdx = label.indexOf(' ', mid) !== -1 ? label.indexOf(' ', mid) : label.lastIndexOf(' ', mid);
-    if (spaceIdx !== -1) {
-      return (
-        <div className="da-header-wrap">
-          <span>{label.slice(0, spaceIdx)}</span>
-          <span>{label.slice(spaceIdx + 1)}</span>
-        </div>
-      );
-    }
-  }
-  return <span>{label}</span>;
-};
-
 const DETable = ({
   rows,
   disciplines = [],
@@ -156,26 +147,13 @@ const DETable = ({
   canImport = true,
   canCreate = true,
   isDisciplineModule = false,
-  extraHeaderActions = null,
-  columnIndices = null, // array of indices to show
-  srStart = 1, // Start number for SR column
-  columnFilters = {}, // New: { columnKey: value }
-  onColumnFilterChange = () => {}, // New: callback
-  filterOptions = {}, // New: { columnKey: [options] }
-  isProgramAssistant = false, // New: prop to handle sticky actions
 }) => {
   const [sortKey, setSortKey] = useState('created'); // 'discipline' | 'created'
   const [asc, setAsc] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedRowId, setSelectedRowId] = useState(null);
-  const [openFilter, setOpenFilter] = useState(null); // New state for header dropdowns
-  const pageSize = 100;
 
   const getDisciplineName = (code) => {
     if (!code || code === 'all') return '—';
-    if (code === 'all_kvk') return 'All disciplines of KVK';
     if (Array.isArray(code)) {
-      if (code.includes('all_kvk')) return 'All disciplines of KVK';
       return code.map(c => disciplines.find(d => d.code === c)?.name || c).join(', ');
     }
     const found = disciplines.find(d => d.code === code);
@@ -190,463 +168,202 @@ const DETable = ({
         const av = getVal(a).localeCompare(getVal(b));
         return asc ? av : -av;
       });
-    } else {
-      // Default: sort by startDate (latest first)
+    } else if (sortKey === 'startDate') {
       copy.sort((a, b) => {
-        const dateA = new Date(a.startDate || 0);
-        const dateB = new Date(b.startDate || 0);
-        return asc ? dateA - dateB : dateB - dateA;
+        const tA = parseDateForSort(a.startDate);
+        const tB = parseDateForSort(b.startDate);
+        return asc ? tA - tB : tB - tA;
       });
+    } else {
+      // keep insertion order by default (newest first)
+      if (asc) copy.reverse();
     }
     return copy;
   }, [rows, sortKey, asc]);
-
-  // Reset to first page when data changes
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [rows, sortKey, asc]);
-
-  const totalPages = Math.max(1, Math.ceil(sortedRows.length / pageSize));
-
-  const paginatedRows = useMemo(() => {
-    const startIdx = (currentPage - 1) * pageSize;
-    return sortedRows.slice(startIdx, startIdx + pageSize);
-  }, [sortedRows, currentPage, pageSize]);
 
   const toggleSort = (key) => {
     if (sortKey === key) {
       setAsc(!asc);
     } else {
       setSortKey(key);
-      setAsc(key === 'discipline'); // default asc for discipline alpha
+      setAsc(key === 'discipline' || key === 'startDate'); // default asc
     }
-  };
-
-  const allColumns = [
-    { label: 'Sr No. (1)', key: 'sr' },
-    { label: 'Event Type (2)', key: 'eventType' },
-    { label: 'Event Category (3)', key: 'eventCategory' },
-    { label: 'Event Name/Sub Category (4)', key: 'eventName' },
-    { label: 'Start Date (5)', key: 'startDate' },
-    { label: 'End Date (6)', key: 'endDate' },
-    { label: 'Venue Details (7)', key: 'venue' },
-    { label: 'Objectives (8)', key: 'objectives' },
-    { label: 'About the Event (9)', key: 'about' },
-    { label: 'Target Group (10)', key: 'targetGroup' },
-    { label: 'Post Event Details (11)', key: 'postEvent' },
-    { label: 'Contact Person (12)', key: 'contactPerson' },
-    { label: 'Discipline (13)', key: 'discipline', sortable: true },
-    { label: 'Designation (14)', key: 'designation' },
-    { label: 'Email (15)', key: 'email' },
-    { label: 'Mobile (16)', key: 'mobile' },
-    { label: 'Landline No. (17)', key: 'landline' },
-    { label: 'Chief Guest Name/Inaugurated by (18)', key: 'cgName' },
-    { label: 'Chief Guest Remark (19)', key: 'cgRemark' },
-    { label: 'Male (20)', key: 'male' },
-    { label: 'Female (21)', key: 'female' },
-    { label: 'SC (22)', key: 'sc', isCat: true },
-    { label: 'ST (23)', key: 'st', isCat: true },
-    { label: 'Other (24)', key: 'other', isCat: true },
-    { label: 'EF (25)', key: 'ef', isCat: true },
-    { label: 'Media Coverage (26)', key: 'media' },
-    { label: 'Actions (27)', key: 'actions', hideOnPrint: true },
-  ];
-
-  const visibleColumns = useMemo(() => {
-    if (!columnIndices) return allColumns;
-    // Always include index 0 (SR No.) on every page for easy identification
-    // columnIndices is an array of 0-based indices
-    return allColumns.filter((_, idx) => idx === 0 || columnIndices.includes(idx));
-  }, [columnIndices]);
-
-  const isVisible = (key) => visibleColumns.some(c => c.key === key);
-
-  // Click outside listener for column filters
-  React.useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (openFilter && !e.target.closest('.da-th-filter-wrapper')) {
-        setOpenFilter(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [openFilter]);
-
-  const ColumnFilter = ({ columnKey, placeholder }) => {
-    const options = filterOptions[columnKey] || [];
-    if (options.length === 0) return null;
-
-    const isOpen = openFilter === columnKey;
-    const currentValue = columnFilters[columnKey] || '';
-
-    return (
-      <div className="da-th-filter-wrapper">
-        <button
-          className={`da-th-filter-btn ${currentValue ? 'active' : ''}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            setOpenFilter(isOpen ? null : columnKey);
-          }}
-          title={placeholder}
-        >
-          <ChevronDown size={14} />
-        </button>
-        {isOpen && (
-          <div 
-            className="da-th-filter-menu" 
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={() => {
-                onColumnFilterChange(columnKey, '');
-                setOpenFilter(null);
-              }}
-              className={!currentValue ? 'active' : ''}
-            >
-              All
-            </button>
-            {options.map(opt => (
-              <button
-                key={opt}
-                onClick={() => {
-                  onColumnFilterChange(columnKey, opt);
-                  setOpenFilter(null);
-                }}
-                className={currentValue === opt ? 'active' : ''}
-                title={opt}
-              >
-                {opt}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
     <div className="da-section">
       <div className="da-section-header">
         <h3 className="da-section-title">Existing Records ({rows.length})</h3>
-        <div className="da-header-actions">
-          {extraHeaderActions}
-          {isDisciplineModule && (
-            <>
-              {onImport && canImport && (
-                <button
-                  type="button"
-                  className="da-btn da-btn-light"
-                  onClick={onImport}
-                >
-                  <Upload size={16} />
-                  Import
-                </button>
-              )}
-              {onManual && canCreate && (
-                <button
-                  type="button"
-                  className="da-btn da-btn-primary"
-                  onClick={onManual}
-                >
-                  <Plus size={16} />
-                  Manual Entry
-                </button>
-              )}
-            </>
-          )}
-        </div>
+        {isDisciplineModule && (
+          <div className="da-header-actions">
+            {onImport && canImport && (
+              <button
+                type="button"
+                className="da-btn da-btn-light"
+                onClick={onImport}
+              >
+                Import
+              </button>
+            )}
+            {onManual && canCreate && (
+              <button
+                type="button"
+                className="da-btn da-btn-primary"
+                onClick={onManual}
+              >
+                Data Entry
+              </button>
+            )}
+          </div>
+        )}
       </div>
       {rows.length === 0 ? (
         <div className="da-empty">
           <p>No records for the current selection</p>
         </div>
       ) : (
-        <>
-          <div className="da-table-wrap">
-            <table className="da-table">
-              <thead>
-                <tr>
-                {isVisible('sr') && <th><HeaderWithWrap label="Sr No. (1)" /></th>}
-                {isVisible('eventType') && (
-                  <th className="da-th-with-filter">
-                    <div className="da-th-content">
-                      <HeaderWithWrap label="Event Type (2)" />
-                      <ColumnFilter columnKey="eventType" placeholder="Filter by type" />
-                    </div>
-                  </th>
-                )}
-                {isVisible('eventCategory') && (
-                  <th className="da-th-with-filter">
-                    <div className="da-th-content">
-                      <HeaderWithWrap label="Event Category (3)" />
-                      <ColumnFilter columnKey="eventCategory" placeholder="Filter by category" />
-                    </div>
-                  </th>
-                )}
-                {isVisible('eventName') && <th><HeaderWithWrap label="Event Name/Sub Category (4)" /></th>}
-                {isVisible('startDate') && <th><HeaderWithWrap label="Start Date (5)" /></th>}
-                {isVisible('endDate') && <th><HeaderWithWrap label="End Date (6)" /></th>}
-                {isVisible('venue') && (
-                  <th className="da-th-with-filter">
-                    <div className="da-th-content">
-                      <HeaderWithWrap label="Venue Details (7)" />
-                      <ColumnFilter columnKey="taluka" placeholder="Filter by taluka" />
-                    </div>
-                  </th>
-                )}
-                {isVisible('objectives') && <th><HeaderWithWrap label="Objectives (8)" /></th>}
-                {isVisible('about') && <th><HeaderWithWrap label="About the Event (9)" /></th>}
-                {isVisible('targetGroup') && (
-                  <th className="da-th-with-filter">
-                    <div className="da-th-content">
-                      <HeaderWithWrap label="Target Group (10)" />
-                      <ColumnFilter columnKey="targetGroup" placeholder="Filter by group" />
-                    </div>
-                  </th>
-                )}
-                {isVisible('postEvent') && <th><HeaderWithWrap label="Post Event Details (11)" /></th>}
-                {isVisible('contactPerson') && (
-                  <th className="da-th-with-filter">
-                    <div className="da-th-content">
-                      <HeaderWithWrap label="Contact Person (12)" />
-                      <ColumnFilter columnKey="contact" placeholder="Filter by contact" />
-                    </div>
-                  </th>
-                )}
-                {isVisible('discipline') && (
-                  <th 
-                    onClick={() => toggleSort('discipline')} 
-                    title="Sort by discipline" 
-                    style={{ cursor: 'pointer' }}
-                    className="da-th-with-filter"
-                  >
-                    <div className="da-th-content">
-                      <HeaderWithWrap label={`Discipline (13) ${sortKey === 'discipline' ? (asc ? '▲' : '▼') : ''}`} />
-                      <ColumnFilter columnKey="discipline" placeholder="Filter by discipline" />
-                    </div>
-                  </th>
-                )}
-                {isVisible('designation') && <th><HeaderWithWrap label="Designation (14)" /></th>}
-                {isVisible('email') && <th><HeaderWithWrap label="Email (15)" /></th>}
-                {isVisible('mobile') && <th><HeaderWithWrap label="Mobile (16)" /></th>}
-                {isVisible('landline') && <th><HeaderWithWrap label="Landline No. (17)" /></th>}
-                {isVisible('cgName') && <th><HeaderWithWrap label="Chief Guest Name/Inaugurated by (18)" /></th>}
-                {isVisible('cgRemark') && <th><HeaderWithWrap label="Chief Guest Remark (19)" /></th>}
-                {isVisible('male') && <th className="da-total-mf"><HeaderWithWrap label="Male (20)" /></th>}
-                {isVisible('female') && <th className="da-total-mf"><HeaderWithWrap label="Female (21)" /></th>}
-                {isVisible('sc') && <th className="da-cat-th da-cat-scst"><CatHeader label="SC (22)" /></th>}
-                {isVisible('st') && <th className="da-cat-th da-cat-scst"><CatHeader label="ST (23)" /></th>}
-                {isVisible('other') && <th className="da-cat-th da-cat-others"><CatHeader label="Other (24)" /></th>}
-                {isVisible('ef') && <th className="da-cat-th da-cat-others"><CatHeader label="EF (25)" /></th>}
-                {isVisible('media') && (
-                  <th className="da-th-with-filter">
-                    <div className="da-th-content">
-                      <HeaderWithWrap label="Media Coverage (26)" />
-                      <ColumnFilter columnKey="media" placeholder="Filter by media" />
-                    </div>
-                  </th>
-                )}
-                {isVisible('actions') && (
-                  <th className={`hide-on-print ${isProgramAssistant ? 'da-actions-sticky' : ''}`}>
-                    <HeaderWithWrap label="Actions (27)" />
-                  </th>
-                )}
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedRows.map((r, idx) => {
-                const genM = parseInt(r.genMale) || 0;
-                const genF = parseInt(r.genFemale) || 0;
+        <div className="da-table-wrap">
+          <table className="da-table">
+            <thead>
+              <tr>
+                <th>Sr No.</th>
+                <th onClick={() => toggleSort('discipline')} title="Sort by discipline" style={{ cursor: 'pointer' }}>
+                  Discipline {sortKey === 'discipline' ? (asc ? '▲' : '▼') : ''}
+                </th>
+                <th>Event Type</th>
+                <th>Event Category</th>
+                <th>Event Name/Sub Category</th>
+                <th onClick={() => toggleSort('startDate')} title="Sort by Start Date" style={{ cursor: 'pointer' }}>
+                  Start Date {sortKey === 'startDate' ? (asc ? '▲' : '▼') : ''}
+                </th>
+                <th>End Date</th>
+                <th>Venue Details</th>
+                <th>Objectives</th>
+                <th>About the Event</th>
+                <th>Target Group</th>
+                <th>Contact Person</th>
+                <th>Designation</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Landline No.</th>
+                <th>Chief Guest Category</th>
+                <th>Chief Guest Name/Inaugurated by</th>
+                <th>Chief Guest Remark</th>
+                <th>Post Event Details</th>
+                <th><CatHeader label="SC" /></th>
+                <th><CatHeader label="ST" /></th>
+                <th><CatHeader label="General" /></th>
+                <th><CatHeader label="Other" /></th>
+                <th><CatHeader label="EF" /></th>
+                <th>Media Coverage</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedRows.map((r, idx) => {
                 const scM = parseInt(r.scMale) || 0;
                 const scF = parseInt(r.scFemale) || 0;
                 const stM = parseInt(r.stMale) || 0;
                 const stF = parseInt(r.stFemale) || 0;
+                const gnM = parseInt(r.genMale) || 0;
+                const gnF = parseInt(r.genFemale) || 0;
                 const otM = parseInt(r.otherMale) || 0;
                 const otF = parseInt(r.otherFemale) || 0;
                 const efM = parseInt(r.efMale) || 0;
                 const efF = parseInt(r.efFemale) || 0;
 
-                const totalM = genM + scM + stM + otM + efM;
-                const totalF = genF + scF + stF + otF + efF;
-
                 return (
-                  <tr 
-                    key={r._id || `${r.eventName}-${(currentPage - 1) * pageSize + idx}`}
-                    onClick={() => setSelectedRowId(prev => prev === r._id ? null : r._id)}
-                    className={selectedRowId === r._id ? 'da-table-row-selected' : ''}
-                  >
-                    {isVisible('sr') && <td>{srStart + (currentPage - 1) * pageSize + idx}</td>}
-                    {isVisible('eventType') && <td>{renderCell(fmt(r.eventType))}</td>}
-                    {isVisible('eventCategory') && <td>{renderCell(fmt(r.eventCategory))}</td>}
-                    {isVisible('eventName') && <td>{renderCell(r.eventName)}</td>}
-                    {isVisible('startDate') && <td>{fmtDate(r.startDate)}</td>}
-                    {isVisible('endDate') && <td>{fmtDate(r.endDate)}</td>}
-                    {isVisible('venue') && (
-                      <td>
-                        {renderCell(
-                          r.venuePlace || r.venueTal || r.venueDist 
-                            ? `${fmt(r.venuePlace)}${r.venueTal ? `, Tal: ${fmt(r.venueTal)}` : ''}${r.venueDist ? `, Dist: ${fmt(r.venueDist)}` : ''}`
-                            : fmt(r.venue)
-                        )}
-                      </td>
-                    )}
-                    {isVisible('objectives') && <td>{renderCell(r.objectives)}</td>}
-                    {isVisible('about') && <td>{renderCell(r.aboutEvent)}</td>}
-                    {isVisible('targetGroup') && <td>{renderCell(fmt(r.targetGroup))}</td>}
-                    {isVisible('postEvent') && <td>{renderCell(fmt(r.postEventDetails))}</td>}
-                    {isVisible('contactPerson') && (
-                      <td>{renderCell((r.contacts || []).map(c => c.contactPerson).filter(Boolean).join(', '))}</td>
-                    )}
-                    {isVisible('discipline') && <td>{renderCell(getDisciplineName(r.discipline))}</td>}
-                    {isVisible('designation') && (
-                      <td>{renderCell((r.contacts || []).map(c => c.designation).filter(Boolean).join(', '))}</td>
-                    )}
-                    {isVisible('email') && (
-                      <td>{
-                        renderCell(
-                          uniqueBy((r.contacts || []).map(c => c.email).filter(Boolean), v => String(v).trim().toLowerCase())
-                            .join(', ')
-                        )
-                      }</td>
-                    )}
-                    {isVisible('mobile') && (
-                      <td>{
-                        renderCell(
-                          uniqueBy((r.contacts || []).map(c => c.mobile).filter(Boolean), v => String(v).replace(/\s|-/g, ''))
-                            .join(', ')
-                        )
-                      }</td>
-                    )}
-                    {isVisible('landline') && (
-                      <td>{
-                        renderCell(
-                          uniqueBy((r.contacts || []).map(c => c.landline).filter(Boolean), v => String(v).replace(/\s|-/g, ''))
-                            .join(', ')
-                        )
-                      }</td>
-                    )}
-                    {isVisible('cgName') && (
-                      <td>{renderCell((() => {
-                        const cg = fmt(r.chiefGuest);
-                        const ib = fmt(r.inauguratedBy);
-                        if (cg === '—' && ib === '—') return '—';
-                        if (cg !== '—' && ib !== '—') return `${cg} / ${ib}`;
-                        return cg !== '—' ? cg : ib;
-                      })())}</td>
-                    )}
-                    {isVisible('cgRemark') && <td>{renderCell(fmt(r.chiefGuestRemark))}</td>}
-                    {isVisible('male') && <td className="da-total-mf">{r.totalMale || totalM}</td>}
-                    {isVisible('female') && <td className="da-total-mf">{r.totalFemale || totalF}</td>}
-                    {isVisible('sc') && <td className="da-cat-td da-cat-scst"><CatCell m={scM} f={scF} t={r.scTotal || (scM + scF)} /></td>}
-                    {isVisible('st') && <td className="da-cat-td da-cat-scst"><CatCell m={stM} f={stF} t={r.stTotal || (stM + stF)} /></td>}
-                    {isVisible('other') && <td className="da-cat-td da-cat-others"><CatCell m={otM} f={otF} t={r.otherTotal || (otM + otF)} /></td>}
-                    {isVisible('ef') && <td className="da-cat-td da-cat-others"><CatCell m={efM} f={efF} t={r.efTotal || (efM + efF)} /></td>}
-                    {isVisible('media') && <td>{renderCell(fmt(r.mediaCoverage))}</td>}
-                    {isVisible('actions') && (
-                      <td className={`hide-on-print ${isProgramAssistant ? 'da-actions-sticky' : ''}`}>
-                        <div className="da-actions">
-                          <div className="da-info-icon-wrapper" title="">
-                            <Info size={16} className="da-info-icon" />
-                            {(() => {
-                              const meta = getEntryMeta(r, disciplines);
-                              return (
-                                <div className="da-tooltip">
-                                  {`Data entry is done by ${meta.userName} from ${meta.moduleLabel}`}
-                                </div>
-                              );
-                            })()}
-                          </div>
-                          {onView && canView && (
-                            <button
-                              type="button"
-                              className="da-btn-icon"
-                              title="View"
-                              onClick={() => onView && onView(r)}
-                            >
-                              <Eye size={16} />
-                            </button>
-                          )}
-                          {onEdit && canEdit && (
-                            <button
-                              type="button"
-                              className="da-btn-icon da-btn-edit"
-                              title="Edit"
-                              onClick={() => onEdit && onEdit(r)}
-                            >
-                              <Edit size={16} />
-                            </button>
-                          )}
-                          {onDelete && canDelete && (
-                            <button
-                              type="button"
-                              className="da-btn-icon da-btn-danger"
-                              title="Delete"
-                              onClick={() => onDelete && onDelete(r)}
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          )}
+                  <tr key={r._id || `${r.eventName}-${idx}`}>
+                    <td>{idx + 1}</td>
+                    <td>{getDisciplineName(r.discipline)}</td>
+                    <td>{fmt(r.eventType)}</td>
+                    <td>{fmt(r.eventCategory)}</td>
+                    <td>{chunkText(r.eventName, 50)}</td>
+                    <td>{fmtDate(r.startDate)}</td>
+                    <td>{fmtDate(r.endDate)}</td>
+                    <td>
+                      {r.venuePlace || r.venueTal || r.venueDist 
+                        ? `${fmt(r.venuePlace)}${r.venueTal ? `, Tal: ${fmt(r.venueTal)}` : ''}${r.venueDist ? `, Dist: ${fmt(r.venueDist)}` : ''}`
+                        : fmt(r.venue)}
+                    </td>
+                    <td>{chunkText(r.objectives, 50)}</td>
+                    <td>{chunkText(r.aboutEvent, 50)}</td>
+                    <td>{fmt(r.targetGroup)}</td>
+                    <td>{(r.contacts || []).map(c => c.contactPerson).filter(Boolean).join(', ')}</td>
+                    <td>{(r.contacts || []).map(c => c.designation).filter(Boolean).join(', ')}</td>
+                    <td>{
+                      uniqueBy((r.contacts || []).map(c => c.email).filter(Boolean), v => String(v).trim().toLowerCase())
+                        .join(', ')
+                    }</td>
+                    <td>{
+                      uniqueBy((r.contacts || []).map(c => c.mobile).filter(Boolean), v => String(v).replace(/\s|-/g, ''))
+                        .join(', ')
+                    }</td>
+                    <td>{
+                      uniqueBy((r.contacts || []).map(c => c.landline).filter(Boolean), v => String(v).replace(/\s|-/g, ''))
+                        .join(', ')
+                    }</td>
+                    <td>{fmt(r.chiefGuestCategory)}</td>
+                    <td>{fmt(r.chiefGuest)}</td>
+                    <td>{fmt(r.chiefGuestRemark)}</td>
+                    <td>{fmt(r.postEventDetails)}</td>
+                    <td><CatCell m={scM} f={scF} /></td>
+                    <td><CatCell m={stM} f={stF} /></td>
+                    <td><CatCell m={gnM} f={gnF} /></td>
+                    <td><CatCell m={otM} f={otF} /></td>
+                    <td><CatCell m={efM} f={efF} /></td>
+                    <td>{fmt(r.mediaCoverage)}</td>
+                    <td>
+                      <div className="da-actions">
+                        <div className="da-info-icon-wrapper" title="">
+                          <Info size={16} className="da-info-icon" />
+                          {(() => {
+                            const meta = getEntryMeta(r, disciplines);
+                            return (
+                              <div className="da-tooltip">
+                                {`Data entry is done by ${meta.userName} from ${meta.moduleLabel}`}
+                              </div>
+                            );
+                          })()}
                         </div>
-                      </td>
-                    )}
+                        {onView && canView && (
+                          <button
+                            type="button"
+                            className="da-btn-icon"
+                            title="View"
+                            onClick={() => onView && onView(r)}
+                          >
+                            <Eye size={16} />
+                          </button>
+                        )}
+                        {onEdit && canEdit && (
+                          <button
+                            type="button"
+                            className="da-btn-icon da-btn-edit"
+                            title="Edit"
+                            onClick={() => onEdit && onEdit(r)}
+                          >
+                            <Edit size={16} />
+                          </button>
+                        )}
+                        {onDelete && canDelete && (
+                          <button
+                            type="button"
+                            className="da-btn-icon da-btn-danger"
+                            title="Delete"
+                            onClick={() => onDelete && onDelete(r)}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 );
-                })}
-              </tbody>
-            </table>
-          </div>
-          {rows.length > pageSize && (
-            <div className="da-table-pagination">
-              <div className="da-table-pagination-info">
-                Showing { (currentPage - 1) * pageSize + 1 }–
-                { Math.min(currentPage * pageSize, rows.length) } of {rows.length}
-              </div>
-              <div className="da-table-pagination-controls">
-                <button
-                  type="button"
-                  className="da-page-btn"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                >
-                  Prev
-                </button>
-                {Array.from({ length: totalPages }).map((_, i) => {
-                  const page = i + 1;
-                  // Simple window: always show first, last, current, and neighbours
-                  const isEdge = page === 1 || page === totalPages;
-                  const isNear = Math.abs(page - currentPage) <= 1;
-                  if (!isEdge && !isNear) {
-                    if (page === 2 && currentPage > 3) {
-                      return <span key={page} className="da-page-ellipsis">…</span>;
-                    }
-                    if (page === totalPages - 1 && currentPage < totalPages - 2) {
-                      return <span key={page} className="da-page-ellipsis">…</span>;
-                    }
-                    return null;
-                  }
-                  return (
-                    <button
-                      key={page}
-                      type="button"
-                      className={`da-page-btn ${page === currentPage ? 'active' : ''}`}
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </button>
-                  );
-                })}
-                <button
-                  type="button"
-                  className="da-page-btn"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
-        </>
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -1334,10 +1334,10 @@ const ManageActivities = () => {
 
             <div className="ma-modal-form">
               <p className="ma-modal-message">
-                Delete <strong>{deleteConfirm.item.name}</strong>? This will move it to the deleted list. You can provide a reason and your admin password to confirm.
+                Delete <strong>{deleteConfirm.item.name}</strong>? This will move it to the deleted list. You can provide a reason (optional) and your admin password to confirm.
               </p>
               <div className="ma-form-group">
-                <label className="ma-label">Reason for deletion </label>
+                <label className="ma-label">Reason for deletion (Optional)</label>
                 <textarea
                   id="deleteReasonInput"
                   className="ma-textarea"

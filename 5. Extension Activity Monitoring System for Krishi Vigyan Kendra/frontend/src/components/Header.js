@@ -71,7 +71,7 @@ const Header = ({ isSidebarCollapsed, onLogout }) => {
         <div className="kvk-title-section">
           <div className="kvk-title-container">
             <h1 className="kvk-system-title">
-              Krishi Vigyan Kendra Extension Activity Monitoring System
+              Krishi Vigyan Kendra Extension Activity Data Logger
             </h1>
           </div>
         </div>

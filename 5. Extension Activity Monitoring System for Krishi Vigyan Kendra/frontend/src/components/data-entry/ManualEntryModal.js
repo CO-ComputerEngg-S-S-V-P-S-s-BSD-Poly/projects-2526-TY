@@ -285,10 +285,7 @@ const ManualEntryModal = ({ open, onClose, onSave }) => {
                       <td>
                         <CustomDropdown 
                           value={form.discipline} 
-                          options={[
-                            ...disciplines.map(d => ({ value: d.code, label: d.name })),
-                            { value: 'other', label: 'Other' }
-                          ]} 
+                          options={disciplines.map(d => ({ value: d.code, label: d.name }))} 
                           onSelect={(val) => updateVal('discipline', val)}
                           placeholder="Select Discipline"
                           required
