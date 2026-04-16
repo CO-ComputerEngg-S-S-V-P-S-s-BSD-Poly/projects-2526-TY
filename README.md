@@ -67,8 +67,7 @@ KrushiSakha/
 </p>
 
 
-<br>
-<p><h1>7. Prerequisites and installation steps: </h1>## # 🌱 Krushi Sakha (Farmer's Friend)
+<h1>7. Prerequisites and installation steps: </h1>## # 🌱 Krushi Sakha (Farmer's Friend)
 
 ## 📌 Project Abstract
 **Krushi Sakha** is a highly optimized, native Android application engineered to bridge the critical knowledge gap in modern agriculture. Farmers currently face significant financial losses (up to 30-40%) due to a lack of scientific crop management, particularly in warehousing and disease mitigation. 
@@ -155,5 +154,4 @@ Every crop within the system adheres to a strict 5-pillar architectural framewor
 git clone [https://github.com/YourUsername/KrushiSakha.git](https://github.com/YourUsername/KrushiSakha.git)
 
 # Navigate into the project directory
-cd KrushiSakha </p>
-</p>
+cd KrushiSakha 
