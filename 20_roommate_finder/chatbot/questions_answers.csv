@@ -1,0 +1,12 @@
+question,answer,related
+"hi","Hello! 😊 Welcome to the Roommate Finder chatbot. How can I assist you?","Find a roommate|List my property|How does this work"
+"find a roommate","Sure! What city are you looking for a roommate in?","|Pune|Nashik|Mumbai|Bangalore|Delhi"
+"list my property","You can list your property by signing up and adding details on our platform.","How much does it cost|How long does it take|Can I edit my listing"
+"how does this work","We connect you with verified roommates based on your preferences.","How do I verify|Is it free|Can I contact users directly"
+"how do I verify","To ensure safety, we require ID and phone number verification.","Is my data safe|How long does verification take|Can I skip verification"
+"is it free","Yes, basic features are free! Premium plans offer more benefits.","What are premium benefits|How much does premium cost|Can I upgrade later"
+"contact users","You can chat with potential roommates after verifying your account.","How do I verify|Is my contact info public|Can I hide my details"
+"bye","Goodbye! Hope you find the perfect roommate. 😊","Hi|Find a roommate|List my property"
+"What is the rent range?","Rent prices vary by city and amenities.","Find a roommate|List my property|How does this work"
+"Are there female-only apartments?","Yes, you can filter listings based on gender preference.","Find a roommate|Is it free|How do I verify"
+"Do I need to pay a security deposit?","Yes, most landlords require a security deposit.","List my property|How much does it cost|Can I contact users directly"
