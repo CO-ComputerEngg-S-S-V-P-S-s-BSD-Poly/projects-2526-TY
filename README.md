@@ -4,5 +4,4 @@
 
   ## Submission Rules
   - One folder per group named: GroupNo-TopicName
-  - Add screenshots of the project too in the folder
-  
+  - Add screenshots of the project too in the folders
