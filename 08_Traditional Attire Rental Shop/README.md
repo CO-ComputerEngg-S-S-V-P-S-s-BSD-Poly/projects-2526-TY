@@ -6,10 +6,10 @@ This project is a web-based Traditional Attire Rental Management System designed
 The system also helps administrators and staff manage products, track bookings, handle returns, and maintain payment records efficiently. Real-time availability tracking reduces booking conflicts and ensures smooth operations. Overall, the system improves efficiency, reduces manual errors, enhances customer experience, and supports digital transformation in rental businesses.
 
 # Team Members:
-Kunal Raghunath Chaudhari
-Sakshi Vinod Chavan
-Harshali Vijay Fulpagare
-Daksh Pravin Jadhav
+1. Kunal Raghunath Chaudhari
+2. Sakshi Vinod Chavan
+3. Harshali Vijay Fulpagare
+4. Daksh Pravin Jadhav
 
 # Tech Stack:
 Frontend: React.js (with Vite.js), HTML, CSS, Bootstrap
