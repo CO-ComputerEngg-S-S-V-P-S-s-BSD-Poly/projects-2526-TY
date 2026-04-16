@@ -1,0 +1,69 @@
+.pandit-container {
+  display: flex;
+  height: 100vh;
+}
+
+.pandit-left {
+  width: 50%;
+  background-size: cover;
+  background-position: center;
+}
+
+.pandit-overlay {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pandit-logo {
+  width: 160px;
+  margin-bottom: 20px;
+}
+
+.pandit-card {
+  background: #fff;
+  padding: 30px;
+  width: 350px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.pandit-title {
+  margin-bottom: 20px;
+}
+
+.pandit-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.pandit-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(to right, #ff9800, #f44336);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.pandit-right {
+  width: 50%;
+  position: relative;
+}
+
+
+.pandit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
