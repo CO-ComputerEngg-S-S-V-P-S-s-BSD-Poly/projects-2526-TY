@@ -1,4 +1,4 @@
-# Water Jar Management System
+# 2 - Water Jar Management System
 
 ## Project Description
 
@@ -12,10 +12,10 @@ The Water Jar Management System is a web-based application developed using React
 
 **Team Members:**
 
-Khushbu Patil
-Harshada Pandurang Mahajan
-Tanishka Hemant Patil
-Priti Tukaram Patil
+1. Khushbu Patil
+2. Harshada Pandurang Mahajan
+3. Tanishka Hemant Patil
+4. Priti Tukaram Patil
 
 
 ---
