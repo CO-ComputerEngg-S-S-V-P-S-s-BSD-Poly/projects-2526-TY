@@ -1,0 +1,59 @@
+.admin-login-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0f172a; /* Dark theme for Admin */
+}
+
+.admin-login-card {
+  background: #1e293b;
+  padding: 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.login-icon-box { margin-bottom: 20px; display: inline-block; }
+
+.admin-login-card h2 { color: white; margin-bottom: 5px; }
+.admin-login-card p { color: #94a3b8; margin-bottom: 30px; }
+
+.admin-input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.admin-input-group .input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+}
+
+.admin-input-group input {
+  width: 350px;
+  padding: 12px 15px 12px 45px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  color: white;
+  outline: none;
+}
+
+.admin-login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #fb923c;
+  border: none;
+  border-radius: 10px;
+  color: #0f172a;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.admin-login-btn:hover { background: #f97316; }

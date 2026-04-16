@@ -1,0 +1,173 @@
+/* ===== PAGE WRAPPER ===== */
+.admin-orders-page {
+  padding: 40px;
+  margin-left: 300px;
+  background: linear-gradient(135deg, #f8fafc, #eef2f7);
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.page-header p {
+  color: #6b7280;
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+/* ===== TABLE CONTAINER ===== */
+.orders-table-container {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  overflow-x: auto;
+  transition: 0.3s ease;
+}
+
+/* ===== TABLE ===== */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+/* ===== TABLE HEAD ===== */
+.orders-table thead {
+  background: linear-gradient(90deg, #16a34a, #15803d);
+  color: #fff;
+}
+
+.orders-table th {
+  padding: 14px 12px;
+  font-size: 13px;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+
+/* ===== TABLE BODY ===== */
+.orders-table td {
+  padding: 14px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #374151;
+}
+
+/* Hover Animation */
+.orders-table tbody tr {
+  transition: all 0.25s ease;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #f0fdf4;
+  transform: scale(1.01);
+}
+
+/* ===== AMOUNT CELL ===== */
+.amount-cell {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+/* ===== PAYMENT METHOD TAG ===== */
+.method-tag {
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+/* ===== STATUS BADGE ===== */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Paid */
+.status-badge.paid {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Pending */
+.status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Processing */
+.status-badge.processing {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* Shipped */
+.status-badge.shipped {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+/* Delivered */
+.status-badge.delivered {
+  background: #bbf7d0;
+  color: #166534;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 12px;
+}
+
+/* ===== LOADING CENTER FIX ===== */
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.h-64 {
+  height: 16rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .admin-orders-page {
+    padding: 20px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    font-size: 12px;
+  }
+}
