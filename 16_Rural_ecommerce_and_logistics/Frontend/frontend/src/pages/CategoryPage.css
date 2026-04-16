@@ -1,0 +1,128 @@
+/* ===== MAIN CONTAINER ===== */
+.category-container {
+  padding: 60px 8%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  font-family: 'Segoe UI', sans-serif;
+  color: #0f172a;
+}
+
+/* ===== TITLE ===== */
+.category-title {
+  font-size: 30px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.category-title::after {
+  content: '';
+  width: 80px;
+  height: 4px;
+  background: #22c55e;
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 10px;
+}
+
+/* ===== FILTER SECTION ===== */
+.filter-scroll-wrapper {
+  overflow-x: auto;
+  margin-bottom: 35px;
+}
+
+.filter-chips {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+}
+
+/* FILTER BUTTON */
+.filter-btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filter-btn:hover {
+  background: #22c55e;
+  color: white;
+  border-color: #22c55e;
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 15px rgba(34,197,94,0.3);
+}
+
+/* ===== PRODUCT GRID ===== */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 25px;
+}
+
+/* ===== LOADER ===== */
+.loader-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.spinner {
+  width: 45px;
+  height: 45px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #22c55e;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader-text {
+  font-size: 14px;
+  color: #475569;
+  letter-spacing: 1px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== EMPTY CATEGORY ===== */
+.empty-category {
+  text-align: center;
+  padding: 60px 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .category-container {
+    padding: 30px 5%;
+  }
+
+  .category-title {
+    font-size: 24px;
+  }
+
+  .filter-chips {
+    justify-content: flex-start;
+  }
+}

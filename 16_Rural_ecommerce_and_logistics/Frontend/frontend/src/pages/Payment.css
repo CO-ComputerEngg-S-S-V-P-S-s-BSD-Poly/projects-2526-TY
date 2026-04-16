@@ -1,0 +1,195 @@
+/* ===== PAGE CONTAINER ===== */
+.payment-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ===== MAIN CARD ===== */
+.payment-card {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  color: white;
+  animation: fadeUp 0.6s ease;
+}
+
+/* ===== HEADER ===== */
+.payment-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.payment-header h2 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.payment-header p {
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+/* ===== MINI SUMMARY ===== */
+.order-summary-mini {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.1);
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  font-weight: 500;
+}
+
+.pay-amount {
+  color: #22c55e;
+  font-weight: 700;
+}
+
+/* ===== FORM ===== */
+.selection-label {
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: #e2e8f0;
+}
+
+/* ===== METHODS GRID ===== */
+.methods-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+/* ===== METHOD CARD ===== */
+.method-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.07);
+  cursor: pointer;
+  transition: 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.method-option:hover {
+  background: rgba(255,255,255,0.12);
+  transform: translateY(-3px);
+}
+
+.method-option.selected {
+  border: 1px solid #22c55e;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.4);
+}
+
+/* METHOD INFO */
+.method-info {
+  flex: 1;
+}
+
+.method-info strong {
+  font-size: 14px;
+}
+
+.method-info small {
+  display: block;
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-top: 2px;
+}
+
+/* RADIO INDICATOR */
+.method-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  position: relative;
+}
+
+.method-option.selected .method-radio {
+  border-color: #22c55e;
+}
+
+.method-option.selected .method-radio::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+}
+
+/* ===== PAY BUTTON ===== */
+.pay-now-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: 0.3s ease;
+}
+
+.pay-now-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.pay-now-btn:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+/* ===== FOOTER ===== */
+.payment-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 12px;
+  color: #cbd5e1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 500px) {
+  .payment-card {
+    padding: 25px;
+  }
+
+  .method-option {
+    padding: 12px;
+  }
+}

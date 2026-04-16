@@ -1,0 +1,143 @@
+/* ===== CARD CONTAINER ===== */
+.p-card-container {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.p-card-container:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.18);
+}
+
+/* ===== IMAGE SECTION ===== */
+.p-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  display: block;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.p-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.p-card-container:hover .p-card-img {
+  transform: scale(1.08);
+}
+
+/* ===== CATEGORY BADGE ===== */
+.p-card-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== BODY ===== */
+.p-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ===== TITLE ===== */
+.p-card-title-link {
+  text-decoration: none;
+}
+
+.p-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  transition: color 0.3s ease;
+}
+
+.p-card-title:hover {
+  color: #16a34a;
+}
+
+/* ===== ARTISAN ===== */
+.p-card-artisan {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ===== RATING ===== */
+.p-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.star-icon {
+  color: #facc15;
+  fill: #facc15;
+}
+
+.rating-text {
+  font-size: 13px;
+  color: #475569;
+}
+
+/* ===== FOOTER ===== */
+.p-card-footer {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* PRICE */
+.p-card-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* CART BUTTON */
+.p-card-cart-btn {
+  background: #0f172a;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.p-card-cart-btn:hover {
+  background: #16a34a;
+  transform: scale(1.1);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .p-card-container {
+    margin-bottom: 20px;
+  }
+  
+  .p-card-img {
+    height: 200px;
+  }
+}

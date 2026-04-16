@@ -1,0 +1,352 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.artisan-layout{
+  display:flex;
+  min-height:100vh;
+  background:#f4f6f9;
+}
+
+/* SIDEBAR */
+
+.artisan-sidebar{
+  width:240px;
+  background:#1e293b;
+  color:white;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:20px;
+}
+
+.sidebar-brand{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.brand-title{
+  font-size:22px;
+  font-weight:600;
+}
+
+.brand-subtitle{
+  font-size:12px;
+  color:#94a3b8;
+}
+
+/* MENU */
+
+.sidebar-menu{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.menu-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:none;
+  background:transparent;
+  color:white;
+  cursor:pointer;
+  border-radius:8px;
+  transition:0.3s;
+  font-size:14px;
+}
+
+.menu-item:hover{
+  background:#334155;
+}
+
+.menu-item.is-active{
+  background:#3b82f6;
+}
+
+/* LOGOUT */
+
+.sidebar-exit{
+  margin-top:30px;
+}
+
+.exit-button{
+  width:100%;
+  padding:10px;
+  border:none;
+  background:#ef4444;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.exit-button:hover{
+  background:#dc2626;
+}
+
+/* MAIN PANEL */
+
+.artisan-main-panel{
+  flex:1;
+  padding:30px;
+}
+
+/* HEADER */
+
+.panel-header{
+  margin-bottom:25px;
+}
+
+.panel-header h1{
+  font-size:24px;
+  font-weight:600;
+}
+
+/* DASHBOARD STATS */
+
+.stats-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+
+.card-stat{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.card-stat:hover{
+  transform:translateY(-4px);
+}
+
+.stat-number{
+  font-size:28px;
+  font-weight:700;
+  color:#1e293b;
+}
+
+.stat-label{
+  color:#64748b;
+  margin-top:5px;
+}
+
+.card-stat.is-highlight{
+  background:linear-gradient(135deg,#6366f1,#3b82f6);
+  color:white;
+}
+
+.card-stat.is-highlight .stat-number{
+  color:white;
+}
+
+.card-stat.is-highlight .stat-label{
+  color:#e0e7ff;
+}
+
+/* FORM */
+
+.artisan-form-box{
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  max-width:650px;
+  box-shadow:0 3px 12px rgba(0,0,0,0.1);
+}
+
+.form-heading{
+  margin-bottom:20px;
+}
+
+.product-upload-form{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.form-input,
+.form-textarea,
+.form-select{
+  padding:12px;
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  font-size:14px;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus{
+  outline:none;
+  border-color:#3b82f6;
+}
+
+.input-row{
+  display:flex;
+  gap:10px;
+}
+
+.form-textarea{
+  min-height:100px;
+  resize:none;
+}
+
+.file-upload-section{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.file-label{
+  font-size:13px;
+  color:#64748b;
+}
+
+.submit-form-btn{
+  padding:12px;
+  background:#3b82f6;
+  border:none;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:500;
+  transition:0.3s;
+}
+
+.submit-form-btn:hover{
+  background:#2563eb;
+}
+
+/* PRODUCT LIST */
+
+.artisan-content-card{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 3px 12px rgba(0,0,0,0.08);
+}
+
+.admin-list-wrapper{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+.admin-list-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  border:1px solid #e5e7eb;
+  border-radius:8px;
+}
+
+.item-name{
+  font-size:15px;
+}
+
+.item-details{
+  color:#6b7280;
+}
+
+.item-actions{
+  display:flex;
+  gap:10px;
+}
+
+/* BUTTONS */
+
+.btn-approve{
+  background:#22c55e;
+  border:none;
+  color:white;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.btn-approve:hover{
+  background:#16a34a;
+}
+
+.btn-reject{
+  background:#ef4444;
+  border:none;
+  color:white;
+  padding:6px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.btn-reject:hover{
+  background:#dc2626;
+}
+
+/* STATUS BADGE */
+
+.admin-badge{
+  padding:4px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:500;
+}
+
+.status-processing{
+  background:#fde68a;
+}
+
+.status-packed{
+  background:#bfdbfe;
+}
+
+.status-shipped{
+  background:#bbf7d0;
+}
+
+.status-delivered{
+  background:#22c55e;
+  color:white;
+}
+
+/* EMPTY MESSAGE */
+
+.empty-msg{
+  text-align:center;
+  color:#9ca3af;
+  margin-top:20px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width:900px){
+
+  .artisan-layout{
+    flex-direction:column;
+  }
+
+  .artisan-sidebar{
+    width:100%;
+    flex-direction:row;
+    justify-content:space-between;
+  }
+
+  .sidebar-menu{
+    flex-direction:row;
+  }
+
+}
