@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submit Feedback | Geo-Track Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .star-rating { font-size: 2rem; color: #ddd; cursor: pointer; }
+        .star-rating .fa-star.active { color: #f59e0b; }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card-custom mx-auto" style="max-width: 500px;">
+            <h3 class="fw-bold text-center mb-4">Event Feedback</h3>
+            <form id="feedbackForm">
+                <div class="mb-3">
+                    <label class="form-label">Select Event</label>
+                    <select id="eventSelect" class="form-select" required></select>
+                </div>
+                
+                <div class="mb-3 text-center">
+                    <label class="form-label d-block">Rating</label>
+                    <div class="star-rating" id="starRating">
+                        <i class="fas fa-star" data-value="1"></i>
+                        <i class="fas fa-star" data-value="2"></i>
+                        <i class="fas fa-star" data-value="3"></i>
+                        <i class="fas fa-star" data-value="4"></i>
+                        <i class="fas fa-star" data-value="5"></i>
+                    </div>
+                    <input type="hidden" id="ratingValue" value="5">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Your Comment</label>
+                    <textarea id="comment" class="form-control" rows="4" placeholder="How was your experience?" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-auth w-100">SUBMIT FEEDBACK</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Star Rating Logic
+        const stars = document.querySelectorAll('#starRating .fa-star');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const val = star.getAttribute('data-value');
+                document.getElementById('ratingValue').value = val;
+                stars.forEach(s => s.classList.toggle('active', s.getAttribute('data-value') <= val));
+            });
+        });
+
+        // Load Events for Dropdown
+        window.onload = async () => {
+            const res = await fetch('http://localhost:5000/api/events');
+            const events = await res.json();
+            document.getElementById('eventSelect').innerHTML = events.map(e => `<option value="${e.name}">${e.name}</option>`).join('');
+        };
+
+        document.getElementById('feedbackForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const user = JSON.parse(localStorage.getItem('user'));
+            const data = {
+                studentEmail: user.email,
+                eventName: document.getElementById('eventSelect').value,
+                rating: document.getElementById('ratingValue').value,
+                comment: document.getElementById('comment').value
+            };
+
+            const res = await fetch('http://localhost:5000/api/submit-feedback', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            if(res.ok) { alert("Thank you for feedback!"); window.location.href="dashboard.html"; }
+        };
+    </script>
+</body>
+</html>

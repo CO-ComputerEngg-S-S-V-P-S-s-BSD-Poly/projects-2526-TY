@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Organizer Dashboard | Geo-Track Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-light">
+
+<script>
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || user.role !== 'organizer') {
+        window.location.replace('../index.html');
+    }
+</script>
+
+<div class="sidebar">
+    <h3 class="fw-bold text-accent mb-4">ORGANIZER</h3>
+    <nav>
+        <a href="dashboard.html" class="nav-link active"><i class="fas fa-chart-line me-2"></i> Live Monitor</a>
+        <a href="create_event.html" class="nav-link"><i class="fas fa-plus-circle me-2"></i> Create Event</a>
+        <a href="attendance_logs.html" class="nav-link"><i class="fas fa-clipboard-list me-2"></i> Attendance Logs</a>
+        <a href="student_admin.html" class="nav-link"><i class="fas fa-users-cog me-2"></i> Manage Students</a>
+        <hr>
+        <a href="#" onclick="logout()" class="nav-link text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Event Monitoring</h2>
+        <div class="d-flex align-items-center">
+            <span class="me-3 text-muted">Welcome, <b id="adminName">Admin</b></span>
+            <a href="create_event.html" class="btn btn-primary px-4">+ New Event</a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center">
+                <small class="text-muted">Total Events</small>
+                <h2 id="totalEvents" class="fw-bold">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center border-success">
+                <small class="text-muted text-success">Active Now</small>
+                <h2 id="activeEvents" class="fw-bold text-success">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center border-primary">
+                <small class="text-muted text-primary">Total Attendance</small>
+                <h2 id="totalAtt" class="fw-bold text-primary">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 shadow-sm text-center border-danger">
+                <small class="text-muted text-danger">Violations</small>
+                <h2 id="violationCount" class="fw-bold text-danger">0</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm p-4 mb-4">
+        <h5 class="fw-bold mb-3">Your Created Events</h5>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Status</th>
+                        <th>Radius</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="orgEventTable">
+                    <tr><td colspan="4" class="text-center">Loading Events...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('adminName').innerText = user.name;
+
+    async function refreshDashboard() {
+        try {
+            // १. इव्हेंट्स डेटा
+            const eventRes = await fetch('http://localhost:5000/api/events');
+            const events = await eventRes.json();
+            const myEvents = events.filter(e => e.organizerEmail === user.email);
+            
+            const eventTable = document.getElementById('orgEventTable');
+            eventTable.innerHTML = myEvents.length ? myEvents.map(ev => `
+                <tr>
+                    <td><b>${ev.name}</b></td>
+                    <td><span class="badge ${ev.status === 'active' ? 'bg-success' : 'bg-secondary'}">${ev.status.toUpperCase()}</span></td>
+                    <td>${ev.radius}m</td>
+                    <td>
+                        <button class="btn btn-sm ${ev.status === 'active' ? 'btn-danger' : 'btn-success'}" 
+                                onclick="toggleStatus(${ev.id}, '${ev.status}')">
+                            ${ev.status === 'active' ? 'Stop' : 'Start'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('') : `<tr><td colspan="4" class="text-center text-muted">No events found.</td></tr>`;
+
+            // २. अटेंडन्स आकडेवारी (नवीन स्ट्रक्चरनुसार)
+            const logRes = await fetch('http://localhost:5000/api/attendance-logs');
+            const logs = await logRes.json(); // logs = {present: [], violations: []}
+            
+            document.getElementById('totalEvents').innerText = myEvents.length;
+            document.getElementById('activeEvents').innerText = myEvents.filter(e => e.status === 'active').length;
+            document.getElementById('totalAtt').innerText = logs.present ? logs.present.length : 0;
+            document.getElementById('violationCount').innerText = logs.violations ? logs.violations.length : 0;
+
+        } catch (err) {
+            console.error("Dashboard Sync Error:", err);
+        }
+    }
+
+    async function toggleStatus(id, currentStatus) {
+        const newStatus = currentStatus === 'active' ? 'stopped' : 'active';
+        try {
+            const res = await fetch('http://localhost:5000/api/update-event-status', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ eventId: Number(id), status: newStatus })
+            });
+            if(res.ok) refreshDashboard();
+        } catch (err) {
+            console.error("Status Update Failed", err);
+        }
+    }
+
+    function logout() {
+        localStorage.clear();
+        window.location.replace('../index.html');
+    }
+
+    window.onload = refreshDashboard;
+</script>
+</body>
+</html>

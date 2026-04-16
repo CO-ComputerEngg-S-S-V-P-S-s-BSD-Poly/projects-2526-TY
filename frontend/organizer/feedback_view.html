@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Feedbacks | Organizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h2 class="fw-bold mb-4">Student Feedbacks</h2>
+        <div id="feedbackList">
+            </div>
+    </div>
+
+    <script>
+        window.onload = async () => {
+            const res = await fetch('http://localhost:5000/api/feedback-list');
+            const feedbacks = await res.json();
+            const list = document.getElementById('feedbackList');
+
+            if(feedbacks.length === 0) {
+                list.innerHTML = "<div class='alert alert-info'>No feedback received yet.</div>";
+                return;
+            }
+
+            list.innerHTML = feedbacks.map(f => `
+                <div class="card-custom mb-3 p-3">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="fw-bold text-accent">${f.studentEmail}</h6>
+                        <span class="text-warning">
+                            ${Array(parseInt(f.rating)).fill('<i class="fas fa-star"></i>').join('')}
+                        </span>
+                    </div>
+                    <p class="mb-1"><strong>Event:</strong> ${f.eventName}</p>
+                    <p class="text-muted small">"${f.comment}"</p>
+                </div>
+            `).join('');
+        };
+    </script>
+</body>
+</html>

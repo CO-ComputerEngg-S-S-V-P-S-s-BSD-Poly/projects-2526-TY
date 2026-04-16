@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "id": 1771942227845,
+      "name": "Anup Rajput",
+      "email": "anuprajput8605@gmail.com",
+      "password": "1",
+      "role": "student",
+      "collegeId": "85",
+      "department": "Computer Science",
+      "status": "active",
+      "createdAt": "2026-02-24T14:10:27.845Z"
+    }
+  ],
+  "events": [],
+  "attendance": [],
+  "violation_logs": [],
+  "feedback": []
+}

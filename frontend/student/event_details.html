@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Details | Geo-Track Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .event-header { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 40px; border-radius: 20px; }
+        .info-box { background: white; border-radius: 15px; padding: 20px; border-bottom: 4px solid var(--accent); }
+        /* Disable बटणसाठी थोडा वेगळा लूक */
+        .btn-marked { background-color: #6c757d !important; cursor: not-allowed; opacity: 0.8; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="event-header mb-4 shadow-lg">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="badge bg-warning text-dark mb-2"><i class="fas fa-bullhorn me-1"></i> Active Event</span>
+                <h1 id="detEventName" class="fw-bold">Loading Event...</h1>
+            </div>
+            <i class="fas fa-map-location-dot fa-4x opacity-50"></i>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="info-box mb-4">
+                <h5 class="fw-bold mb-3">Event Description</h5>
+                <p id="detDesc" class="text-muted">No description provided for this event.</p>
+                <hr>
+                <div class="row">
+                    <div class="col-6">
+                        <small class="text-muted d-block">Geofence Radius</small>
+                        <span class="fw-bold" id="detRadius">--</span> meters
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">Time Window</small>
+                        <span class="fw-bold" id="detWindow">--</span> Minutes
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h5 class="fw-bold mb-3"><i class="fas fa-shield-check text-success me-2"></i>Attendance Policy</h5>
+                <ul class="small text-muted">
+                    <li>You must be within the specified radius to mark attendance.</li>
+                    <li>GPS must be enabled with High Accuracy.</li>
+                    <li>Proxy or VPN usage will result in a <b>Violation Log</b>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card-custom text-center shadow-sm p-4 bg-white" style="border-radius: 15px;">
+                <h5 class="fw-bold mb-3">Verification</h5>
+                <p id="statusMsg" class="small text-muted">Please ensure you are at the event location before clicking verify.</p>
+                
+                <button id="markBtn" class="btn-auth w-100 py-3 mb-3" onclick="goToVerify()">
+                    <i class="fas fa-fingerprint me-2"></i> VERIFY LOCATION
+                </button>
+                
+                <a href="dashboard.html" class="btn btn-outline-secondary w-100">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('id');
+    const user = JSON.parse(localStorage.getItem('user')); // लॉगिन असलेल्या युजरची माहिती
+
+    window.onload = async () => {
+        if (!user) {
+            window.location.href = '../index.html';
+            return;
+        }
+
+        try {
+            // १. इव्हेंटची माहिती आणणे
+            const eventRes = await fetch('http://localhost:5000/api/events');
+            const events = await eventRes.json();
+            const event = events.find(e => Number(e.id) === Number(eventId));
+
+            if (event) {
+                document.getElementById('detEventName').innerText = event.name;
+                document.getElementById('detDesc').innerText = event.description || "No description provided.";
+                document.getElementById('detRadius').innerText = event.radius;
+                document.getElementById('detWindow').innerText = event.window;
+                
+                // २. हजेरी आधीच लागली आहे का ते चेक करणे (Duplicate Check)
+                checkExistingAttendance();
+                
+            } else {
+                alert("Event not found!");
+                window.location.href = 'dashboard.html';
+            }
+        } catch (err) {
+            console.error("Failed to load event details", err);
+        }
+    };
+
+    async function checkExistingAttendance() {
+        try {
+            const res = await fetch('http://localhost:5000/api/attendance-logs');
+            const data = await res.json();
+            
+            // हजेरीच्या लिस्टमध्ये या विद्यार्थ्याचा ईमेल आणि हा इव्हेंट आयडी आहे का?
+            const alreadyPresent = data.present.some(a => 
+                a.studentEmail === user.email && Number(a.eventId) === Number(eventId)
+            );
+
+            if (alreadyPresent) {
+                const btn = document.getElementById('markBtn');
+                btn.disabled = true;
+                btn.classList.add('btn-marked');
+                btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> ATTENDANCE MARKED';
+                document.getElementById('statusMsg').innerHTML = '<span class="text-success fw-bold">Your attendance has already been recorded.</span>';
+            }
+        } catch (err) {
+            console.error("Error checking attendance status", err);
+        }
+    }
+
+    function goToVerify() {
+        const name = document.getElementById('detEventName').innerText;
+        window.location.href = `mark_attendance.html?id=${eventId}&name=${encodeURIComponent(name)}`;
+    }
+</script>
+</body>
+</html>

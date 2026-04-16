@@ -1,0 +1,221 @@
+/* 1. Global Variables & Root - प्रोजेक्टची थीम इथून कंट्रोल होते */
+:root {
+    --primary: #0f172a;       /* Deep Dark Blue */
+    --accent: #2563eb;        /* Vibrant Electric Blue */
+    --success: #10b981;       /* Emerald Green */
+    --danger: #ef4444;        /* Rose Red */
+    --warning: #f59e0b;       /* Amber */
+    --bg-main: #f1f5f9;       /* Soft Light Gray Blue */
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* 2. Base Setup */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* 3. ADVANCED AUTH LAYOUT (Login/Signup) - इथून बदल सुरू होतात */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* कॉलेजचा फोटो खालील लाईनमध्ये सेट कर */
+    background: url('capstone.webp') no-repeat center center fixed; 
+    background-size: cover;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* फोटोवर एक डार्क ब्ल्युइश लेयर ज्यामुळे टेक्स्ट उठून दिसेल */
+.auth-container::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(37, 99, 235, 0.4));
+    z-index: -1;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.9); /* पारदर्शक पांढरा */
+    backdrop-filter: blur(15px);          /* Glassmorphism Effect */
+    -webkit-backdrop-filter: blur(15px);
+    padding: 3rem;
+    border-radius: 32px;                 /* जास्त कर्व्ह केलेले कॉर्नर्स */
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    width: 100%;
+    max-width: 460px;
+    border: 1px solid rgba(255, 255, 255, 0.3); /* ग्लोइंग बॉर्डर */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.auth-card:hover {
+    transform: translateY(-8px);
+}
+
+.brand-logo {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -1.5px;
+    text-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* इनपुट बॉक्सला अधिक आधुनिक लुक */
+.form-control {
+    border-radius: 12px !important;
+    padding: 12px 15px !important;
+    border: 2px solid #e2e8f0 !important;
+    background: rgba(248, 250, 252, 0.8) !important;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+    background: #ffffff !important;
+}
+
+/* 4. Dashboard Layout (Student & Organizer) - जसा आहे तसाच ठेवला आहे */
+.sidebar {
+    height: 100vh;
+    width: 260px;
+    background: var(--primary);
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 1.5rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.main-content {
+    margin-left: 260px;
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    color: #94a3b8;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    transition: 0.2s;
+}
+
+.nav-link:hover, .nav-link.active {
+    background: rgba(37, 99, 235, 0.1);
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.nav-link.active {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+/* 5. Custom Reusable Components (Heavy Elements) */
+.card-custom {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    border-radius: 20px;
+    padding: 1.5rem;
+    background: #ffffff;
+    border-bottom: 4px solid var(--accent);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 6. Professional Buttons */
+.btn-auth {
+    background: var(--accent);
+    color: #ffffff;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    font-weight: 700;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.btn-auth:hover {
+    background: #1d4ed8;
+    transform: scale(1.02);
+    box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.4);
+}
+
+/* 7. Advanced Tables (For History & Reports) */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.table thead th {
+    border: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    background: #ffffff;
+    transition: 0.2s;
+}
+
+.table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* 8. Badge Styles */
+.badge-custom {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-present { background: #dcfce7; color: #166534; }
+.badge-violation { background: #fee2e2; color: #991b1b; }
+
+/* 9. Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar { width: 0; padding: 0; overflow: hidden; }
+    .main-content { margin-left: 0; }
+    .auth-card { padding: 2rem; }
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Reports | Geo-Track Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Generated Reports</h2>
+            <button class="btn btn-success" onclick="exportToExcel()">
+                <i class="fas fa-file-excel me-2"></i> Export to Excel
+            </button>
+        </div>
+
+        <div class="card-custom">
+            <table class="table" id="reportTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Student Name</th>
+                        <th>Event</th>
+                        <th>Status</th>
+                        <th>Distance (m)</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        window.onload = loadFullReport;
+
+        function exportToExcel() {
+            const table = document.getElementById("reportTable");
+            const wb = XLSX.utils.table_to_book(table, {sheet: "Attendance_Report"});
+            XLSX.writeFile(wb, "Geofence_Attendance_Report.xlsx");
+        }
+
+        async function loadFullReport() {
+            const res = await fetch('http://localhost:5000/api/full-report');
+            const data = await res.json();
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = data.map(r => `
+                <tr>
+                    <td>${new Date(r.time).toLocaleDateString()}</td>
+                    <td>${r.studentName}</td>
+                    <td>${r.eventName}</td>
+                    <td><span class="badge ${r.status.includes('Present') ? 'bg-success' : 'bg-danger'}">${r.status}</span></td>
+                    <td>${r.distance}m</td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

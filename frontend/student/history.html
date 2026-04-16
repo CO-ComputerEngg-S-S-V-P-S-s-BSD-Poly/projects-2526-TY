@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance History | Geo-Track Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">My Attendance History</h2>
+            <div class="card p-3 shadow-sm">
+                <small class="text-muted">Current Attendance</small>
+                <h4 id="attendancePercentage" class="fw-bold text-primary">0%</h4>
+            </div>
+        </div>
+
+        <div class="card-custom bg-white p-4 shadow-sm rounded">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date & Time</th>
+                        <th>Distance Recorded</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    </tbody>
+            </table>
+        </div>
+        <a href="dashboard.html" class="btn btn-link mt-3 text-decoration-none">← Back to Dashboard</a>
+    </div>
+
+    <script>
+        window.onload = loadStudentHistory;
+
+        async function loadStudentHistory() {
+            // १. लॉगिन असलेला युजर मिळवा
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            try {
+                // २. बॅकएंडकडून डेटा खेचणे
+                const logsRes = await fetch('http://localhost:5000/api/attendance-logs');
+                const logsData = await logsRes.json();
+                
+                const eventsRes = await fetch('http://localhost:5000/api/events');
+                const totalEvents = await eventsRes.json();
+
+                // ३. फक्त स्वतःची (लॉगिन स्टुडंटची) हजेरी फिल्टर करणे
+                const myAttendance = logsData.present.filter(log => log.studentEmail === user.email);
+                
+                // ४. टेबलमध्ये डेटा भरणे
+                const tableBody = document.getElementById('historyTableBody');
+                tableBody.innerHTML = '';
+
+                if (myAttendance.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center">No attendance history found.</td></tr>';
+                } else {
+                    myAttendance.forEach(log => {
+                        tableBody.innerHTML += `
+                            <tr>
+                                <td>${log.eventName}</td>
+                                <td>${new Date(log.time).toLocaleString()}</td>
+                                <td>${log.distance}m</td>
+                                <td><span class="badge bg-success">Present</span></td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // ५. टक्केवारी कॅल्क्युलेट करणे (Percentage Calculation)
+                const percentageDisplay = document.getElementById('attendancePercentage');
+                if (totalEvents.length > 0) {
+                    const percent = (myAttendance.length / totalEvents.length) * 100;
+                    percentageDisplay.innerText = Math.round(percent) + "%";
+                }
+
+            } catch (err) {
+                console.error("Error loading student history:", err);
+                alert("Failed to connect to server!");
+            }
+        }
+    </script>
+</body>
+</html>

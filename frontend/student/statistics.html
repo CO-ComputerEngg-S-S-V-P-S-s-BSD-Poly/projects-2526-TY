@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics & Certificate | Geo-Track Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .stats-progress { height: 20px; border-radius: 10px; background: #e9ecef; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent); transition: 0.5s; width: 0%; }
+        .cert-card { border: 2px dashed #ccc; border-radius: 15px; padding: 40px; text-align: center; background: #fff; }
+        .cert-card.eligible { border-color: #28a745; background: #f8fff9; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="fas fa-chart-pie me-2 text-primary"></i>My Performance</h2>
+        <a href="dashboard.html" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5 mb-4">
+            <div class="card-custom p-4">
+                <h5 class="fw-bold mb-4">Attendance Summary</h5>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Overall Attendance</span>
+                        <span class="fw-bold" id="percLabel">0%</span>
+                    </div>
+                    <div class="stats-progress">
+                        <div class="progress-fill" id="percBar"></div>
+                    </div>
+                </div>
+                <div class="row mt-4 text-center">
+                    <div class="col-6 border-end">
+                        <small class="text-muted d-block">Total Events</small>
+                        <h4 class="fw-bold" id="totalEv">0</h4>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted d-block">Attended</small>
+                        <h4 class="fw-bold text-success" id="attCount">0</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div id="certBox" class="cert-card">
+                <i class="fas fa-certificate fa-4x mb-3 text-muted" id="certIcon"></i>
+                <h4 class="fw-bold">Completion Certificate</h4>
+                <p class="text-muted" id="certMsg">You need at least <b>75% attendance</b> to unlock your certificate.</p>
+                
+                <div id="unlockZone" style="display: none;">
+                    <div class="alert alert-success border-0 shadow-sm">
+                        🎉 Congratulations! You are eligible for the certificate.
+                    </div>
+                    <button class="btn-auth px-5" onclick="downloadCert()">
+                        <i class="fas fa-download me-2"></i> DOWNLOAD CERTIFICATE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = async () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(!user) window.location.href = '../index.html';
+
+        try {
+            // Backend कडून विद्यार्थ्याची आकडेवारी मिळवा (Phase 3.4)
+            const res = await fetch(`http://localhost:5000/api/student-stats?email=${user.email}`);
+            const stats = await res.json();
+
+            const percentage = stats.totalEvents > 0 ? Math.round((stats.attended / stats.totalEvents) * 100) : 0;
+
+            // UI Update करा
+            document.getElementById('totalEv').innerText = stats.totalEvents;
+            document.getElementById('attCount').innerText = stats.attended;
+            document.getElementById('percLabel').innerText = percentage + "%";
+            document.getElementById('percBar').style.width = percentage + "%";
+
+            // Certificate Eligibility Check (Phase 3.4 Logic)
+            if (percentage >= 75) {
+                document.getElementById('certBox').classList.add('eligible');
+                document.getElementById('certIcon').classList.replace('text-muted', 'text-warning');
+                document.getElementById('certMsg').style.display = 'none';
+                document.getElementById('unlockZone').style.display = 'block';
+            }
+        } catch (err) {
+            console.error("Stats loading failed", err);
+        }
+    };
+
+    function downloadCert() {
+        // हे फंक्शन आपण बनवलेल्या certificate.html वर घेऊन जाईल
+        window.location.href = 'certificate.html';
+    }
+</script>
+</body>
+</html>

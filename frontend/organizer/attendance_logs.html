@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Logs | Manual Override</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="main-content" style="margin-left: 0; padding: 40px;">
+        <div class="card-custom">
+            <h3 class="fw-bold mb-4">Manual Attendance & Rejection Review</h3>
+            
+            <ul class="nav nav-tabs mb-4" id="logTabs">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#presentList">Present List</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rejectionList">Violation Logs</button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="presentList">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5>Successfully Marked Attendance</h5>
+                        <button class="btn btn-sm btn-success" onclick="manualOverridePrompt()">+ Manual Override</button>
+                    </div>
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr><th>Student Email</th><th>Event</th><th>Time</th><th>Method</th></tr>
+                        </thead>
+                        <tbody id="presentTableBody">
+                            </tbody>
+                    </table>
+                </div>
+
+                <div class="tab-pane fade" id="rejectionList">
+                    <h5 class="text-danger">Failed Attempts (Violations)</h5>
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr><th>Student</th><th>Distance</th><th>Reason</th><th>Time</th></tr>
+                        </thead>
+                        <tbody id="violationTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+            <a href="dashboard.html" class="btn btn-secondary mt-3">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // १. डेटा लोड करण्याचे मुख्य फंक्शन
+        async function loadAdvancedLogs() {
+            console.log("Fetching logs...");
+            try {
+                const res = await fetch('http://localhost:5000/api/attendance-logs');
+                if (!res.ok) throw new Error("Server not responding");
+                
+                const data = await res.json();
+
+                // प्रेझेंट लिस्ट भरूया
+                const presentTable = document.getElementById('presentTableBody');
+                if (presentTable) {
+                    presentTable.innerHTML = '';
+                    if (data.present && data.present.length > 0) {
+                        data.present.forEach(log => {
+                            presentTable.innerHTML += `
+                                <tr>
+                                    <td>${log.studentEmail}</td>
+                                    <td>${log.eventName || 'Event'}</td>
+                                    <td>${new Date(log.time).toLocaleString()}</td>
+                                    <td><span class="badge bg-success">Geofence Verified</span></td>
+                                </tr>`;
+                        });
+                    } else {
+                        presentTable.innerHTML = '<tr><td colspan="4" class="text-center">No records found.</td></tr>';
+                    }
+                }
+
+                // व्हायलेशन लिस्ट भरूया
+                const violationTable = document.getElementById('violationTableBody');
+                if (violationTable) {
+                    violationTable.innerHTML = '';
+                    if (data.violations && data.violations.length > 0) {
+                        data.violations.forEach(log => {
+                            violationTable.innerHTML += `
+                                <tr>
+                                    <td>${log.studentEmail}</td>
+                                    <td>${log.distance}m</td>
+                                    <td>Out of Range</td>
+                                    <td>${new Date(log.time).toLocaleString()}</td>
+                                </tr>`;
+                        });
+                    } else {
+                        violationTable.innerHTML = '<tr><td colspan="4" class="text-center">No violations found.</td></tr>';
+                    }
+                }
+            } catch (err) {
+                console.error("Fetch Error:", err);
+            }
+        }
+
+        // २. मॅनुअल ओव्हरराईड फंक्शन
+        async function manualOverridePrompt() {
+            const email = prompt("Enter Student Email:");
+            const eventId = prompt("Enter Event ID:");
+            if(email && eventId) {
+                const res = await fetch('http://localhost:5000/api/mark-attendance', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ studentEmail: email, eventId: eventId, studentLat: 0, studentLng: 0 })
+                });
+                if(res.ok) { 
+                    alert("Success!"); 
+                    loadAdvancedLogs(); 
+                }
+            }
+        }
+
+        // ३. पेज लोड झाल्यावर फंक्शन कॉल करणे
+        window.onload = loadAdvancedLogs;
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{
+  "users": [
+    {
+      "id": 1772531902375,
+      "name": "Anup Rajput",
+      "email": "anuprajput8605@gmail.com",
+      "password": "1",
+      "role": "student",
+      "collegeId": "85",
+      "department": "Computer Science",
+      "status": "active",
+      "createdAt": "2026-03-03T09:58:22.375Z"
+    },
+    {
+      "id": 1772531958586,
+      "name": "Aishwarya Patil",
+      "email": "Aishwarya@gmail.com",
+      "password": "1",
+      "role": "organizer",
+      "collegeId": "ADMIN",
+      "department": "ADMIN",
+      "status": "active",
+      "createdAt": "2026-03-03T09:59:18.586Z"
+    },
+    {
+      "id": 1775627170044,
+      "name": "Omkar Rajput",
+      "email": "omkar@gmail.com",
+      "password": "kdjvgrie",
+      "role": "student",
+      "collegeId": "95",
+      "department": "Computer Science",
+      "status": "active",
+      "createdAt": "2026-04-08T05:46:10.044Z"
+    }
+  ],
+  "events": [
+    {
+      "id": 1774704870032,
+      "name": "internship",
+      "lat": 20.914410750935133,
+      "lng": 74.74870009652403,
+      "radius": 50,
+      "window": 60,
+      "description": "",
+      "organizerEmail": "Aishwarya@gmail.com",
+      "status": "active",
+      "createdAt": "2026-03-28T13:34:30.032Z"
+    },
+    {
+      "id": 1775627034683,
+      "name": "Anual Day",
+      "lat": 20.918566,
+      "lng": 74.780319,
+      "radius": 49,
+      "window": 60,
+      "description": "ihdiyg4yigiy",
+      "organizerEmail": "Aishwarya@gmail.com",
+      "status": "active",
+      "createdAt": "2026-04-08T05:43:54.683Z"
+    }
+  ],
+  "attendance": [],
+  "violation_logs": [
+    {
+      "studentEmail": "anuprajput8605@gmail.com",
+      "eventId": 1774704870032,
+      "eventName": "internship",
+      "time": "2026-04-09T02:42:14.458Z",
+      "distance": 3362,
+      "status": "Violation"
+    },
+    {
+      "studentEmail": "anuprajput8605@gmail.com",
+      "eventId": 1774704870032,
+      "eventName": "internship",
+      "time": "2026-04-09T03:00:38.960Z",
+      "distance": 8425852,
+      "status": "Violation"
+    }
+  ],
+  "feedback": []
+}
