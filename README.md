@@ -25,17 +25,17 @@ Sudarshan Devendra Patil
 
 ## 📁 Project Structure
 
+### 📂 Project Structure
+
+```text
 /Geo-Track-Pro-System
-│
 ├── /public
 │   ├── /css
 │   │   └── style.css
-│   │
 │   ├── /js
 │   │   ├── auth.js
 │   │   ├── organizer_features.js
 │   │   └── student_features.js
-│   │
 │   ├── /pages
 │   │   ├── index.html
 │   │   ├── signup.html
@@ -43,11 +43,9 @@ Sudarshan Devendra Patil
 │   │   ├── student_dashboard.html
 │   │   ├── attendance_report.html
 │   │   └── violation_log.html
-│   │
 │   └── /assets
 │       ├── capstone.webp
 │       └── logo.png
-│
 ├── server.js
 ├── database.json
 ├── package.json
