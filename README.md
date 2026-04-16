@@ -25,40 +25,35 @@ Sudarshan Devendra Patil
 
 ## 📁 Project Structure
 
-`/Geo-Track-Pro-System
+/Geo-Track-Pro-System
 │
-├── /node_modules           # (हे फक्त तुझ्या PC वर असेल, GitHub वर टाकू नकोस)
-│
-├── /public                 # सर्व क्लायंट-साईड फाईल्स
+├── /public
 │   ├── /css
-│   │   └── style.css       # तुझा तो अल्ट्रा-अ‍ॅडव्हान्स CSS कोड
+│   │   └── style.css
 │   │
-│   ├── /js                 # सर्व Frontend JavaScript लॉजिक
-│   │   ├── auth.js         # Login, Signup, Logout मॅनेजमेंट
-│   │   ├── organizer_features.js  # Attendance, Violation, Reports लॉजिक
-│   │   └── student_features.js    # Student Profile, History, Stats लॉजिक
+│   ├── /js
+│   │   ├── auth.js
+│   │   ├── organizer_features.js
+│   │   └── student_features.js
 │   │
-│   ├── /pages              # सर्व HTML फाईल्स
-│   │   ├── index.html              # मुख्य लँडिंग / लॉगिन पेज
-│   │   ├── signup.html             # रजिस्ट्रेशन पेज
-│   │   ├── organizer_dashboard.html # शिक्षकांचा डॅशबोर्ड
-│   │   ├── student_dashboard.html   # विद्यार्थ्यांचा डॅशबोर्ड
-│   │   ├── attendance_report.html   # रिपोर्ट्स पाहण्यासाठी पेज
-│   │   └── violation_log.html      # नियमांचे उल्लंघन ट्रॅक करण्यासाठी
+│   ├── /pages
+│   │   ├── index.html
+│   │   ├── signup.html
+│   │   ├── organizer_dashboard.html
+│   │   ├── student_dashboard.html
+│   │   ├── attendance_report.html
+│   │   └── violation_log.html
 │   │
-│   └── /assets             # मीडिया फाईल्स
-│       ├── capstone.webp   # बॅकग्राउंड इमेज
-│       └── logo.png        # कॉलेज/प्रोजेक्ट लोगो
+│   └── /assets
+│       ├── capstone.webp
+│       └── logo.png
 │
-├── /backend                # सर्व्हर साईड लॉजिक (Optional organization)
-│   └── helper_functions.js # काही एक्स्ट्रा लॉजिक असल्यास
-│
-├── server.js               # मुख्य Node.js Express Server
-├── database.json           # सेंट्रल डेटाबेस (Students, Attendance, Violations)
-├── package.json            # प्रोजेक्ट कॉन्फिगरेशन आणि डिपेंडन्सीज
-├── .gitignore              # (node_modules ला GitHub पासून वाचवण्यासाठी)
-└── README.md               # मघाशी दिलेलं इंग्लिश डॉक्युमेंटेशन
-
+├── server.js
+├── database.json
+├── package.json
+├── package-lock.json
+├── .gitignore
+└── README.md
 ## ⚙️ Prerequisites
 
 Before running the project, make sure you have:
