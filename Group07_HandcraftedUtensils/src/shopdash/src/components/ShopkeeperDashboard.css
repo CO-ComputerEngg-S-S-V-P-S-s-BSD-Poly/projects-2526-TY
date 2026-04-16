@@ -1,0 +1,4 @@
+/* ShopkeeperDashboard.css */
+/* All dashboard styles are in ShopkeeperSidebar.css (shared stylesheet) */
+/* Import it from there — both files use the same :root variables */
+@import "./ShopkeeperSidebar.css";

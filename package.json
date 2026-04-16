@@ -1,0 +1,12 @@
+{
+  "name": "projects-2526-ty",
+  "version": "1.0.0",
+  "description": "**Department:** Computer Engineering  \r   **College:** S.S.V.P.S's B. S. Deore Polytechnic, Dhule",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

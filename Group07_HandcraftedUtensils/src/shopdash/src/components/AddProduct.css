@@ -1,0 +1,198 @@
+@import "./ShopkeeperSidebar.css";
+
+/* ── Content wrapper ── */
+.ap-content { padding: 24px 28px; }
+
+.ap-error-banner {
+  background: rgba(239,83,80,0.08);
+  border: 1px solid rgba(239,83,80,0.25);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #c62828;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ── 2 column grid ── */
+.ap-form-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* ── Card ── */
+.ap-card {
+  background: var(--white);
+  border: 1px solid rgba(184,115,51,0.12);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 2px 10px rgba(184,115,51,0.08);
+}
+.ap-card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px; font-weight: 700; color: var(--dark);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(184,115,51,0.12);
+}
+
+/* ── Image Upload ── */
+.ap-img-drop {
+  display: block;
+  border: 2px dashed rgba(184,115,51,0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.ap-img-drop:hover { border-color: var(--copper); }
+
+.ap-img-placeholder {
+  padding: 36px 20px;
+  text-align: center;
+  background: var(--cream);
+}
+.ap-img-icon { font-size: 40px; margin-bottom: 10px; opacity: 0.5; }
+.ap-img-text { color: var(--mid); font-size: 13px; font-weight: 600; }
+.ap-img-sub { color: rgba(109,76,65,0.5); font-size: 11px; margin-top: 4px; }
+.ap-img-btn {
+  display: inline-block; margin-top: 12px;
+  padding: 8px 20px;
+  background: rgba(184,115,51,0.1);
+  border: 1px solid rgba(184,115,51,0.3);
+  border-radius: 8px; color: var(--copper);
+  font-size: 12px; font-weight: 700;
+}
+
+.ap-img-preview {
+  position: relative;
+  height: 220px;
+}
+.ap-img-preview img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.ap-img-change-overlay {
+  position: absolute; inset: 0;
+  background: rgba(62,39,35,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+  color: white; font-size: 14px; font-weight: 700;
+}
+.ap-img-drop:hover .ap-img-change-overlay { opacity: 1; }
+
+/* Category chips */
+.ap-cat-grid {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.ap-cat-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid rgba(184,115,51,0.22);
+  background: var(--cream);
+  color: var(--mid);
+  transition: all 0.2s;
+}
+.ap-cat-chip:hover:not(.active) { border-color: var(--copper); color: var(--copper); }
+.ap-cat-chip.active {
+  background: linear-gradient(135deg, var(--copper), var(--brass));
+  border-color: var(--copper); color: white;
+  box-shadow: 0 3px 10px rgba(184,115,51,0.3);
+}
+
+/* ── Form Fields ── */
+.ap-field { margin-bottom: 16px; }
+.ap-label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--copper); text-transform: uppercase;
+  letter-spacing: 0.9px; margin-bottom: 6px;
+}
+.ap-input {
+  width: 100%;
+  background: var(--cream);
+  border: 1.5px solid rgba(184,115,51,0.22);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--dark); font-size: 14px; outline: none;
+  font-family: 'Lato', sans-serif;
+  transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
+}
+.ap-input::placeholder { color: rgba(62,39,35,0.3); }
+.ap-input:focus {
+  border-color: var(--copper);
+  box-shadow: 0 0 0 3px rgba(184,115,51,0.11);
+  background: white;
+}
+.ap-input.error { border-color: #ef5350; }
+.ap-textarea { resize: vertical; min-height: 100px; }
+
+.ap-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+
+.ap-field-error { color: #ef5350; font-size: 11px; font-weight: 600; margin-top: 5px; }
+
+/* ── Actions ── */
+.ap-actions { display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(184,115,51,0.1); }
+.ap-cancel-btn {
+  flex: 1; padding: 13px;
+  background: var(--cream);
+  border: 1.5px solid rgba(184,115,51,0.25);
+  border-radius: 10px; color: var(--mid);
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: 'Lato', sans-serif; transition: all 0.2s;
+}
+.ap-cancel-btn:hover { border-color: var(--copper); color: var(--copper); }
+.ap-submit-btn {
+  flex: 2; padding: 13px;
+  background: linear-gradient(135deg, var(--copper), var(--brass));
+  border: none; border-radius: 10px; color: white;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: 'Lato', sans-serif;
+  box-shadow: 0 4px 16px rgba(184,115,51,0.3);
+  transition: all 0.2s;
+}
+.ap-submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(184,115,51,0.42); }
+.ap-submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.ap-loading { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.ap-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white; border-radius: 50%;
+  animation: spin 0.7s linear infinite; display: inline-block;
+}
+
+/* Back btn */
+.ap-back-btn {
+  padding: 9px 18px;
+  background: var(--cream);
+  border: 1.5px solid rgba(184,115,51,0.25);
+  border-radius: 10px; color: var(--mid);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  font-family: 'Lato', sans-serif; transition: all 0.2s;
+}
+.ap-back-btn:hover { border-color: var(--copper); color: var(--copper); }
+
+/* ── Success Screen ── */
+.ap-success-screen {
+  min-height: calc(100vh - 66px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 14px;
+  font-family: 'Lato', sans-serif;
+}
+.ap-success-icon { font-size: 64px; }
+.ap-success-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px; color: var(--dark); font-weight: 800;
+}
+.ap-success-sub { color: var(--mid); font-size: 15px; }
+.ap-success-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid rgba(184,115,51,0.2);
+  border-top-color: var(--copper); border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-top: 10px;
+}
