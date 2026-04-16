@@ -1,0 +1,66 @@
+﻿{% extends "base.html" %}
+
+{% block title %}{{ group.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+        <div>
+            <p class="recommendation-kicker mb-1">Setup Details</p>
+            <h1 class="display-6 mb-1">{{ group.name }}</h1>
+            <p class="text-muted mb-0">{{ group.summary }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('cart_page') }}" class="btn btn-outline-dark">Back to Cart</a>
+            {% if edit_url %}
+                <a href="{{ edit_url }}" class="btn btn-dark">Edit Setup</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <div class="small text-muted">Setup Type</div>
+                <div class="fw-semibold">{{ group.type|replace('_', ' ')|title }}</div>
+            </div>
+            <div class="text-end">
+                <div class="small text-muted">Total</div>
+                <div class="h4 mb-0">{{ total|inr }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        {% for component in components %}
+            <div class="col-lg-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex gap-3">
+                            <img src="{{ product_image(component) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('product-fallback', component.product_id or component.name) }}'" alt="{{ component.name }}" style="width:96px;height:96px;object-fit:cover;" class="rounded">
+                            <div class="flex-grow-1">
+                                <div class="small text-muted">{{ component.category }}</div>
+                                <h2 class="h6 mb-1">{{ component.name }}</h2>
+                                <p class="small text-muted mb-2">{{ component.description }}</p>
+                                <div class="fw-semibold mb-2">{{ component.price|inr }}</div>
+                                <span class="badge text-bg-light border">View Only</span>
+                            </div>
+                        </div>
+                        {% if component.specs %}
+                            <div class="small mt-3">
+                                {% for key, value in component.specs.items() %}
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <span class="text-muted">{{ key|replace('_',' ')|title }}</span>
+                                        <span>{{ value }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

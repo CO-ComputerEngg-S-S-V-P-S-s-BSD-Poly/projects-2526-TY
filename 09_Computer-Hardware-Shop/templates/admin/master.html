@@ -1,0 +1,31 @@
+{% extends 'admin/base.html' %}
+{% import 'admin/layout.html' as layout with context -%}
+
+{% block head_css %}
+    {{ super() }}
+    <link href="{{ url_for('static', filename='css/admin_panel.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block brand %}
+    <a class="navbar-brand admin-brand" href="{{ admin_view.admin.url }}">
+        <span class="admin-brand-mark">SK</span>
+        <span>{{ admin_view.admin.name }}</span>
+    </a>
+{% endblock %}
+
+{% block menu_links %}
+<ul class="nav navbar-nav navbar-right admin-menu-links">
+    {{ layout.menu_links() }}
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('index') }}"><i class="fa fa-external-link"></i> Storefront</a>
+    </li>
+    {% if current_user.is_authenticated %}
+    <li class="nav-item">
+        <span class="nav-link admin-user-chip"><i class="fa fa-user-circle"></i> {{ current_user.username }}</span>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('logout') }}"><i class="fa fa-sign-out"></i> Logout</a>
+    </li>
+    {% endif %}
+</ul>
+{% endblock %}

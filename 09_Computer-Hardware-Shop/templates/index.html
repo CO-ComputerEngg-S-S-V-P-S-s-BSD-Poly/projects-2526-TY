@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Hardware Consultant{% endblock %}
+
+{% block content %}
+<section class="hero legacy-home-hero">
+    <div class="container">
+        <div class="d-flex justify-content-end mb-4">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('profile') }}" class="btn btn-outline-light btn-sm">Profile</a>
+            {% else %}
+                <a href="{{ url_for('login_page') }}" class="btn btn-outline-light btn-sm me-2">Login</a>
+                <a href="{{ url_for('register') }}" class="btn btn-light btn-sm">Register</a>
+            {% endif %}
+        </div>
+
+        <div class="legacy-hero-content text-center mx-auto">
+            <p class="hero-kicker mb-3">SMART PC PLANNER</p>
+            <h1 class="display-4 mb-3">Build the Right Setup for Your Work and Budget</h1>
+            <p class="lead mb-4 text-light-emphasis">
+                Tell us your use case and get component recommendations instantly, then buy directly from the catalog.
+            </p>
+
+            <form action="{{ url_for('search') }}" method="POST" id="home-recommend-form" class="legacy-recommend-bar" novalidate>
+                <div class="legacy-recommend-controls">
+                    <label class="visually-hidden" for="categorySelect">Select profile</label>
+                    <select class="form-select form-select-lg" id="categorySelect" name="profession" required>
+                        <option value="">Select profile</option>
+                        <option value="Student">Student</option>
+                        <option value="Gaming">Gamer</option>
+                        <option value="Software Developer">Software Developer</option>
+                        <option value="Professional Worker">Professional Worker</option>
+                        <option value="Content Creation">Content Creation</option>
+                    </select>
+
+                    
+
+                    <button class="btn btn-dark btn-lg legacy-recommend-btn" type="submit">
+                        <i class="fas fa-wand-magic-sparkles me-2"></i>Recommend
+                    </button>
+                </div>
+                <div class="legacy-invalid-feedback" id="recommendError">Please select your profile.</div>
+            </form>
+
+            <div class="legacy-quick-profiles mt-3">
+                <span class="quick-profile-chip">Student</span>
+                <span class="quick-profile-chip">Gamer</span>
+                <span class="quick-profile-chip">Developer</span>
+                <span class="quick-profile-chip">Office</span>
+                <span class="quick-profile-chip">Creator</span>
+            </div>
+            <br>
+            <a href="{{ url_for('custom_pc_builder') }}" class="btn btn-outline-light legacy-customize-btn">
+                <i class="fas fa-screwdriver-wrench me-2"></i>Make Your Customize PC
+            </a>
+        </div>
+
+        </div>
+</section>
+
+<section class="py-5 legacy-category-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <h2 class="mb-0">Browse by Category</h2>
+            <a href="{{ url_for('products') }}" class="link-dark fw-semibold">View all products</a>
+        </div>
+
+        <div class="row g-3 g-lg-4">
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='cpu') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=900&auto=format&fit=crop" alt="CPU" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>CPU</span>
+                        {% if category_count_by_slug.get('cpu', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('cpu', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='gpu') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://images.unsplash.com/photo-1591488320449-011701bb6704?w=900&auto=format&fit=crop" alt="GPU" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>GPU</span>
+                        {% if category_count_by_slug.get('gpu', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('gpu', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='ram') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://images.unsplash.com/photo-1562976540-1502c2145186?w=900&auto=format&fit=crop" alt="RAM" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>RAM</span>
+                        {% if category_count_by_slug.get('ram', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('ram', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='monitor') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202306/kv-banner-sixteen_nine.jpeg?VersionId=29GPWyDSzKguWWSYVKTJpAEObTO2WX.O&size=690:388" alt="Monitor" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>Monitor</span>
+                        {% if category_count_by_slug.get('monitor', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('monitor', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='storage') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://images.unsplash.com/photo-1601737487795-dab272f52420?w=900&auto=format&fit=crop" alt="Storage" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>Storage</span>
+                        {% if category_count_by_slug.get('storage', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('storage', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='motherboard') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&auto=format&fit=crop" alt="Motherboard" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>Motherboard</span>
+                        {% if category_count_by_slug.get('motherboard', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('motherboard', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='keyboard') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&auto=format&fit=crop" alt="Keyboard" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>Keyboard</span>
+                        {% if category_count_by_slug.get('keyboard', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('keyboard', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="{{ url_for('products', category='mouse') }}" class="category-tile legacy-category-tile d-block">
+                    <img src="https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=900&auto=format&fit=crop" alt="Mouse" class="img-fluid" loading="lazy">
+                    <div class="tile-label d-flex justify-content-between align-items-center">
+                        <span>Mouse</span>
+                        {% if category_count_by_slug.get('mouse', 0) %}<span class="legacy-stock-chip">{{ category_count_by_slug.get('mouse', 0) }}</span>{% endif %}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pb-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <h2 class="mb-0">Popular Setup Profiles</h2>
+            <a href="{{ url_for('recommended_prebuilds', profession='Student') }}" class="link-dark fw-semibold">Open setup options</a>
+        </div>
+
+        <div class="row g-4">
+            {% for card in home_profile_cards %}
+                <div class="col-xl-4 col-md-6">
+                    <article class="legacy-profile-card h-100">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <h3 class="h5 mb-0">{{ card.profile_label }}</h3>
+                            <span class="badge bg-dark">from {{ card.starting_price|inr }}</span>
+                        </div>
+                        <p class="small text-muted mb-3">{{ card.description }}</p>
+                        <div class="small text-muted mb-3">
+                            {% for setup in card.setups[:2] %}
+                                <div class="mb-1">{{ setup.name }} - {{ setup.total|inr }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="d-flex gap-2 mt-auto">
+                            <a href="{{ url_for('recommended_prebuilds', profession=card.profile_label) }}" class="btn btn-dark btn-sm flex-grow-1">View Setups</a>
+                            <a href="{{ url_for('custom_pc_builder', preset=card.profile_key) }}" class="btn btn-outline-dark btn-sm flex-grow-1">Customize</a>
+                        </div>
+                    </article>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="pb-5">
+    <div class="container text-center">
+        <h3 class="fw-bold mb-2">Need Installation or Repair Service?</h3>
+        <p class="text-muted mb-4">Book certified technicians for repair, OS installation, and upgrades.</p>
+        <a href="{{ url_for('service_request') }}" class="btn btn-dark">
+            Request Service <i class="fas fa-wrench ms-2"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legacy-home-hero {
+        padding: 74px 0 54px;
+        background:
+            radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.14), transparent 45%),
+            radial-gradient(circle at 82% 8%, rgba(242, 189, 126, 0.24), transparent 34%),
+            linear-gradient(120deg, #1b7f76 0%, #26958a 54%, #2b7f5f 100%);
+    }
+    .legacy-hero-content {
+        max-width: 980px;
+    }
+    .legacy-home-hero h1 {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .legacy-home-hero .lead {
+        max-width: 760px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .legacy-recommend-bar {
+        border-radius: 18px;
+        background: rgba(253, 252, 249, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 0 16px 34px rgba(16, 28, 24, 0.2);
+        padding: 12px;
+        margin: 0 auto;
+        max-width: 1020px;
+    }
+    .legacy-recommend-controls {
+        display: grid;
+        grid-template-columns: 1fr 220px;
+        gap: 10px;
+        align-items: center;
+    }
+    .legacy-recommend-controls .form-control,
+    .legacy-recommend-controls .form-select {
+        border-radius: 13px;
+        border-color: #cfc2b1;
+    }
+    .legacy-recommend-btn {
+        border-radius: 13px;
+    }
+    .legacy-invalid-feedback {
+        display: none;
+        margin-top: 8px;
+        text-align: left;
+        color: #852f2f;
+        font-size: 0.9rem;
+        padding-left: 4px;
+    }
+    .legacy-invalid-feedback.show {
+        display: block;
+    }`r`n    .legacy-quick-profiles {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+    .quick-profile-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.52);
+        color: #fff;
+        font-size: 0.82rem;
+        background: rgba(255, 255, 255, 0.1);
+        user-select: none;
+        pointer-events: none;
+    }
+    .legacy-customize-btn {
+        border-color: rgba(255, 255, 255, 0.52);
+    }
+    .legacy-customize-btn:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+    }
+    .legacy-category-section {
+        background: #f2eee8;
+    }
+    .legacy-category-tile {
+        border-radius: 14px;
+        overflow: hidden;
+    }
+    .legacy-category-tile img {
+        height: 190px;
+    }
+    .legacy-stock-chip {
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.44);
+        color: #fff;
+        padding: 1px 7px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        min-width: 24px;
+        text-align: center;
+    }
+    .legacy-profile-card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 12px 24px rgba(24, 20, 18, 0.08);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    @media (max-width: 992px) {
+        .legacy-recommend-controls {
+            grid-template-columns: 1fr;
+        }
+        .legacy-home-hero h1 {
+            font-size: 2.5rem;
+        }
+    }
+    @media (max-width: 768px) {
+        .legacy-home-hero {
+            padding: 56px 0 44px;
+        }
+        .legacy-home-hero h1 {
+            font-size: 2rem;
+        }
+        .legacy-category-tile img {
+            height: 148px;
+        }}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+    const form = document.getElementById("home-recommend-form");
+    const profileSelect = document.getElementById("categorySelect");
+    const recommendError = document.getElementById("recommendError");
+    if (!form || !profileSelect || !recommendError) return;
+
+    const hideError = () => recommendError.classList.remove("show");
+    const showError = () => recommendError.classList.add("show");
+
+    profileSelect.addEventListener("change", hideError);
+    form.addEventListener("submit", (event) => {
+        if (!String(profileSelect.value || "").trim()) {
+            event.preventDefault();
+            showError();
+            profileSelect.focus();
+            return;
+        }
+        hideError();
+    });
+})();
+</script>
+{% endblock %}
+
+
+
+

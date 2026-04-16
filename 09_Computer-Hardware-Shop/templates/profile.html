@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5 profile-page">
+    <section class="profile-hero mb-4">
+        <div>
+            <p class="profile-kicker mb-1">Account</p>
+            <h1 class="mb-1">{{ current_user.username }}</h1>
+            <p class="text-muted mb-0">{{ current_user.email }}</p>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn btn-dark">Logout</a>
+    </section>
+
+    <section class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="profile-stat-card">
+                <div class="small text-muted">Total Orders</div>
+                <div class="h4 mb-0">{{ orders|length }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="profile-stat-card">
+                <div class="small text-muted">Service Requests</div>
+                <div class="h4 mb-0">{{ service_requests|length }}</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="profile-panel mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Previous Orders</h2>
+            <a href="{{ url_for('products') }}" class="btn btn-outline-dark btn-sm">Shop More</a>
+        </div>
+
+        {% if orders %}
+            <div class="d-grid gap-3">
+                {% for order in orders %}
+                    <div class="profile-row">
+                        <div>
+                            <div class="fw-semibold">Order {{ order.order_number }}</div>
+                            <div class="small text-muted">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+                            <div class="small text-muted">{{ order.payment_mode|replace('_', ' ')|title }} | {{ order.status|capitalize }}</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-semibold mb-2">{{ order.total_amount|inr }}</div>
+                            <a href="{{ url_for('profile_order_detail', order_id=order.id) }}" class="btn btn-dark btn-sm">View Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">No orders yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="profile-panel">
+        <h2 class="h5 mb-3">Previous Service Requests</h2>
+        {% if service_requests %}
+            <div class="d-grid gap-3">
+                {% for req in service_requests %}
+                    <div class="profile-row">
+                        <div>
+                            <div class="fw-semibold">{{ req.service_type|capitalize }}</div>
+                            <div class="small text-muted">Device: {{ req.device_model or 'N/A' }}</div>
+                            <div class="small text-muted">{{ req.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge {% if req.status == 'completed' %}bg-success{% elif req.status == 'pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                                {{ req.status|capitalize }}
+                            </span>
+                            {% if req.estimated_cost %}
+                                <div class="small mt-2">Est: {{ req.estimated_cost|inr }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">No service requests yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-hero {
+        border: 1px solid var(--line);
+        background: linear-gradient(120deg, #fffefa, #f5eee5);
+        border-radius: 16px;
+        padding: 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+    }
+    .profile-kicker {
+        text-transform: uppercase;
+        letter-spacing: .12em;
+        font-size: .72rem;
+        font-weight: 800;
+        color: var(--brand-deep);
+    }
+    .profile-stat-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        padding: 12px 14px;
+    }
+    .profile-panel {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: #fff;
+        padding: 16px;
+    }
+    .profile-row {
+        border: 1px solid #eee3d7;
+        border-radius: 10px;
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        background: #fffdfa;
+    }
+    @media (max-width: 768px) {
+        .profile-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .profile-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}
