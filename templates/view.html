@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="view-container">
+
+    <h2>Email Details</h2>
+
+    <div class="view-box">
+        <p><b>Sender:</b> {{ data[2] }}</p>
+        <p><b>Date:</b> {{ data[1] }}</p>
+        <p><b>Result:</b> {{ data[5] }}</p>
+        <p><b>Risk Score:</b> {{ data[4] }}</p>
+
+        <p><b>Email Content:</b></p>
+        <div class="email-body">
+            {{ data[3] }}
+        </div>
+    </div>
+
+    <a href="/history" class="back-btn">⬅ Back to History</a>
+
+</div>
+{% endblock %}

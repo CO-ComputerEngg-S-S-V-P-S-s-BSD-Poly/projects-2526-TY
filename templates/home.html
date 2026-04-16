@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ===== HOME SECTION ===== -->
+<section class="home-section">
+    <div class="home-container">
+
+        <!-- LEFT SIDE TEXT -->
+        <div class="home-left">
+            <h1>Malicious Email Detection System</h1>
+            <p>
+                Protect yourself from phishing and spam emails.
+                Our intelligent system analyzes email content and detects
+                malicious or safe emails instantly.
+            </p>
+
+            <a href="/check" class="check-btn">Check Email Now</a>
+        </div>
+
+        <!-- RIGHT SIDE IMAGE -->
+        <div class="home-right">
+            <img src="{{ url_for('static', filename='images/img 1.png') }}" alt="Email Security">
+        </div>
+
+    </div>
+</section>
+
+<!-- ===== FEATURES SECTION ===== -->
+<section class="features">
+    <h2 class="feature-title">Why Use Our System?</h2>
+
+    <div class="feature-container">
+
+        <div class="feature-box">
+            <img src="{{ url_for('static', filename='images/img 4.png') }}" class="feature-icon">
+            <h3>Secure Detection</h3>
+            <p>Detect phishing and malicious emails with advanced analysis.</p>
+        </div>
+
+        <div class="feature-box">
+            <img src="{{ url_for('static', filename='images/img 3.png') }}" class="feature-icon">
+            <h3>Fast Analysis</h3>
+            <p>Get instant results within seconds using smart detection.</p>
+        </div>
+
+        <div class="feature-box">
+            <img src="{{ url_for('static', filename='images/accuracy.png') }}" class="feature-icon">
+            <h3>Accuracy & Reliablity</h3>
+            <p>Provides reliable email classification to prevent false alerts..</p>
+        </div>
+
+    </div>
+</section>
+
+
+{% endblock %}

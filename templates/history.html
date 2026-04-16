@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <!-- Header + Action Buttons -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Email History</h2>
+
+        <div>
+            <!-- Logout Button -->
+            <a href="/logout" class="btn btn-warning me-2 fw-bold">
+                Logout
+            </a>
+
+            <!-- Action Buttons -->
+            <button id="viewBtn" class="btn btn-primary me-2" disabled>View</button>
+            <button id="deleteBtn" class="btn btn-danger" disabled>Delete</button>
+        </div>
+    </div>>
+
+    <table class="table table-bordered table-hover">
+        <thead class="custom_header">
+            <tr>
+                <th>Date</th>
+                <th>Sender</th>
+                <th>Result</th>
+                <th>Risk Score</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for r in rows %}
+            <tr data-id="{{ r.id }}" style="cursor:pointer;">
+                <td>{{ r.date }}</td>
+                <td>{{ r.sender }}</td>
+                <td>{{ r.threat }}</td>
+                <td>{{ r.final_score }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+let selectedId = null;
+
+// Row click selection
+document.querySelectorAll("tbody tr").forEach(row => {
+    row.addEventListener("click", function() {
+
+        // Remove previous highlight
+        document.querySelectorAll("tbody tr").forEach(r =>
+            r.classList.remove("table-active")
+        );
+
+        // Highlight selected row
+        this.classList.add("table-active");
+
+        selectedId = this.getAttribute("data-id");
+
+        // Enable buttons
+        document.getElementById("deleteBtn").disabled = false;
+        document.getElementById("viewBtn").disabled = false;
+    });
+});
+
+// Delete button
+document.getElementById("deleteBtn").addEventListener("click", function() {
+    if (selectedId) {
+
+        if (confirm("Are you sure you want to delete this record?")) {
+
+            fetch("/delete/" + selectedId, { method: "POST" })
+            .then(response => {
+                if(response.ok){
+                    location.reload();
+                }
+            });
+        }
+    }
+});
+
+// View button
+document.getElementById("viewBtn").addEventListener("click", function() {
+    if (selectedId) {
+        window.location.href = "/view/" + selectedId;
+    }
+});
+</script>
+
+
+
+
+{% endblock %}

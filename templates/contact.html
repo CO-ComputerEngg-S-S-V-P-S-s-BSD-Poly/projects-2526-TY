@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="contact-hero">
+  <div class="contact-overlay">
+
+    <div class="contact-content">
+
+        <!-- LEFT IMAGE -->
+        <div class="contact-img">
+            <img src="{{ url_for('static', filename='images/img 5.png') }}" alt="contact">
+        </div>
+
+        <!-- RIGHT TEXT -->
+        <div class="contact-text">
+    <h1>Contact Us</h1>
+
+    <p><strong>Project:</strong> Malicious Email Detection System</p>
+
+    <p>If you have any questions, feedback, or issues while using the system,
+    feel free to contact the administrator.</p>
+
+    <p><strong>Email:</strong> support@email.com</p>
+    <p><strong>Phone:</strong> +91 9876543210</p>
+    <p><strong>Location:</strong> Dhule, Maharashtra, India</p>
+
+    <p><strong>Developed By:</strong> Computer Engineering Group</p>
+</div>
+
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock %}
