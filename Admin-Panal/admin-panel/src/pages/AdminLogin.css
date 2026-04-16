@@ -1,0 +1,88 @@
+/* Full Page Background */
+.admin-login-page{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#2563eb,#7c3aed);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Login Box */
+.login-box{
+    width: 360px;
+    padding: 40px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    text-align: center;
+    color: white;
+}
+
+/* Header */
+.login-header{
+    margin-bottom: 25px;
+}
+
+.login-header h2{
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* Input Fields */
+.input-field{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+/* Input */
+.input-field input{
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    width: 100%;
+    font-size: 14px;
+}
+
+/* Placeholder */
+.input-field input::placeholder{
+    color: rgba(255,255,255,0.7);
+}
+
+/* Button */
+.admin-btn{
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #1d4ed8;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Hover Button */
+.admin-btn:hover{
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Responsive */
+@media(max-width:500px){
+
+.login-box{
+    width: 90%;
+    padding: 30px;
+}
+
+}

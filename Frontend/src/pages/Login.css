@@ -1,0 +1,111 @@
+/* FULL PAGE BACKGROUND */
+
+.auth-form-container{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background: linear-gradient(135deg,#2563eb,#3b82f6,#60a5fa);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* LOGIN CARD */
+
+.auth-form{
+  width:360px;
+  padding:40px;
+
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(12px);
+  border-radius:12px;
+
+  box-shadow:0 8px 30px rgba(0,0,0,0.2);
+  text-align:center;
+
+  animation:fadeIn 0.6s ease;
+}
+
+
+/* TITLE */
+
+.auth-form h2{
+  margin-bottom:25px;
+  color:white;
+  font-size:26px;
+}
+
+
+/* INPUT FIELDS */
+
+.auth-form input{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+
+  border:none;
+  outline:none;
+
+  border-radius:6px;
+  background:rgba(255,255,255,0.9);
+
+  font-size:14px;
+}
+
+
+/* BUTTON */
+
+.btn-primary{
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+
+  background:#fbbf24;
+  border:none;
+  border-radius:6px;
+
+  font-weight:600;
+  font-size:15px;
+
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn-primary:hover{
+  background:#f59e0b;
+  transform:translateY(-2px);
+}
+
+
+/* REGISTER LINK */
+
+.auth-form p{
+  margin-top:15px;
+  color:white;
+  font-size:14px;
+}
+
+.auth-form a{
+  color:#fbbf24;
+  text-decoration:none;
+  font-weight:600;
+}
+
+.auth-form a:hover{
+  text-decoration:underline;
+}
+
+
+/* ANIMATION */
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}

@@ -1,0 +1,116 @@
+/* Page Background */
+
+.dashboard-wrapper{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#2563eb,#6366f1,#0ea5e9);
+    padding: 40px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Content Container */
+
+.dashboard-content{
+    width: 900px;
+    max-width: 100%;
+}
+
+/* Welcome Section */
+
+.welcome-section{
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 18px;
+    padding: 30px;
+    text-align: center;
+    color: white;
+    margin-bottom: 35px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.welcome-section h2{
+    margin-top: 10px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.welcome-section p{
+    margin-top: 5px;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Card Grid */
+
+.card-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 25px;
+}
+
+/* Dashboard Cards */
+
+.menu-card{
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.35s;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+.menu-card h3{
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.menu-card p{
+    font-size: 13px;
+    margin-top: 5px;
+    color: #64748b;
+}
+
+/* Hover Animation */
+
+.menu-card:hover{
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+}
+
+/* Color Themes */
+
+.menu-card.blue{
+    border-top: 5px solid #2563eb;
+    color: #2563eb;
+}
+
+.menu-card.green{
+    border-top: 5px solid #22c55e;
+    color: #22c55e;
+}
+
+.menu-card.yellow{
+    border-top: 5px solid #eab308;
+    color: #eab308;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+.dashboard-content{
+    width: 100%;
+}
+
+.welcome-section{
+    padding: 25px;
+}
+
+.menu-card{
+    padding: 20px;
+}
+
+}

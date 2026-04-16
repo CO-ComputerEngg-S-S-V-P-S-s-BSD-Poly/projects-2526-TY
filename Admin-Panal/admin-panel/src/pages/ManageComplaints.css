@@ -1,0 +1,148 @@
+/* Main content */
+.admin-main{
+    margin-left: 10px;
+    padding: 40px;
+    background: #f1f5f9;
+    min-height: 100vh;
+    width: 1200px;
+}
+
+/* Heading */
+.admin-main h2{
+    font-size: 26px;
+    margin-bottom: 25px;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+/* Table container */
+.table-container{
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    overflow-x: auto;
+}
+
+/* Table */
+.complaint-table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Table header */
+.complaint-table thead{
+    background: #1e293b;
+    color: white;
+}
+
+.complaint-table th{
+    padding: 15px;
+    text-align: left;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+/* Table rows */
+.complaint-table td{
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+}
+
+/* Row hover */
+.complaint-table tbody tr:hover{
+    background: #f8fafc;
+}
+
+/* User phone */
+.complaint-table small{
+    color: #64748b;
+}
+
+/* Status badges */
+.status-pill{
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Pending */
+.status-pill.pending{
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+/* In Progress */
+.status-pill.in\ progress{
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Resolved */
+.status-pill.resolved{
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* Action buttons */
+.actions{
+    display: flex;
+    gap: 10px;
+}
+
+/* Update button */
+.update-btn{
+    background: #3b82f6;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.update-btn:hover{
+    background: #2563eb;
+}
+
+/* Resolve button */
+.resolve-btn{
+    background: #22c55e;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.resolve-btn:hover{
+    background: #16a34a;
+}
+
+/* View link */
+.complaint-table a{
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.complaint-table a:hover{
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media(max-width:768px){
+
+.admin-main{
+    margin-left: 200px;
+    padding: 25px;
+}
+
+.complaint-table th,
+.complaint-table td{
+    font-size: 13px;
+}
+
+}

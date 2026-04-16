@@ -1,0 +1,87 @@
+/* Sidebar Container */
+.admin-sidebar{
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(180deg,#1e293b,#0f172a);
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 20px;
+    box-shadow: 3px 0px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Logo */
+.admin-logo{
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.admin-logo h3{
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg,#38bdf8,#6366f1);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* Links list */
+.admin-links{
+    list-style: none;
+    padding: 0;
+}
+
+/* List items */
+.admin-links li{
+    margin-bottom: 15px;
+}
+
+/* Links */
+.admin-links a{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #cbd5f5;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.admin-links a:hover{
+    background: rgba(255,255,255,0.08);
+    color: white;
+    transform: translateX(5px);
+}
+
+/* Logout button */
+.logout a{
+    background: rgba(255,0,0,0.15);
+    color: #f87171;
+}
+
+.logout a:hover{
+    background: #ef4444;
+    color: white;
+}
+
+/* Icons */
+.admin-links svg{
+    transition: 0.3s;
+}
+
+.admin-links a:hover svg{
+    transform: scale(1.2);
+}
+
+/* Responsive */
+@media (max-width:768px){
+    .admin-sidebar{
+        width: 200px;
+    }
+}

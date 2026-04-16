@@ -1,0 +1,118 @@
+/* Layout */
+.admin-layout{
+    display: flex;
+    min-height: 100vh;
+    background: #f1f5f9;
+}
+
+/* Main Content */
+.admin-main{
+    margin-left: 250px;
+    padding: 40px;
+    width: 100%;
+}
+
+/* Heading */
+.admin-main h1{
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #1e293b;
+}
+
+/* Stats Grid */
+.stats-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 25px;
+}
+
+/* Stat Cards */
+.stat-card{
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover animation */
+.stat-card:hover{
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* Number */
+.stat-card h3{
+    font-size: 34px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Text */
+.stat-card p{
+    font-size: 15px;
+    color: #64748b;
+}
+
+/* Colors */
+.stat-card.blue{
+    border-top: 5px solid #3b82f6;
+}
+
+.stat-card.yellow{
+    border-top: 5px solid #facc15;
+}
+
+.stat-card.orange{
+    border-top: 5px solid #fb923c;
+}
+
+.stat-card.green{
+    border-top: 5px solid #22c55e;
+}
+
+/* Loading Screen */
+.admin-loading{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    background: #f8fafc;
+}
+
+/* Spinner animation */
+.spinner{
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media(max-width:768px){
+
+.admin-main{
+    margin-left: 200px;
+    padding: 25px;
+}
+
+.stats-grid{
+    grid-template-columns: 1fr;
+}
+
+}
