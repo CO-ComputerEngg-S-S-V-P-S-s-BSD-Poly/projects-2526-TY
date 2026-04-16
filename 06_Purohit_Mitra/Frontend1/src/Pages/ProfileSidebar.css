@@ -1,0 +1,95 @@
+ .profile-sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 340px;
+  height: 100vh;
+  background: linear-gradient(135deg, #ffedd5, #fff);
+  box-shadow: -4px 0 20px rgba(0,0,0,0.25);
+  padding: 20px;
+  z-index: 999;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-logo {
+  width: 90px;
+}
+
+.profile-header h3 {
+  margin-top: 10px;
+  color: #e63946;
+}
+
+.profile-menu button,
+.profile-edit button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 30px;
+  border: 1px solid #ff7a00;
+  background: transparent;
+  color: #ff7a00;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-menu button:hover,
+.profile-edit button:hover {
+  background: #ff7a00;
+  color: white;
+}
+
+.profile-edit input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 122, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #ff7a00;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #ff7a00;
+  color: white;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.profile-icon {
+  cursor: pointer;
+  color: #ff7a00;
+}
+.profile-icon:hover {
+  transform: scale(1.1);
+} 
+
+
+
+/* extra effect karne ke liye */
+

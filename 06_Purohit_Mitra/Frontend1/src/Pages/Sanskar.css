@@ -1,0 +1,162 @@
+.sanskar-page {
+  padding: 40px 60px;
+  background: linear-gradient(to right, #fff7f0, #ffffff);
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: #e65100;
+  font-weight: 700;
+}
+
+/* GRID LAYOUT FOR LAPTOP */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 cards per row */
+  gap: 30px;
+}
+
+/* CARD DESIGN */
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(230, 81, 0, 0.15);
+  transition: all 0.3s ease;
+  opacity: 3;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 14px 30px rgba(230, 81, 0, 0.25);
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 18px;
+}
+
+.card-body h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #e65100;
+  font-weight: 600;
+}
+
+.card-body p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* ORANGE BUTTON */
+.view-btn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 10px;
+  background: #ff6f00;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.view-btn:hover {
+  background: #e65100;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .card-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+/* MODAL */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: white;
+  width: 500px;
+  padding: 25px;
+  border-radius: 12px;
+  position: relative;
+  text-align: center;
+}
+
+.modal-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+.close-btn{
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: #ff6b00;
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+}
+/* LEFT TOP MANDALA */
+.home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+/* RIGHT BOTTOM MANDALA (already there) */
+.home-mandala {
+  position: absolute;
+  right: -180px;
+  top: -50px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}

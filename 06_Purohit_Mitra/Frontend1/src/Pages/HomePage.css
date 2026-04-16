@@ -1,0 +1,93 @@
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #fff6ec, #ffffff);
+  font-family: "Poppins", sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* CARDS */
+.card-section {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 65px;
+  margin-top: 50px;
+  margin-bottom: 100px;
+}
+
+.home-card {
+  width: 260px;
+  padding: 35px 22px;
+  border-radius: 22px;
+  background: linear-gradient(to bottom, #ff9a2f, #ff6a00);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(255,122,24,0.35);
+  transition: all 0.35s ease;
+}
+
+.home-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.home-card p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.home-card:hover {
+  transform: translateY(-10px) scale(1.05);
+}
+/* LEFT TOP MANDALA */
+.home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+/* RIGHT BOTTOM MANDALA (already there) */
+.home-mandala {
+  position: absolute;
+  right: -180px;
+  top: -50px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.mantra-section {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.mantra-text {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.8;
+  color: #e67e22;
+  background: linear-gradient(to bottom, #fff3e0, #ffffff);
+  display: inline-block;
+  padding: 30px 50px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(255, 153, 51, 0.25);
+}
+
+.home-mantra-text {
+  color: #ff7a00;   /* सुंदर orange */
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.8;
+  background: linear-gradient(to bottom, #fff3e0, #ffffff);
+  display: inline-block;
+  padding: 30px 50px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(255, 153, 51, 0.25);
+}

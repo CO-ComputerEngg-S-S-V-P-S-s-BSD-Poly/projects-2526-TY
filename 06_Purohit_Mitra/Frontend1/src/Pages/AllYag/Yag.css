@@ -1,0 +1,107 @@
+.yag-page {
+  min-height: 100vh;
+  padding: 70px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, #fff5e6, #f4dbb7);
+}
+
+/* Title */
+.yag-title {
+  font-size: 38px;
+  font-weight: bold;
+  color: #b34700;
+  margin-bottom: 10px;
+}
+
+.yag-subtitle {
+  color: #663300;
+  margin-bottom: 50px;
+  font-size: 16px;
+}
+
+/* 🔥 Grid Layout – 3 Cards Per Row */
+.yag-card-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* Card */
+.yag-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.yag-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon */
+.yag-icon {
+  font-size: 40px;
+  color: #ff6600;
+  margin-bottom: 20px;
+}
+
+/* Title */
+.yag-card h3 {
+  color: #cc5200;
+  margin-bottom: 15px;
+}
+
+/* Button */
+.yag-btn {
+  background: linear-gradient(to right, #ff9933, #ff6600);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.yag-btn:hover {
+  background: linear-gradient(to right, #ff6600, #cc4400);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .yag-card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .yag-card-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* LEFT TOP MANDALA */
+.home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.10;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* RIGHT BOTTOM MANDALA */
+.home-mandala {
+  position: absolute;
+  right: -180px;
+  top: -50px;
+  width: 750px;
+  opacity: 0.10;
+  z-index: 0;
+  pointer-events: none;
+}
