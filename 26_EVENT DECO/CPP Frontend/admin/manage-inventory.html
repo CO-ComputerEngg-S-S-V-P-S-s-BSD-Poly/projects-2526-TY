@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Inventory | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./manage-inventory.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body data-page="inventory" class="admin-theme">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="ph-fill ph-aperture"></i>
+                </div>
+                <div>
+                    <p class="brand-name">Vishva Decor</p>
+                    <p class="brand-sub">Owner Console</p>
+                </div>
+            </div>
+
+            <p class="menu-title">Navigation</p>
+            <nav class="nav">
+                <a class="nav-link" href="./dashboard.html">
+                    <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-link" href="./manage-bookings.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-check"></i></span>
+                    <span>Manage Bookings</span>
+                </a>
+                <a class="nav-link" href="./bookings-calendar.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-blank"></i></span>
+                    <span>Booking Calendar</span>
+                </a>
+                <a class="nav-link" href="./manage-decor.html">
+                    <span class="nav-icon"><i class="ph ph-sparkle"></i></span>
+                    <span>Manage Decorations</span>
+                </a>
+                <a class="nav-link" href="./reviews.html">
+                    <span class="nav-icon"><i class="ph ph-chat-centered-dots"></i></span>
+                    <span>Customer Reviews</span>
+                </a>
+                <a class="nav-link active" href="./manage-inventory.html">
+                    <span class="nav-icon"><i class="ph ph-package"></i></span>
+                    <span>Manage Inventory</span>
+                </a>
+                <a class="nav-link" href="./manage-payments.html">
+                    <span class="nav-icon"><i class="ph ph-wallet"></i></span>
+                    <span>Manage Payments</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main inventory-shell">
+            <header class="topbar">
+                <div class="search-wrap">
+                    <i class="ph ph-package"></i>
+                    <strong>Manage Inventory</strong>
+                </div>
+                <div class="top-right">
+                    <div class="profile-chip">
+                        <div id="owner-avatar" class="avatar-dot" aria-label="Owner avatar">O</div>
+                        <span id="owner-email" class="sr-only">owner@vishva.com</span>
+                    </div>
+                    <button id="owner-logout-btn" class="btn-primary" type="button">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <header class="inventory-topbar page-hero">
+                <div>
+                    <p class="kicker">OWNER PANEL</p>
+                    <h1>Manage Inventory</h1>
+                    <p class="subtitle">Track stock levels, categories, and inventory value in one place.</p>
+                </div>
+            </header>
+
+            <section class="inventory-stats">
+            <article class="stat-card">
+                <p class="stat-label">Total Items</p>
+                <p class="stat-value" id="inventory-total">0</p>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Categories</p>
+                <p class="stat-value" id="inventory-categories">0</p>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Estimated Stock Value</p>
+                <p class="stat-value" id="inventory-stock-value">Rs 0</p>
+            </article>
+            </section>
+
+            <section class="inventory-grid">
+            <article class="panel">
+                <div class="panel-head">
+                    <h2>Inventory Controls</h2>
+                    <p>Search, filter, and maintain stock records.</p>
+                </div>
+                <div class="tool-grid">
+                    <label>
+                        <span>Search</span>
+                        <input id="inventory-search" placeholder="Item name or category">
+                    </label>
+                    <label>
+                        <span>Category</span>
+                        <select id="inventory-category-filter">
+                            <option value="all">All Categories</option>
+                        </select>
+                    </label>
+                </div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-head">
+                    <h2 id="inventory-form-title">Add Inventory Item</h2>
+                    <p>Create and update your inventory records.</p>
+                </div>
+                <form id="inventory-form" class="inventory-form">
+                    <input type="hidden" id="inventory-id">
+                    <div class="form-grid">
+                        <label>
+                            <span>Item Name</span>
+                            <input id="item_name" placeholder="Marigold Garlands" required>
+                        </label>
+                        <label>
+                            <span>Category</span>
+                            <input id="category" placeholder="flowers">
+                        </label>
+                        <label>
+                            <span>Current Quantity</span>
+                            <input id="quantity" type="number" min="0" placeholder="120" required>
+                        </label>
+                        <label>
+                            <span>Unit Price</span>
+                            <input id="unit_price" type="number" min="0" step="0.01" placeholder="80">
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button id="inventory-save-btn" class="btn-primary" type="submit">Add Item</button>
+                        <button id="inventory-cancel-btn" class="btn-outline" type="button" hidden>Cancel Edit</button>
+                    </div>
+                </form>
+            </article>
+
+            <article class="panel table-panel">
+                <div class="panel-head">
+                    <h2>Inventory Table</h2>
+                    <p>Edit, adjust stock, or remove records.</p>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-body"></tbody>
+                    </table>
+                </div>
+            </article>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

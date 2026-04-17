@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details | Vishva Decorators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="travel-theme booking-details-page bg-light">
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Vishva <span>Decor</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="nav-dropdown">
+                    <button type="button" class="nav-dropdown-toggle active" aria-expanded="false" aria-haspopup="true">
+                        <span>Gallery</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="nav-dropdown-menu" hidden>
+                        <a href="gallery.html">
+                            <i class="fas fa-images" aria-hidden="true"></i>
+                            <span>All Themes</span>
+                        </a>
+                        <a href="gallery.html?filter=wedding">
+                            <i class="fas fa-ring" aria-hidden="true"></i>
+                            <span>Wedding Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=festival">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <span>Festival Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=religious">
+                            <i class="fas fa-hands-praying" aria-hidden="true"></i>
+                            <span>Religious Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=party">
+                            <i class="fas fa-cake-candles" aria-hidden="true"></i>
+                            <span>Party Themes</span>
+                        </a>
+                    </div>
+                </li>
+                <li><a href="my-bookings.html">My Bookings</a></li>
+                <li class="nav-dropdown nav-dropdown-right">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+        <span>Contact Us</span>
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="nav-dropdown-menu" hidden>
+        <a href="contact.html">
+            <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+            <span>Contact Us Page</span>
+        </a>
+        <a href="tel:+911234567890">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Call Us</span>
+        </a>
+        <a href="mailto:vishvadecor@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Email Us</span>
+        </a>
+    </div>
+</li>
+            </ul>
+            <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="section-padding">
+        <div class="container">
+            <div id="booking-detail-container"></div>
+        </div>
+    </section>
+
+    <script>
+        const API_HOST = window.location.hostname || "localhost";
+        const API_BASE_URL = `http://${API_HOST}:5000`;
+
+        const params = new URLSearchParams(window.location.search);
+        const bookingId = Number.parseInt(params.get("booking"), 10);
+        const container = document.getElementById("booking-detail-container");
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatDate(value) {
+            if (!value) return "-";
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) return "-";
+            return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+        }
+
+        function formatPrice(value) {
+            const n = Number(value);
+            if (!Number.isFinite(n)) return "-";
+            return `Rs. ${n.toLocaleString("en-IN")}`;
+        }
+
+        function normalizeStatus(value) {
+            return String(value || "").trim().toLowerCase();
+        }
+
+        function starsMarkup(selected = 0) {
+            return [1, 2, 3, 4, 5].map((n) => `
+                <button type="button" class="review-star ${n <= selected ? "active" : ""}" data-rating="${n}" aria-label="${n} star">&#9733;</button>
+            `).join("");
+        }
+
+        let activeCustomer = null;
+
+        async function ensureCustomerSession() {
+            const response = await fetch(`${API_BASE_URL}/api/customers/me`, { credentials: "include" });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.customer) {
+                return null;
+            }
+            activeCustomer = data.customer;
+            return activeCustomer;
+        }
+
+        async function fetchBooking() {
+            const res = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}/mine`, { credentials: "include" });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || "Failed to load booking details");
+            return data;
+        }
+
+        async function generateBookingReceipt(bookingIdValue) {
+            const res = await fetch(`${API_BASE_URL}/api/bookings/${bookingIdValue}/receipt/generate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({})
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || "Failed to generate bill receipt");
+            return data.receipt || null;
+        }
+
+        function renderBooking(booking) {
+            const status = normalizeStatus(booking.status);
+            const canReview = status === "accepted" || status === "completed";
+            const canGenerateBill = status === "accepted" || status === "completed";
+            const reviewId = Number.parseInt(booking.review_id, 10);
+            const hasReview = Number.isInteger(reviewId) && reviewId > 0;
+            const reviewRating = Number.parseInt(booking.review_rating, 10);
+            const safeReviewRating = Number.isInteger(reviewRating) && reviewRating >= 1 && reviewRating <= 5 ? reviewRating : 0;
+            const imagePath = String(booking.decoration_image || "").trim();
+            const imageUrl = imagePath
+                ? (imagePath.startsWith("http") ? imagePath : `${API_BASE_URL}${imagePath.startsWith("/") ? imagePath : `/${imagePath}`}`)
+                : "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop";
+
+            container.innerHTML = `
+                <div class="detail-layout">
+                    <div class="detail-image-box">
+                        <img src="${imageUrl}" alt="${escapeHtml(booking.decoration_title || "Decoration")}" onerror="this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop'">
+                    </div>
+                    <div class="detail-content">
+                        <span class="category">${escapeHtml(booking.decoration_event_type || "Decoration")}</span>
+                        <h1>${escapeHtml(booking.decoration_title || "Booking")}</h1>
+                        <p class="detail-price">${escapeHtml(formatPrice(booking.decoration_price))}</p>
+                        <p class="detail-description">${escapeHtml(booking.decoration_description || "No description available.")}</p>
+                        <p class="theme-meta"><strong>Booking ID:</strong> #${escapeHtml(booking.id)}</p>
+                        <p class="theme-meta"><strong>Status:</strong> ${escapeHtml(booking.status || "pending")}</p>
+                        <p class="theme-meta"><strong>Event Date:</strong> ${escapeHtml(formatDate(booking.event_date))}</p>
+                        <p class="theme-meta"><strong>Event Time:</strong> ${escapeHtml(booking.event_time || "-")}</p>
+                        <p class="theme-meta"><strong>Location:</strong> ${escapeHtml(booking.location || "-")}</p>
+                        <p class="theme-meta"><strong>Customer:</strong> ${escapeHtml(booking.customer_name || "-")} (${escapeHtml(booking.phone || "-")})</p>
+                        ${
+                            canGenerateBill
+                                ? `
+                                    <div class="review-form-card" style="margin-top: 16px;">
+                                        <h3>Booking Bill</h3>
+                                        
+                                        <div class="card-actions detail-actions" style="margin-top: 10px;">
+                                            <button type="button" id="generate-bill-btn" class="btn-card">Generate Bill</button>
+                                        </div>
+                                        <p id="bill-feedback-message" class="review-feedback-message" aria-live="polite"></p>
+                                    </div>
+                                `
+                                : ""
+                        }
+                        <div class="card-actions detail-actions">
+                            <a class="btn-card btn-card-alt" href="my-bookings.html">Back to My Bookings</a>
+                        </div>
+                    </div>
+                </div>
+                <section class="reviews-section" id="payment-section">
+                    <div class="reviews-header">
+                        <h2>Payment History</h2>
+                    </div>
+                    <div class="review-form-card">
+                        <div id="payment-history-list"></div>
+                    </div>
+                </section>
+                ${
+                    canReview
+                        ? `
+                            <section class="reviews-section" id="booking-review-section">
+                                <div class="reviews-header">
+                                    <h2>Rate This Booking</h2>
+                                </div>
+                                ${
+                                    hasReview
+                                        ? `
+                                            <div class="review-form-card">
+                                                <p><strong>Your Rating:</strong> ${"&#9733;".repeat(safeReviewRating)}${"&#9734;".repeat(5 - safeReviewRating)}</p>
+                                                <p><strong>Your Review:</strong> ${escapeHtml(booking.review_comment || "No comment provided.")}</p>
+                                                <p><small>Submitted on ${escapeHtml(formatDate(booking.review_created_at))}</small></p>
+                                            </div>
+                                        `
+                                        : `
+                                            <div class="review-form-card">
+                                                <h3>Share Your Feedback</h3>
+                                                <div class="review-stars-input" id="review-stars">${starsMarkup(0)}</div>
+                                                <textarea id="review-comment" class="review-comment" rows="4" placeholder="Write your review..."></textarea>
+                                                <button type="button" id="submit-review-btn" class="btn-card review-submit-btn">Submit Review</button>
+                                                <p id="review-feedback-message" class="review-feedback-message" aria-live="polite"></p>
+                                            </div>
+                                        `
+                                }
+                            </section>
+                        `
+                        : ""
+                }
+            `;
+
+            if (canReview && !hasReview) {
+                wireReviewForm(booking.id);
+            }
+            if (canGenerateBill) {
+                wireBillingSection(booking.id);
+            }
+        }
+
+        function wireBillingSection(bookingIdValue) {
+            const generateBtn = document.getElementById("generate-bill-btn");
+            const messageEl = document.getElementById("bill-feedback-message");
+            if (!generateBtn || !messageEl) return;
+
+            const previewUrl = `${API_BASE_URL}/api/bookings/${bookingIdValue}/receipt/preview`;
+
+            const showMessage = (message, isError = false) => {
+                messageEl.textContent = message || "";
+                messageEl.classList.toggle("error", isError);
+                messageEl.classList.toggle("success", !isError && !!message);
+            };
+
+            generateBtn.addEventListener("click", async () => {
+                try {
+                    generateBtn.disabled = true;
+                    showMessage("Generating bill...");
+                    await generateBookingReceipt(bookingIdValue);
+                    const tab = window.open(previewUrl, "_blank", "noopener");
+                    if (!tab) {
+                        window.location.href = previewUrl;
+                    }
+                    showMessage("Bill generated. Opened preview in browser tab.");
+                } catch (error) {
+                    showMessage(error.message || "Failed to generate bill.", true);
+                } finally {
+                    generateBtn.disabled = false;
+                }
+            });
+        }
+
+        function wireReviewForm(bookingIdValue) {
+            const starsContainer = document.getElementById("review-stars");
+            const stars = Array.from(document.querySelectorAll(".review-star"));
+            const commentInput = document.getElementById("review-comment");
+            const submitBtn = document.getElementById("submit-review-btn");
+            const messageEl = document.getElementById("review-feedback-message");
+            let rating = 0;
+
+            function showMessage(message, isError = false) {
+                if (!messageEl) return;
+                messageEl.textContent = message;
+                messageEl.classList.toggle("error", isError);
+                messageEl.classList.toggle("success", !isError && !!message);
+            }
+
+            stars.forEach((star) => {
+                star.addEventListener("click", () => {
+                    rating = Number.parseInt(star.dataset.rating, 10) || 0;
+                    stars.forEach((s) => {
+                        const n = Number.parseInt(s.dataset.rating, 10) || 0;
+                        s.classList.toggle("active", n <= rating);
+                    });
+                });
+            });
+
+            submitBtn.addEventListener("click", async () => {
+                const comment = (commentInput.value || "").trim();
+
+                if (rating < 1 || rating > 5) {
+                    showMessage("Please select rating between 1 and 5.", true);
+                    return;
+                }
+
+                try {
+                    submitBtn.disabled = true;
+                    showMessage("Submitting review...");
+
+                    const res = await fetch(`${API_BASE_URL}/api/bookings/${bookingIdValue}/review`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ rating, comment })
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) throw new Error(data.message || "Failed to submit review");
+
+                    showMessage("Review submitted successfully.");
+                    setTimeout(() => window.location.reload(), 400);
+                } catch (error) {
+                    showMessage(error.message || "Unable to submit review.", true);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+
+            if (!starsContainer) return;
+        }
+
+        async function fetchPaymentSummary(bookingIdValue) {
+            const res = await fetch(`${API_BASE_URL}/api/payments/${bookingIdValue}`, { credentials: "include" });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.message || "Failed to load payment summary");
+            return data;
+        }
+
+        function renderPaymentSummary(data) {
+            const historyList = document.getElementById("payment-history-list");
+            if (!historyList) return;
+
+            const summary = data.summary || {};
+            const payments = Array.isArray(data.payments) ? data.payments : [];
+            if (!payments.length) {
+                historyList.innerHTML = `<p class="gallery-empty-state">No payments recorded yet.</p>`;
+                return;
+            }
+
+            historyList.innerHTML = payments.map((payment) => `
+                <div class="booking-card">
+                    <div class="booking-details">
+                        <div class="booking-header">
+                            <h4>${escapeHtml((payment.payment_type || "payment").toUpperCase())}</h4>
+                            <span class="status-badge status-accepted">${escapeHtml(formatPrice(payment.amount || 0))}</span>
+                        </div>
+                        <div class="booking-meta">
+                            <p><i class="fas fa-credit-card"></i> Method: <strong>${escapeHtml(payment.payment_method || "N/A")}</strong></p>
+                            <p><i class="fas fa-calendar-day"></i> Paid: <strong>${escapeHtml(formatDate(payment.payment_date || payment.created_at))}</strong></p>
+                            <p><i class="fas fa-user-check"></i> Recorded By: <strong>${escapeHtml(payment.recorded_by || "-")}</strong></p>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        
+
+
+
+        function bookingPhotoSource(photoPath) {
+            const raw = String(photoPath || "").trim();
+            if (!raw) {
+                return "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop";
+            }
+            return raw.startsWith("http") ? raw : `${API_BASE_URL}${raw.startsWith("/") ? raw : `/${raw}`}`;
+        }
+
+        function normalizeReviewPhotos(booking) {
+            if (Array.isArray(booking?.review_photos)) {
+                return booking.review_photos.filter((item) => String(item || "").trim());
+            }
+
+            const fallback = booking?.review_photo_paths_json;
+            if (!fallback) return [];
+
+            try {
+                const parsed = JSON.parse(fallback);
+                return Array.isArray(parsed) ? parsed.filter((item) => String(item || "").trim()) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function reviewStarsDisplay(rating) {
+            const safeRating = Math.max(0, Math.min(5, Number(rating || 0)));
+            return Array.from({ length: 5 }, (_, index) => (
+                `<span class="story-star ${index < safeRating ? "active" : ""}">&#9733;</span>`
+            )).join("");
+        }
+
+        function reviewPhotoGalleryMarkup(photos) {
+            const items = Array.isArray(photos) ? photos.filter(Boolean) : [];
+            if (!items.length) return "";
+
+            return `
+                <div class="experience-photo-grid">
+                    ${items.map((photo, index) => `
+                        <figure class="review-photo-preview-card">
+                            <img src="${bookingPhotoSource(photo)}" alt="Decoration photo ${index + 1}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=900&auto=format&fit=crop'">
+                        </figure>
+                    `).join("")}
+                </div>
+            `;
+        }
+
+        function renderBooking(booking) {
+            const status = normalizeStatus(booking.status);
+            const canShareExperience = status === "completed";
+            const canGenerateBill = status === "accepted" || status === "completed";
+            const reviewId = Number.parseInt(booking.review_id, 10);
+            const hasReview = Number.isInteger(reviewId) && reviewId > 0;
+            const reviewRating = Number.parseInt(booking.review_rating, 10);
+            const safeReviewRating = Number.isInteger(reviewRating) && reviewRating >= 1 && reviewRating <= 5 ? reviewRating : 0;
+            const reviewPhotos = normalizeReviewPhotos(booking);
+            const imageUrl = bookingPhotoSource(booking.decoration_image);
+
+            container.innerHTML = `
+                <div class="detail-layout">
+                    <div class="detail-image-box">
+                        <img src="${imageUrl}" alt="${escapeHtml(booking.decoration_title || "Decoration")}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1200&auto=format&fit=crop'">
+                    </div>
+                    <div class="detail-content">
+                        <span class="category">${escapeHtml(booking.decoration_event_type || "Decoration")}</span>
+                        <h1>${escapeHtml(booking.decoration_title || "Booking")}</h1>
+                        <p class="detail-price">${escapeHtml(formatPrice(booking.decoration_price))}</p>
+                        <p class="detail-description">${escapeHtml(booking.decoration_description || "No description available.")}</p>
+                        <p class="theme-meta"><strong>Booking ID:</strong> #${escapeHtml(booking.id)}</p>
+                        <p class="theme-meta"><strong>Status:</strong> ${escapeHtml(booking.status || "pending")}</p>
+                        <p class="theme-meta"><strong>Event Date:</strong> ${escapeHtml(formatDate(booking.event_date))}</p>
+                        <p class="theme-meta"><strong>Event Time:</strong> ${escapeHtml(booking.event_time || "-")}</p>
+                        <p class="theme-meta"><strong>Location:</strong> ${escapeHtml(booking.location || "-")}</p>
+                        <p class="theme-meta"><strong>Customer:</strong> ${escapeHtml(booking.customer_name || "-")} (${escapeHtml(booking.phone || "-")})</p>
+                        ${canGenerateBill ? `
+                            <div class="review-form-card" style="margin-top: 16px;">
+                                <h3>Booking Bill</h3>
+                                <div class="card-actions detail-actions" style="margin-top: 10px;">
+                                    <button type="button" id="generate-bill-btn" class="btn-card">Generate Bill</button>
+                                </div>
+                                <p id="bill-feedback-message" class="review-feedback-message" aria-live="polite"></p>
+                            </div>
+                        ` : ""}
+                        <div class="card-actions detail-actions">
+                            <a class="btn-card btn-card-alt" href="my-bookings.html">Back to My Bookings</a>
+                        </div>
+                    </div>
+                </div>
+                <section class="reviews-section" id="payment-section">
+                    <div class="reviews-header">
+                        <h2>Payment History</h2>
+                    </div>
+                    <div class="review-form-card">
+                        <div id="payment-history-list"></div>
+                    </div>
+                </section>
+                ${(canShareExperience || hasReview) ? `
+                    <section class="reviews-section" id="booking-review-section">
+                        <div class="reviews-header">
+                            <h2>Share Your Decoration Experience</h2>
+                        </div>
+                        ${hasReview ? `
+                            <div class="review-form-card">
+                                <p class="review-upload-hint">Your completed decoration story is now visible in the public customer gallery and in your profile.</p>
+                                <div class="story-rating">${reviewStarsDisplay(safeReviewRating)}</div>
+                                <div class="review-field-stack">
+                                    <div>
+                                        <strong>Your Review</strong>
+                                        <p>${escapeHtml(booking.review_comment || "No review text was added.")}</p>
+                                    </div>
+                                    ${booking.review_feedback ? `
+                                        <div>
+                                            <strong>Your Feedback</strong>
+                                            <p>${escapeHtml(booking.review_feedback)}</p>
+                                        </div>
+                                    ` : ""}
+                                </div>
+                                ${reviewPhotoGalleryMarkup(reviewPhotos)}
+                                <p><small>Shared on ${escapeHtml(formatDate(booking.review_created_at))}</small></p>
+                            </div>
+                        ` : `
+                            <div class="review-form-card">
+                                <h3>Post your completed decoration setup</h3>
+                                <p class="review-upload-hint">Upload real decoration photos, give an honest star rating, and share your review and feedback. Your post will appear in the public reviews gallery and in your profile.</p>
+                                <div class="review-stars-input" id="review-stars">${starsMarkup(0)}</div>
+                                <div class="review-field-stack">
+                                    <textarea id="review-comment" class="review-comment" rows="4" placeholder="Write your honest review about the decoration experience..."></textarea>
+                                    <textarea id="review-feedback" class="review-comment" rows="4" placeholder="Share detailed feedback for future customers and our team..."></textarea>
+                                </div>
+                                <label class="review-upload-label" for="review-photos">Upload Decoration Photos</label>
+                                <input id="review-photos" class="review-photo-input" type="file" accept="image/*" multiple>
+                                <p class="review-upload-hint">Add at least 1 photo and up to 6 photos from the completed decoration setup.</p>
+                                <div id="review-photo-preview-grid" class="review-photo-preview-grid"></div>
+                                <button type="button" id="submit-review-btn" class="btn-card review-submit-btn">Share Experience</button>
+                                <p id="review-feedback-message" class="review-feedback-message" aria-live="polite"></p>
+                            </div>
+                        `}
+                    </section>
+                ` : ""}
+            `;
+
+            if (canShareExperience && !hasReview) {
+                wireReviewForm(booking.id);
+            }
+            if (canGenerateBill) {
+                wireBillingSection(booking.id);
+            }
+        }
+
+        function wireReviewForm(bookingIdValue) {
+            const stars = Array.from(document.querySelectorAll(".review-star"));
+            const commentInput = document.getElementById("review-comment");
+            const feedbackInput = document.getElementById("review-feedback");
+            const photoInput = document.getElementById("review-photos");
+            const previewGrid = document.getElementById("review-photo-preview-grid");
+            const submitBtn = document.getElementById("submit-review-btn");
+            const messageEl = document.getElementById("review-feedback-message");
+            let rating = 0;
+
+            function showMessage(message, isError = false) {
+                if (!messageEl) return;
+                messageEl.textContent = message || "";
+                messageEl.classList.toggle("error", isError);
+                messageEl.classList.toggle("success", !isError && !!message);
+            }
+
+            function renderPreview() {
+                if (!previewGrid || !photoInput) return;
+
+                const files = Array.from(photoInput.files || []);
+                if (!files.length) {
+                    previewGrid.innerHTML = "";
+                    return;
+                }
+
+                previewGrid.innerHTML = files.map((file) => {
+                    const previewUrl = URL.createObjectURL(file);
+                    return `
+                        <figure class="review-photo-preview-card">
+                            <img src="${previewUrl}" alt="${escapeHtml(file.name || "Selected decoration photo")}">
+                            <figcaption>${escapeHtml(file.name || "Decoration photo")}</figcaption>
+                        </figure>
+                    `;
+                }).join("");
+            }
+
+            stars.forEach((star) => {
+                star.addEventListener("click", () => {
+                    rating = Number.parseInt(star.dataset.rating, 10) || 0;
+                    stars.forEach((item) => {
+                        const value = Number.parseInt(item.dataset.rating, 10) || 0;
+                        item.classList.toggle("active", value <= rating);
+                    });
+                });
+            });
+
+            if (photoInput) {
+                photoInput.addEventListener("change", () => {
+                    const files = Array.from(photoInput.files || []);
+                    if (files.length > 6) {
+                        showMessage("Please upload up to 6 photos only.", true);
+                        photoInput.value = "";
+                        renderPreview();
+                        return;
+                    }
+                    showMessage("");
+                    renderPreview();
+                });
+            }
+
+            if (!submitBtn) return;
+
+            submitBtn.addEventListener("click", async () => {
+                const comment = String(commentInput?.value || "").trim();
+                const feedback = String(feedbackInput?.value || "").trim();
+                const files = Array.from(photoInput?.files || []);
+
+                if (rating < 1 || rating > 5) {
+                    showMessage("Please select a rating from 1 to 5 stars.", true);
+                    return;
+                }
+                if (!comment) {
+                    showMessage("Please write a short review before posting.", true);
+                    return;
+                }
+                if (!files.length) {
+                    showMessage("Please upload at least one decoration photo.", true);
+                    return;
+                }
+                if (files.length > 6) {
+                    showMessage("Please upload up to 6 photos only.", true);
+                    return;
+                }
+
+                try {
+                    submitBtn.disabled = true;
+                    showMessage("Sharing your decoration experience...");
+
+                    const formData = new FormData();
+                    formData.append("rating", String(rating));
+                    formData.append("comment", comment);
+                    formData.append("feedback", feedback);
+                    files.forEach((file) => formData.append("photos", file));
+
+                    const res = await fetch(`${API_BASE_URL}/api/bookings/${bookingIdValue}/review`, {
+                        method: "POST",
+                        credentials: "include",
+                        body: formData
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) {
+                        throw new Error(data.message || "Failed to share your decoration experience");
+                    }
+
+                    showMessage(data.message || "Decoration experience shared successfully.");
+                    setTimeout(() => window.location.reload(), 500);
+                } catch (error) {
+                    showMessage(error.message || "Unable to share your decoration experience.", true);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (!Number.isInteger(bookingId) || bookingId <= 0) {
+                container.innerHTML = `<p class="gallery-empty-state">Invalid booking ID.</p>`;
+                return;
+            }
+
+            try {
+                const session = await ensureCustomerSession();
+                if (!session) {
+                    alert("Please log in to view booking details.");
+                    window.location.href = "login.html";
+                    return;
+                }
+                const booking = await fetchBooking();
+                renderBooking(booking);
+                try {
+                    const payments = await fetchPaymentSummary(bookingId);
+                    renderPaymentSummary(payments);
+                } catch (paymentError) {
+                    const historyList = document.getElementById("payment-history-list");
+                    if (historyList) {
+                        historyList.innerHTML = `<p class="gallery-empty-state">${escapeHtml(paymentError.message || "Unable to load payment history.")}</p>`;
+                    }
+                }
+            } catch (error) {
+                container.innerHTML = `<p class="gallery-empty-state">${escapeHtml(error.message || "Unable to load booking details.")}</p>`;
+            }
+        });
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

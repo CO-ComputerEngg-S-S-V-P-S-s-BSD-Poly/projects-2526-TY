@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body data-page="dashboard" class="admin-theme">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="ph-fill ph-aperture"></i>
+                </div>
+                <div>
+                    <p class="brand-name">Vishva Decor</p>
+                    <p class="brand-sub">Owner Console</p>
+                </div>
+            </div>
+
+            <p class="menu-title">Navigation</p>
+            <nav class="nav">
+                <a class="nav-link active" href="./dashboard.html">
+                    <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-link" href="./manage-bookings.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-check"></i></span>
+                    <span>Manage Bookings</span>
+                </a>
+                <a class="nav-link" href="./bookings-calendar.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-blank"></i></span>
+                    <span>Booking Calendar</span>
+                </a>
+                <a class="nav-link" href="./manage-decor.html">
+                    <span class="nav-icon"><i class="ph ph-sparkle"></i></span>
+                    <span>Manage Decorations</span>
+                </a>
+                <a class="nav-link" href="./reviews.html">
+                    <span class="nav-icon"><i class="ph ph-chat-centered-dots"></i></span>
+                    <span>Customer Reviews</span>
+                </a>
+                <a class="nav-link" href="./manage-inventory.html">
+                    <span class="nav-icon"><i class="ph ph-package"></i></span>
+                    <span>Manage Inventory</span>
+                </a>
+                                <a class="nav-link" href="./manage-payments.html">
+                    <span class="nav-icon"><i class="ph ph-wallet"></i></span>
+                    <span>Manage Payments</span>
+                </a>
+            </nav>
+
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="search-wrap">
+                    <i class="ph ph-magnifying-glass search-icon"></i>
+                    <input id="dashboard-search" type="text" placeholder="Search dashboard sections..." autocomplete="off">
+                </div>
+                <div class="top-right">
+                    <button id="dashboard-notification-btn" class="icon-btn" type="button" aria-label="Notifications">
+                        <i class="ph ph-bell"></i>
+                        <span class="badge"></span>
+                    </button>
+                    <div class="profile-chip">
+                        <div id="owner-avatar" class="avatar-dot" aria-label="Owner avatar">O</div>
+                        <span id="owner-email" class="sr-only">owner@vishva.com</span>
+                    </div>
+                    <button id="owner-logout-btn" type="button">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <section class="hero page-hero" data-searchable="welcome dashboard bookings decoration catalog inventory workspace">
+                <div class="hero-content">
+                    <p class="hero-kicker"><i class="ph-fill ph-crown"></i> OWNER DASHBOARD</p>
+                    <h1>Welcome back, Admin</h1>
+                    <p>Track bookings, manage your decoration catalog, and control inventory in one premium workspace.</p>
+                </div>
+                <a class="hero-chip" href="./manage-bookings.html">
+                    Open Bookings <i class="ph ph-arrow-right"></i>
+                </a>
+            </section>
+
+            <section class="kpi-floating" data-searchable="bookings pending accepted">
+                <article class="stat-card stat-card-elevated dashboard-search-item" data-searchable="total bookings live sync booking api">
+                    <div class="card-top">
+                        <div class="ring ring-blue"><i class="ph ph-trend-up"></i></div>
+                        <div class="trend positive">&mdash;</div>
+                    </div>
+                    <p class="stat-label">Total Bookings</p>
+                    <p class="stat-value" id="stat-bookings">0</p>
+                    <p class="stat-pop">Live sync from booking API</p>
+                </article>
+                <article class="stat-card stat-card-elevated dashboard-search-item" data-searchable="pending reviews owner action">
+                    <div class="card-top">
+                        <div class="ring ring-teal"><i class="ph ph-hourglass-high"></i></div>
+                        <div class="trend neutral">&mdash;</div>
+                    </div>
+                    <p class="stat-label">Pending Reviews</p>
+                    <p class="stat-value" id="stat-pending">0</p>
+                    <p class="stat-pop">Needs owner action</p>
+                </article>
+                <article class="stat-card stat-card-elevated dashboard-search-item" data-searchable="accepted events confirmed reservations">
+                    <div class="card-top">
+                        <div class="ring ring-indigo"><i class="ph ph-check-circle"></i></div>
+                        <div class="trend positive">&mdash;</div>
+                    </div>
+                    <p class="stat-label">Accepted Events</p>
+                    <p class="stat-value" id="stat-accepted">0</p>
+                    <p class="stat-pop">Confirmed reservations</p>
+                </article>
+            </section>
+
+            <section class="stats-grid" data-searchable="decorations inventory low stock alerts">
+                <article class="stat-card dashboard-search-item" data-searchable="active decorations">
+                    <div class="stat-icon-bg"><i class="ph ph-palette"></i></div>
+                    <div>
+                        <p class="stat-label">Active Decorations</p>
+                        <p class="stat-value" id="stat-decorations">0</p>
+                    </div>
+                </article>
+                <article class="stat-card dashboard-search-item" data-searchable="inventory items">
+                    <div class="stat-icon-bg"><i class="ph ph-stack"></i></div>
+                    <div>
+                        <p class="stat-label">Inventory Items</p>
+                        <p class="stat-value" id="stat-inventory">0</p>
+                    </div>
+                </article>
+                <article class="stat-card warning dashboard-search-item" data-searchable="low stock alerts">
+                    <div class="stat-icon-bg warn-bg"><i class="ph ph-warning"></i></div>
+                    <div>
+                        <p class="stat-label">Low Stock Alerts</p>
+                        <p class="stat-value" id="stat-low-stock">0</p>
+                    </div>
+                </article>
+            </section>
+
+            <section class="content-grid" data-searchable="operations weekly performance quick access">
+                <article class="panel mini-chart dashboard-search-item" data-searchable="weekly performance bookings accepted accept rate low stock rate">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Weekly Performance</h3>
+                            <span id="weekly-range-label">Trailing 7 Days</span>
+                        </div>
+                        <select id="weekly-range" class="premium-select">
+                            <option value="this-week">This Week</option>
+                            <option value="last-week">Last Week</option>
+                        </select>
+                    </div>
+                    <div class="weekly-stats">
+                        <div class="weekly-item">
+                            <p class="weekly-label">Bookings</p>
+                            <p class="weekly-value" id="weekly-bookings">0</p>
+                        </div>
+                        <div class="weekly-item">
+                            <p class="weekly-label">Accepted</p>
+                            <p class="weekly-value" id="weekly-accepted">0</p>
+                        </div>
+                        <div class="weekly-item">
+                            <p class="weekly-label">Accept Rate</p>
+                            <p class="weekly-value" id="weekly-accept-rate">&mdash;</p>
+                        </div>
+                        <div class="weekly-item">
+                            <p class="weekly-label">Low Stock Rate</p>
+                            <p class="weekly-value" id="weekly-low-stock-rate">&mdash;</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <svg viewBox="0 0 620 180" class="chart-svg" role="img" aria-label="Weekly trend chart">
+                            <defs>
+                                <linearGradient id="gradientA" x1="0" x2="0" y1="0" y2="1">
+                                    <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.2"/>
+                                    <stop offset="100%" stop-color="#4f46e5" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <polyline id="weekly-area" points="0,180 0,180 103,180 206,180 309,180 412,180 515,180 620,180 620,180" fill="url(#gradientA)" stroke="none"></polyline>
+                            <polyline id="weekly-line-bookings" points="0,180 103,180 206,180 309,180 412,180 515,180 620,180" class="line-a"></polyline>
+                            <polyline id="weekly-line-accepted" points="0,180 103,180 206,180 309,180 412,180 515,180 620,180" class="line-b"></polyline>
+                        </svg>
+                    </div>
+                </article>
+
+            </section>            <p id="dashboard-search-empty" class="search-empty dashboard-hidden">No matching dashboard section found.</p>
+
+            <aside id="dashboard-notification-popup" class="dashboard-notification-popup" aria-hidden="true">
+                <div class="dashboard-popup-head">
+                    <h4>Live Admin Updates</h4>
+                    <button type="button" class="popup-close-btn" data-close-dashboard-popup="notifications" aria-label="Close notifications">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+                <ul class="dashboard-popup-list">
+                    <li>
+                        <span class="popup-dot popup-dot-bookings"></span>
+                        <div>
+                            <p><strong id="popup-notify-bookings">0</strong> new bookings tracked</p>
+                            <small>Updated from live booking API</small>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="popup-dot popup-dot-pending"></span>
+                        <div>
+                            <p><strong id="popup-notify-pending">0</strong> pending approvals</p>
+                            <small>Review requests waiting owner action</small>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="popup-dot popup-dot-stock"></span>
+                        <div>
+                            <p><strong id="popup-notify-stock">0</strong> low stock alerts</p>
+                            <small>Restock recommendations generated</small>
+                        </div>
+                    </li>
+                </ul>
+            </aside>
+
+            <div id="dashboard-quick-popup" class="dashboard-quick-popup" aria-hidden="true">
+                <div class="dashboard-quick-card" role="dialog" aria-modal="true" aria-labelledby="dashboard-quick-title">
+                    <div class="dashboard-popup-head">
+                        <h4 id="dashboard-quick-title">Quick Actions</h4>
+                        <button type="button" class="popup-close-btn" data-close-dashboard-popup="quick" aria-label="Close quick popup">
+                            <i class="ph ph-x"></i>
+                        </button>
+                    </div>
+                    <p>Jump straight to admin tools with one click.</p>
+                    <div class="dashboard-quick-actions">
+                        <a href="./manage-bookings.html" class="btn-primary" data-popup-action="bookings">Open Bookings</a>
+                        <a href="./manage-decor.html" class="btn-outline" data-popup-action="decor">Open Decorations</a>
+                        <a href="./manage-inventory.html" class="btn-outline" data-popup-action="inventory">Open Inventory</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dashboard-toast" class="dashboard-toast" aria-hidden="true">
+                <i class="ph-fill ph-check-circle"></i>
+                <span id="dashboard-toast-text">Dashboard synced successfully.</span>
+            </div>
+        </main>
+    </div>
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts & Reminders | Vishva Decorators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="travel-theme dashboard-page bg-light notifications-page">
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Vishva <span>Decor</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="nav-dropdown">
+                    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                        <span>Gallery</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="nav-dropdown-menu" hidden>
+                        <a href="gallery.html">
+                            <i class="fas fa-images" aria-hidden="true"></i>
+                            <span>All Themes</span>
+                        </a>
+                        <a href="gallery.html?filter=wedding">
+                            <i class="fas fa-ring" aria-hidden="true"></i>
+                            <span>Wedding Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=festival">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <span>Festival Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=religious">
+                            <i class="fas fa-hands-praying" aria-hidden="true"></i>
+                            <span>Religious Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=party">
+                            <i class="fas fa-cake-candles" aria-hidden="true"></i>
+                            <span>Party Themes</span>
+                        </a>
+                    </div>
+                </li>
+                <li><a href="my-bookings.html" class="active">My Bookings</a></li>
+                <li class="nav-dropdown nav-dropdown-right">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+        <span>Contact Us</span>
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="nav-dropdown-menu" hidden>
+        <a href="contact.html">
+            <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+            <span>Contact Us Page</span>
+        </a>
+        <a href="tel:+911234567890">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Call Us</span>
+        </a>
+        <a href="mailto:vishvadecor@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Email Us</span>
+        </a>
+    </div>
+</li>
+            </ul>
+            <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+            <a href="my-bookings.html" class="btn-outline-small">Back to Bookings</a>
+        </div>
+    </nav>
+
+    <header class="dashboard-header section-padding">
+        <div class="container">
+            <span class="subtitle-accent">NOTIFICATION CENTER</span>
+            <h2>Alerts, Reminders &amp; Messages</h2>
+            <p>All updates from owner and system are organized in one place.</p>
+        </div>
+    </header>
+
+    <section class="dashboard-content section-padding" style="padding-top: 0;">
+        <div class="container">
+            <div class="bookings-section">
+                <div class="notifications-head">
+                    <h3 class="section-title-small">My Notifications</h3>
+                    <div class="notifications-tools">
+                        <div class="notification-filters" id="notification-filters">
+                            <button type="button" class="btn-outline-small is-active" data-filter="alerts">
+                                <i class="fas fa-bell"></i> Alerts <span id="alerts-count">0</span>
+                            </button>
+                            <button type="button" class="btn-outline-small" data-filter="reminders">
+                                <i class="fas fa-clock"></i> Reminders <span id="reminders-count">0</span>
+                            </button>
+                            <button type="button" class="btn-outline-small" data-filter="messages">
+                                <i class="fas fa-envelope"></i> Messages <span id="messages-count">0</span>
+                            </button>
+                        </div>
+                        <button id="mark-all-read-btn" type="button" class="btn-outline-small">Mark all read</button>
+                    </div>
+                </div>
+                <div class="notifications-list" id="notifications-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo white">Vishva <span>Decor</span></div>
+                <p>Transforming your celebrations with exquisite traditional decorations.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Vishva Decor. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_HOST = window.location.hostname || "localhost";
+        const API_BASE_URL = `http://${API_HOST}:5000`;
+
+        const notificationState = {
+            all: [],
+            filter: "alerts"
+        };
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        let activeCustomer = null;
+
+        async function ensureCustomerSession() {
+            const response = await fetch(`${API_BASE_URL}/api/customers/me`, { credentials: "include" });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.customer) {
+                return null;
+            }
+            activeCustomer = data.customer;
+            return activeCustomer;
+        }
+
+        function formatDateTime(dateValue) {
+            const date = new Date(dateValue);
+            if (Number.isNaN(date.getTime())) return "-";
+            return date.toLocaleString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        function getNotificationBucket(item) {
+            const type = String(item?.type || "").toLowerCase();
+            if (type === "booking_reminder" || type === "owner_overdue_reminder" || type === "payment_due_reminder") return "reminders";
+            if (type === "owner_message" || type === "payment_notice" || type === "payment_update") return "messages";
+            return "alerts";
+        }
+
+        function getNotificationIcon(type) {
+            const normalized = String(type || "").toLowerCase();
+            if (normalized === "booking_reminder" || normalized === "owner_overdue_reminder") return "fa-clock";
+            if (normalized === "payment_notice" || normalized === "payment_due_reminder") return "fa-wallet";
+            if (normalized === "owner_message") return "fa-envelope-open-text";
+            if (normalized === "booking_status") return "fa-circle-check";
+            return "fa-bell";
+        }
+
+        function updateFilterButtons() {
+            const root = document.getElementById("notification-filters");
+            if (!root) return;
+            root.querySelectorAll("button[data-filter]").forEach((button) => {
+                button.classList.toggle("is-active", button.dataset.filter === notificationState.filter);
+            });
+        }
+
+        function renderNotifications(items) {
+            const listEl = document.getElementById("notifications-list");
+            if (!listEl) return;
+
+            const list = Array.isArray(items) ? items : [];
+            notificationState.all = list;
+
+            const alerts = list.filter((item) => getNotificationBucket(item) === "alerts");
+            const reminders = list.filter((item) => getNotificationBucket(item) === "reminders");
+            const messages = list.filter((item) => getNotificationBucket(item) === "messages");
+
+            const alertsCountEl = document.getElementById("alerts-count");
+            const remindersCountEl = document.getElementById("reminders-count");
+            const messagesCountEl = document.getElementById("messages-count");
+
+            if (alertsCountEl) alertsCountEl.textContent = String(alerts.length);
+            if (remindersCountEl) remindersCountEl.textContent = String(reminders.length);
+            if (messagesCountEl) messagesCountEl.textContent = String(messages.length);
+
+            updateFilterButtons();
+
+            let filtered = alerts;
+            if (notificationState.filter === "reminders") filtered = reminders;
+            if (notificationState.filter === "messages") filtered = messages;
+
+            if (!filtered.length) {
+                const label = notificationState.filter === "messages"
+                    ? "messages"
+                    : (notificationState.filter === "reminders" ? "reminders" : "alerts");
+                listEl.innerHTML = `<p class="gallery-empty-state">No ${label} right now.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map((item) => `
+                <article class="notification-item ${item.is_read ? "is-read" : "is-unread"}">
+                    <div class="notification-main">
+                        <p class="notification-title">
+                            <span class="notification-type-dot"><i class="fas ${getNotificationIcon(item.type)}"></i></span>
+                            ${escapeHtml(item.title || "Notification")}
+                        </p>
+                        <p class="notification-message">${escapeHtml(item.message || "")}</p>
+                        <p class="notification-meta">
+                            ${escapeHtml((item.status || "sent").toUpperCase())}
+                            |
+                            ${escapeHtml(formatDateTime(item.sent_at || item.due_at || item.created_at))}
+                        </p>
+                    </div>
+                    ${item.is_read
+                        ? ""
+                        : `<button type="button" class="btn-text js-mark-read" data-notification-id="${escapeHtml(item.id)}">Mark read</button>`
+                    }
+                </article>
+            `).join("");
+        }
+
+        async function loadNotifications() {
+            const listEl = document.getElementById("notifications-list");
+            if (!activeCustomer || !Number.isInteger(Number(activeCustomer.id))) {
+                renderNotifications([]);
+                if (listEl) {
+                    listEl.innerHTML = `<p class="gallery-empty-state">Create a booking to start receiving alerts and reminders.</p>`;
+                }
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/api/notifications?customer_id=${encodeURIComponent(activeCustomer.id)}&limit=80`, {
+                credentials: "include"
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to load notifications");
+            }
+
+            renderNotifications(Array.isArray(data.notifications) ? data.notifications : []);
+        }
+
+        async function markNotificationAsRead(notificationId) {
+            if (!activeCustomer || !Number.isInteger(Number(activeCustomer.id))) return;
+
+            const response = await fetch(`${API_BASE_URL}/api/notifications/${encodeURIComponent(notificationId)}/read`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ customer_id: activeCustomer.id, is_read: true })
+            });
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to update notification");
+            }
+        }
+
+        async function markAllNotificationsAsRead() {
+            if (!activeCustomer || !Number.isInteger(Number(activeCustomer.id))) return;
+
+            const response = await fetch(`${API_BASE_URL}/api/notifications/read-all`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ customer_id: activeCustomer.id })
+            });
+
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to mark all notifications as read");
+            }
+        }
+
+        function getInitialFilterFromQuery() {
+            const tab = String(new URLSearchParams(window.location.search).get("tab") || "").toLowerCase();
+            if (tab === "reminders" || tab === "messages") return tab;
+            return "alerts";
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const session = await ensureCustomerSession();
+            if (!session) {
+                alert("Please log in to view your notifications.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            notificationState.filter = getInitialFilterFromQuery();
+
+            try {
+                await loadNotifications();
+            } catch (error) {
+                const listEl = document.getElementById("notifications-list");
+                if (listEl) listEl.innerHTML = `<p class="gallery-empty-state">${escapeHtml(error.message || "Unable to load notifications right now.")}</p>`;
+            }
+
+            const filtersRoot = document.getElementById("notification-filters");
+            if (filtersRoot) {
+                filtersRoot.addEventListener("click", (event) => {
+                    const button = event.target.closest("button[data-filter]");
+                    if (!button) return;
+                    const selected = String(button.dataset.filter || "").toLowerCase();
+                    notificationState.filter = selected === "messages" ? "messages" : (selected === "reminders" ? "reminders" : "alerts");
+                    renderNotifications(notificationState.all);
+                });
+            }
+
+            const notificationsListEl = document.getElementById("notifications-list");
+            if (notificationsListEl) {
+                notificationsListEl.addEventListener("click", async (event) => {
+                    const button = event.target.closest(".js-mark-read");
+                    if (!button) return;
+                    try {
+                        await markNotificationAsRead(button.dataset.notificationId);
+                        await loadNotifications();
+                    } catch (error) {
+                        alert(error.message || "Unable to update notification");
+                    }
+                });
+            }
+
+            const markAllReadBtn = document.getElementById("mark-all-read-btn");
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener("click", async () => {
+                    try {
+                        await markAllNotificationsAsRead();
+                        await loadNotifications();
+                    } catch (error) {
+                        alert(error.message || "Unable to mark all notifications as read.");
+                    }
+                });
+            }
+
+            window.setInterval(() => {
+                loadNotifications().catch(() => {});
+            }, 60000);
+        });
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile | Vishva Decor</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css?v=20260323-profile">
+<link rel="stylesheet" href="profile.css?v=20260414-profile-panels">
+</head>
+<body class="travel-theme bg-light profile-page-standalone">
+
+<nav class="navbar">
+    <div class="container nav-container">
+        <div class="logo">Vishva <span>Decor</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li class="nav-dropdown">
+                <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                    <span>Gallery</span>
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="nav-dropdown-menu" hidden>
+                    <a href="gallery.html"><i class="fas fa-images" aria-hidden="true"></i><span>All Themes</span></a>
+                    <a href="gallery.html?filter=wedding"><i class="fas fa-ring" aria-hidden="true"></i><span>Wedding Decor</span></a>
+                    <a href="gallery.html?filter=festival"><i class="fas fa-star" aria-hidden="true"></i><span>Festival Decor</span></a>
+                    <a href="gallery.html?filter=religious"><i class="fas fa-hands-praying" aria-hidden="true"></i><span>Religious Decor</span></a>
+                    <a href="gallery.html?filter=party"><i class="fas fa-cake-candles" aria-hidden="true"></i><span>Party Themes</span></a>
+                </div>
+            </li>
+            <li><a href="reviews.html">Customer Reviews</a></li>
+            <li class="nav-dropdown nav-dropdown-right">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+        <span>Contact Us</span>
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="nav-dropdown-menu" hidden>
+        <a href="contact.html">
+            <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+            <span>Contact Us Page</span>
+        </a>
+        <a href="tel:+911234567890">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Call Us</span>
+        </a>
+        <a href="mailto:vishvadecor@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Email Us</span>
+        </a>
+    </div>
+</li>
+        </ul>
+        <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+        </button>
+        <a href="login.html" class="btn-nav">Login / Sign Up</a>
+    </div>
+</nav>
+
+<section class="profile-container section-padding">
+<div class="container">
+
+<p id="profile-page-status" class="profile-page-status" hidden></p>
+
+<div class="profile-header card motion-fade-up">
+<div class="profile-avatar">
+<span id="profile-avatar-text">V</span>
+</div>
+
+<div class="profile-info">
+<span class="profile-kicker">Customer Profile</span>
+<h2 id="profile-name">Loading profile...</h2>
+<p>Email: <span id="profile-email">Loading...</span></p>
+<p>Phone: <span id="profile-phone">Loading...</span></p>
+<div class="profile-meta-row">
+<span class="profile-chip">Live Account</span>
+
+</div>
+</div>
+</div>
+
+<div class="stats-grid motion-stagger">
+
+<div class="stat-card">
+<i class="fas fa-calendar-check"></i>
+<h3 id="stat-total-bookings">0</h3>
+<p>Total Bookings</p>
+</div>
+
+<div class="stat-card">
+<i class="fas fa-star"></i>
+<h3 id="stat-completed-events">0</h3>
+<p>Completed Events</p>
+</div>
+
+<div class="stat-card">
+<i class="fas fa-clock"></i>
+<h3 id="stat-upcoming-events">0</h3>
+<p>Upcoming Events</p>
+</div>
+
+<div class="stat-card">
+<i class="fas fa-comment"></i>
+<h3 id="stat-reviews-posted">0</h3>
+<p>Reviews Posted</p>
+</div>
+
+</div>
+
+<div class="profile-grid">
+
+<div class="card motion-fade-up profile-panel-card">
+<div class="card-head">
+<h3>Recent Bookings</h3>
+<div class="card-head-actions">
+<button type="button" id="delete-all-bookings-btn" class="panel-action-btn panel-action-danger">Delete All</button>
+<a href="my-bookings.html" class="see-all-link">See All</a>
+</div>
+</div>
+<div id="recent-bookings-list" class="profile-scroll-list" aria-live="polite">
+<div class="booking-item profile-list-item">
+<h4>Loading bookings...</h4>
+<p>Please wait while we fetch your latest booking activity.</p>
+</div>
+</div>
+</div>
+
+<div class="card motion-fade-up profile-panel-card">
+<div class="card-head">
+<h3>Notifications</h3>
+<div class="card-head-actions">
+<button type="button" id="delete-all-notifications-btn" class="panel-action-btn panel-action-danger">Delete All</button>
+<a href="notifications.html" class="see-all-link">See All</a>
+</div>
+</div>
+<div id="notification-list" class="notification-list profile-scroll-list" aria-live="polite">
+<div class="profile-notification-item profile-list-item">Loading notifications...</div>
+</div>
+</div>
+
+</div>
+
+<div class="card review-showcase motion-fade-up">
+<div class="card-head">
+<h3>My Decoration Experiences</h3>
+<a href="reviews.html" class="see-all-link">Open Gallery</a>
+</div>
+<div id="review-grid" class="review-grid">
+<div class="review-card">
+<p>Loading your shared decoration experiences...</p>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div class="footer-brand">
+            <div class="logo white">Vishva <span>Decor</span></div>
+            <p>Transforming your celebrations with exquisite traditional decorations for every special occasion.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+const PROFILE_API_HOST = window.location.hostname || "localhost";
+const PROFILE_API_BASE_URL_CANDIDATES = Array.from(new Set([
+    `http://${PROFILE_API_HOST}:5000`,
+    "http://localhost:5000",
+    "http://127.0.0.1:5000"
+]));
+let profileActiveApiBase = PROFILE_API_BASE_URL_CANDIDATES[0];
+const profileState = {
+    customer: null,
+    bookings: [],
+    notifications: [],
+    reviews: []
+};
+
+async function profileApiFetch(path, options = {}) {
+    let lastNetworkError = null;
+
+    for (const baseUrl of PROFILE_API_BASE_URL_CANDIDATES) {
+        try {
+            const response = await fetch(`${baseUrl}${path}`, {
+                credentials: "include",
+                ...options
+            });
+            profileActiveApiBase = baseUrl;
+            return response;
+        } catch (error) {
+            lastNetworkError = error;
+        }
+    }
+
+    throw lastNetworkError || new Error("Unable to reach the backend server");
+}
+
+async function profileApiFetchFirstSuccessful(paths, options = {}) {
+    let fallbackResponse = null;
+    let lastNetworkError = null;
+
+    for (const path of paths) {
+        try {
+            const response = await profileApiFetch(path, options);
+            if (response.status === 404 || response.status === 405) {
+                fallbackResponse = response;
+                continue;
+            }
+            return response;
+        } catch (error) {
+            lastNetworkError = error;
+        }
+    }
+
+    if (fallbackResponse) return fallbackResponse;
+    throw lastNetworkError || new Error("Unable to reach the backend server");
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function formatDate(value) {
+    if (!value) return "Date pending";
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return "Date pending";
+    return parsed.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function formatDateTime(value) {
+    if (!value) return "Just now";
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return "Just now";
+    return parsed.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+}
+
+function resolveImageSource(rawPath) {
+    const fallback = "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=900&auto=format&fit=crop";
+    const value = String(rawPath || "").trim();
+    if (!value) return fallback;
+    if (value.startsWith("http://") || value.startsWith("https://")) return value;
+    return `${profileActiveApiBase}${value.startsWith("/") ? value : `/${value}`}`;
+}
+
+function normalizeStatus(status) {
+    return String(status || "").trim().toLowerCase();
+}
+
+function resolveTimestamp(value) {
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return 0;
+    return parsed.getTime();
+}
+
+function sortByRecent(items, keys) {
+    return (Array.isArray(items) ? items.slice() : []).sort((left, right) => {
+        const leftTime = keys.reduce((max, key) => Math.max(max, resolveTimestamp(left?.[key])), 0);
+        const rightTime = keys.reduce((max, key) => Math.max(max, resolveTimestamp(right?.[key])), 0);
+        return rightTime - leftTime;
+    });
+}
+
+function statusBadge(status) {
+    const normalized = normalizeStatus(status);
+    if (normalized === "completed") return { label: "Completed", className: "status completed" };
+    if (normalized === "accepted" || normalized === "confirmed") return { label: "Confirmed", className: "status confirmed" };
+    if (normalized === "pending") return { label: "Pending", className: "status pending" };
+    if (normalized === "cancelled" || normalized === "rejected") return { label: "Cancelled", className: "status cancelled" };
+    return { label: status || "Pending", className: "status pending" };
+}
+
+function setStatus(message = "", isError = false) {
+    const statusEl = document.getElementById("profile-page-status");
+    if (!statusEl) return;
+    statusEl.hidden = !message;
+    statusEl.textContent = message;
+    statusEl.classList.toggle("is-error", isError);
+}
+
+function getNotificationDateLabel(item) {
+    return formatDateTime(item?.sent_at || item?.created_at || item?.due_at);
+}
+
+function updatePanelActionState() {
+    const deleteAllBookingsBtn = document.getElementById("delete-all-bookings-btn");
+    const deleteAllNotificationsBtn = document.getElementById("delete-all-notifications-btn");
+
+    if (deleteAllBookingsBtn) deleteAllBookingsBtn.disabled = profileState.bookings.length === 0;
+    if (deleteAllNotificationsBtn) deleteAllNotificationsBtn.disabled = profileState.notifications.length === 0;
+}
+
+function renderIdentity(customer) {
+    const name = String(customer?.name || "Customer").trim();
+    const email = String(customer?.email || "Not added").trim();
+    const phone = String(customer?.phone || "Not added").trim();
+    const avatarText = name ? name.charAt(0).toUpperCase() : "V";
+
+    document.getElementById("profile-avatar-text").textContent = avatarText;
+    document.getElementById("profile-name").textContent = name;
+    document.getElementById("profile-email").textContent = email;
+    document.getElementById("profile-phone").textContent = phone;
+}
+
+function renderStats(bookings, reviews) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const totalBookings = bookings.length;
+    const completedEvents = bookings.filter((item) => normalizeStatus(item.status) === "completed").length;
+    const upcomingEvents = bookings.filter((item) => {
+        const status = normalizeStatus(item.status);
+        const eventDate = new Date(item.event_date);
+        return (status === "accepted" || status === "pending" || status === "confirmed") && !Number.isNaN(eventDate.getTime()) && eventDate >= today;
+    }).length;
+    const reviewsPosted = reviews.length;
+
+    document.getElementById("stat-total-bookings").textContent = String(totalBookings);
+    document.getElementById("stat-completed-events").textContent = String(completedEvents);
+    document.getElementById("stat-upcoming-events").textContent = String(upcomingEvents);
+    document.getElementById("stat-reviews-posted").textContent = String(reviewsPosted);
+}
+
+function renderBookings(bookings) {
+    const container = document.getElementById("recent-bookings-list");
+    if (!container) return;
+
+    const items = sortByRecent(bookings, ["updated_at", "created_at", "event_date"]);
+    if (!items.length) {
+        container.innerHTML = `
+            <div class="booking-item profile-list-item profile-empty-state-card">
+                <h4>No bookings yet</h4>
+                <p>Your upcoming decoration bookings will appear here.</p>
+            </div>
+        `;
+        updatePanelActionState();
+        return;
+    }
+
+    container.innerHTML = items.map((booking) => {
+        const badge = statusBadge(booking.status);
+        const bookingId = String(booking?.id || "").trim();
+        const subtitle = booking.event_type || booking.category || "Decoration booking";
+        return `
+            <div class="booking-item profile-list-item">
+                <div class="booking-copy">
+                    <h4>${escapeHtml(booking.decoration_title || "Decoration Booking")}</h4>
+                    <p>${escapeHtml(subtitle)}</p>
+                    <p class="profile-item-meta">Event Date: ${escapeHtml(formatDate(booking.event_date))}</p>
+                </div>
+                <div class="profile-item-side">
+                    <span class="${badge.className}">${escapeHtml(badge.label)}</span>
+                    ${bookingId
+                        ? `<button type="button" class="item-action-btn item-delete-btn js-delete-booking" data-booking-id="${escapeHtml(bookingId)}">Delete</button>`
+                        : ""
+                    }
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    updatePanelActionState();
+}
+
+function renderNotifications(notifications) {
+    const list = document.getElementById("notification-list");
+    if (!list) return;
+
+    const items = sortByRecent(notifications, ["sent_at", "created_at", "due_at"]);
+    if (!items.length) {
+        list.innerHTML = `<div class="profile-notification-item profile-list-item profile-empty-state-card">No notifications yet.</div>`;
+        updatePanelActionState();
+        return;
+    }
+
+    list.innerHTML = items.map((item) => {
+        const notificationId = String(item?.id || "").trim();
+        return `
+            <article class="profile-notification-item profile-list-item ${item?.is_read ? "" : "is-unread"}">
+                <div class="profile-notification-copy">
+                    <strong>${escapeHtml(item.title || "Notification")}</strong>
+                    <p>${escapeHtml(item.message || "A new update is available.")}</p>
+                    <span>${escapeHtml(getNotificationDateLabel(item))}</span>
+                </div>
+                <div class="profile-item-side">
+                    ${notificationId
+                        ? `<button type="button" class="item-action-btn item-delete-btn js-delete-notification" data-notification-id="${escapeHtml(notificationId)}">Delete</button>`
+                        : ""
+                    }
+                </div>
+            </article>
+        `;
+    }).join("");
+
+    updatePanelActionState();
+}
+
+function renderReviews(reviews) {
+    const grid = document.getElementById("review-grid");
+    if (!grid) return;
+
+    const items = Array.isArray(reviews) ? reviews.slice(0, 6) : [];
+    if (!items.length) {
+        grid.innerHTML = `
+            <div class="review-card">
+                <p>You have not shared any decoration experiences yet.</p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = items.map((review, index) => {
+        const photo = Array.isArray(review.photos) && review.photos.length ? review.photos[0] : "";
+        const rating = Math.max(0, Math.min(5, Number(review.rating || 0)));
+        const stars = Array.from({ length: 5 }, (_, starIndex) => (
+            `<span class="review-star-icon ${starIndex < rating ? "active" : ""}">&#9733;</span>`
+        )).join("");
+        return `
+            <div class="review-card review-card-${index + 1}">
+                <img src="${resolveImageSource(photo)}" alt="${escapeHtml(review.decoration_title || "Decoration experience")}" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=900&auto=format&fit=crop'">
+                <p class="review-stars">${stars}</p>
+                <p>${escapeHtml(review.comment || "Shared a decoration experience.")}</p>
+            </div>
+        `;
+    }).join("");
+}
+
+function animateOnLoad() {
+    document.querySelectorAll(".motion-fade-up, .stat-card, .review-card, .profile-list-item").forEach((element, index) => {
+        element.style.animationDelay = `${Math.min(index * 0.08, 0.56)}s`;
+        element.classList.add("motion-ready");
+    });
+}
+
+function refreshProfilePanels() {
+    renderStats(profileState.bookings, profileState.reviews);
+    renderBookings(profileState.bookings);
+    renderNotifications(profileState.notifications);
+    renderReviews(profileState.reviews);
+    animateOnLoad();
+}
+
+function buildDeleteRequestOptions() {
+    return {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            customer_id: profileState.customer?.id
+        })
+    };
+}
+
+function bookingDeletePaths(bookingId) {
+    const id = encodeURIComponent(String(bookingId || "").trim());
+    const customerId = encodeURIComponent(String(profileState.customer?.id || "").trim());
+    return [
+        `/api/bookings/${id}/mine`,
+        `/api/bookings/${id}/mine?customer_id=${customerId}`,
+        `/api/bookings/${id}?customer_id=${customerId}`,
+        `/api/bookings/${id}`,
+        `/api/bookings?id=${id}&customer_id=${customerId}`
+    ];
+}
+
+function deleteAllBookingPaths() {
+    const customerId = encodeURIComponent(String(profileState.customer?.id || "").trim());
+    return [
+        `/api/bookings/mine`,
+        `/api/bookings/all/mine`,
+        `/api/bookings?customer_id=${customerId}`
+    ];
+}
+
+function notificationDeletePaths(notificationId) {
+    const id = encodeURIComponent(String(notificationId || "").trim());
+    const customerId = encodeURIComponent(String(profileState.customer?.id || "").trim());
+    return [
+        `/api/notifications/${id}?customer_id=${customerId}`,
+        `/api/notifications/${id}`,
+        `/api/notifications?id=${id}&customer_id=${customerId}`
+    ];
+}
+
+function deleteAllNotificationPaths() {
+    const customerId = encodeURIComponent(String(profileState.customer?.id || "").trim());
+    return [
+        `/api/notifications/all?customer_id=${customerId}`,
+        `/api/notifications?customer_id=${customerId}`,
+        `/api/notifications/mine`
+    ];
+}
+
+async function deleteBooking(bookingId, trigger) {
+    if (!bookingId) return;
+
+    const confirmed = window.confirm("Delete this booking from your account?");
+    if (!confirmed) return;
+
+    try {
+        if (trigger) trigger.disabled = true;
+        const response = await profileApiFetchFirstSuccessful(bookingDeletePaths(bookingId), buildDeleteRequestOptions());
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to delete this booking right now.");
+        }
+
+        profileState.bookings = profileState.bookings.filter((item) => String(item?.id) !== String(bookingId));
+        refreshProfilePanels();
+        setStatus(data.message || "Booking deleted successfully.");
+    } catch (error) {
+        setStatus(error.message || "Unable to delete this booking right now.", true);
+    } finally {
+        if (trigger) trigger.disabled = false;
+    }
+}
+
+async function deleteAllBookings(trigger) {
+    if (!profileState.bookings.length) return;
+
+    const confirmed = window.confirm("Delete all bookings from your profile?");
+    if (!confirmed) return;
+
+    try {
+        if (trigger) trigger.disabled = true;
+        const response = await profileApiFetchFirstSuccessful(deleteAllBookingPaths(), buildDeleteRequestOptions());
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to delete all bookings right now.");
+        }
+
+        profileState.bookings = [];
+        refreshProfilePanels();
+        setStatus(data.message || "All bookings were deleted successfully.");
+    } catch (error) {
+        setStatus(error.message || "Unable to delete all bookings right now.", true);
+    } finally {
+        if (trigger) trigger.disabled = false;
+    }
+}
+
+async function deleteNotification(notificationId, trigger) {
+    if (!notificationId) return;
+
+    const confirmed = window.confirm("Delete this notification?");
+    if (!confirmed) return;
+
+    try {
+        if (trigger) trigger.disabled = true;
+        const response = await profileApiFetchFirstSuccessful(notificationDeletePaths(notificationId), buildDeleteRequestOptions());
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to delete this notification right now.");
+        }
+
+        profileState.notifications = profileState.notifications.filter((item) => String(item?.id) !== String(notificationId));
+        refreshProfilePanels();
+        setStatus(data.message || "Notification deleted successfully.");
+    } catch (error) {
+        setStatus(error.message || "Unable to delete this notification right now.", true);
+    } finally {
+        if (trigger) trigger.disabled = false;
+    }
+}
+
+async function deleteAllNotifications(trigger) {
+    if (!profileState.notifications.length) return;
+
+    const confirmed = window.confirm("Delete all notifications?");
+    if (!confirmed) return;
+
+    try {
+        if (trigger) trigger.disabled = true;
+        const response = await profileApiFetchFirstSuccessful(deleteAllNotificationPaths(), buildDeleteRequestOptions());
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.message || "Unable to delete all notifications right now.");
+        }
+
+        profileState.notifications = [];
+        refreshProfilePanels();
+        setStatus(data.message || "All notifications were deleted successfully.");
+    } catch (error) {
+        setStatus(error.message || "Unable to delete all notifications right now.", true);
+    } finally {
+        if (trigger) trigger.disabled = false;
+    }
+}
+
+async function loadProfile() {
+    try {
+        setStatus("");
+
+        const sessionResponse = await profileApiFetch("/api/customers/me");
+        const sessionData = await sessionResponse.json().catch(() => ({}));
+
+        if (!sessionResponse.ok || !sessionData.customer) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const customer = sessionData.customer;
+        profileState.customer = customer;
+        renderIdentity(customer);
+
+        const [bookingsResponse, notificationsResponse, reviewsResponse] = await Promise.all([
+            profileApiFetch("/api/bookings/mine"),
+            profileApiFetch(`/api/notifications?customer_id=${encodeURIComponent(customer.id)}&limit=50`),
+            profileApiFetch("/api/reviews/mine")
+        ]);
+
+        const bookingsData = await bookingsResponse.json().catch(() => []);
+        const notificationsData = await notificationsResponse.json().catch(() => ({}));
+        const reviewsData = await reviewsResponse.json().catch(() => ({}));
+
+        profileState.bookings = bookingsResponse.ok && Array.isArray(bookingsData) ? bookingsData : [];
+        profileState.notifications = notificationsResponse.ok && Array.isArray(notificationsData.notifications) ? notificationsData.notifications : [];
+        profileState.reviews = reviewsResponse.ok && Array.isArray(reviewsData.reviews) ? reviewsData.reviews : [];
+
+        refreshProfilePanels();
+
+        if (!bookingsResponse.ok || !notificationsResponse.ok || !reviewsResponse.ok) {
+            setStatus("Some profile details could not be loaded completely.", true);
+        }
+    } catch (error) {
+        setStatus(error.message || "Unable to load your profile right now.", true);
+    }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    const bookingsList = document.getElementById("recent-bookings-list");
+    const notificationList = document.getElementById("notification-list");
+    const deleteAllBookingsBtn = document.getElementById("delete-all-bookings-btn");
+    const deleteAllNotificationsBtn = document.getElementById("delete-all-notifications-btn");
+
+    if (bookingsList) {
+        bookingsList.addEventListener("click", (event) => {
+            const button = event.target.closest(".js-delete-booking");
+            if (!button) return;
+            deleteBooking(button.dataset.bookingId, button);
+        });
+    }
+
+    if (notificationList) {
+        notificationList.addEventListener("click", (event) => {
+            const button = event.target.closest(".js-delete-notification");
+            if (!button) return;
+            deleteNotification(button.dataset.notificationId, button);
+        });
+    }
+
+    if (deleteAllBookingsBtn) {
+        deleteAllBookingsBtn.addEventListener("click", () => {
+            deleteAllBookings(deleteAllBookingsBtn);
+        });
+    }
+
+    if (deleteAllNotificationsBtn) {
+        deleteAllNotificationsBtn.addEventListener("click", () => {
+            deleteAllNotifications(deleteAllNotificationsBtn);
+        });
+    }
+
+    loadProfile();
+});
+</script>
+<script src="main.js?v=20260323-navfix"></script>
+
+</body>
+</html>
+
+
+

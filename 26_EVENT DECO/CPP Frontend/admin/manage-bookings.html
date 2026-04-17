@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Bookings | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./manage-bookings.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body data-page="bookings" class="admin-theme">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="ph-fill ph-aperture"></i>
+                </div>
+                <div>
+                    <p class="brand-name">Vishva Decor</p>
+                    <p class="brand-sub">Owner Console</p>
+                </div>
+            </div>
+
+            <p class="menu-title">Navigation</p>
+            <nav class="nav">
+                <a class="nav-link" href="./dashboard.html">
+                    <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-link active" href="./manage-bookings.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-check"></i></span>
+                    <span>Manage Bookings</span>
+                </a>
+                <a class="nav-link" href="./bookings-calendar.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-blank"></i></span>
+                    <span>Booking Calendar</span>
+                </a>
+                <a class="nav-link" href="./manage-decor.html">
+                    <span class="nav-icon"><i class="ph ph-sparkle"></i></span>
+                    <span>Manage Decorations</span>
+                </a>
+                <a class="nav-link" href="./reviews.html">
+                    <span class="nav-icon"><i class="ph ph-chat-centered-dots"></i></span>
+                    <span>Customer Reviews</span>
+                </a>
+                <a class="nav-link" href="./manage-inventory.html">
+                    <span class="nav-icon"><i class="ph ph-package"></i></span>
+                    <span>Manage Inventory</span>
+                </a>
+                <a class="nav-link" href="./manage-payments.html">
+                    <span class="nav-icon"><i class="ph ph-wallet"></i></span>
+                    <span>Manage Payments</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main bookings-shell">
+
+            <!-- TOP HEADER -->
+            <header class="topbar">
+                <div class="search-wrap">
+                    <i class="ph ph-calendar-check"></i>
+                    <strong>Manage Bookings</strong>
+                </div>
+
+                <div class="top-right">
+
+                    <div class="profile-chip">
+                        <div id="owner-avatar" class="avatar-dot" aria-label="Owner avatar">O</div>
+                        <span id="owner-email" class="sr-only">owner@vishva.com</span>
+                    </div>
+
+                    <button id="owner-logout-btn" class="btn-primary" type="button">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- PAGE HEADER -->
+            <section class="bookings-topbar page-hero">
+                <div class="title-wrap">
+                    <p class="kicker">OWNER PANEL</p>
+                    <h1>Manage Bookings</h1>
+                    <p class="subtitle">Review, accept or manage bookings efficiently.</p>
+                </div>
+            </section>
+
+            <!-- STATS -->
+            <section class="booking-stats">
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="ph ph-flag-banner"></i></div>
+                    <div>
+                        <p class="stat-label">Past</p>
+                        <p class="stat-value" id="stat-bookings-past">0</p>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="ph ph-calendar"></i></div>
+                    <div>
+                        <p class="stat-label">Today</p>
+                        <p class="stat-value" id="stat-bookings-today">0</p>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="ph ph-trend-up"></i></div>
+                    <div>
+                        <p class="stat-label">Upcoming</p>
+                        <p class="stat-value" id="stat-bookings-upcoming">0</p>
+                    </div>
+                </article>
+            </section>
+
+            <!-- QUICK ACTIONS -->
+            <section class="quick-links">
+                <a class="btn-primary" href="./dashboard.html">
+                    <i class="ph ph-arrow-left"></i> Dashboard
+                </a>
+                <a class="btn-primary" href="./bookings-calendar.html">
+                    <i class="ph ph-calendar-blank"></i> Calendar
+                </a>
+            </section>
+
+            <!-- TABLE -->
+            <section class="table-panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Booking Requests</h2>
+                        <p>Manage all booking requests from here.</p>
+                    </div>
+
+                    <div class="booking-filters">
+                        <button class="filter-pill active" data-booking-filter="all">All</button>
+                        <button class="filter-pill" data-booking-filter="today">Today</button>
+                        <button class="filter-pill" data-booking-filter="upcoming">Upcoming</button>
+                        <button class="filter-pill" data-booking-filter="past">Past</button>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Decoration</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="bookings-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
+
+
+
+
+
+

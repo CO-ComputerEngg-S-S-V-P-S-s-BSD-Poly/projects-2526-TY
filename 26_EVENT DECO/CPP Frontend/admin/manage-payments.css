@@ -1,0 +1,202 @@
+:root {
+    --panel-bg: #ffffff;
+    --line: #e2e8f0;
+    --muted: #64748b;
+    --admin-primary-a: #0f766e;
+    --shadow-1: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.payments-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+    background: #f8fafc;
+}
+
+.payments-shell > .topbar + .payments-hero.page-hero {
+    margin-top: 0 !important;
+}
+
+/* Hero Section */
+.payments-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    background: var(--panel-bg);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-1);
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.payments-hero h1 {
+    font-size: 24px;
+    margin: 8px 0;
+    color: #1e293b;
+}
+
+.payments-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f1f5f9;
+    padding: 12px 16px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.payments-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+/* Layout Grid for Stats and Form */
+.top-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.85fr) minmax(430px, 1.15fr);
+    gap: 18px;
+    align-items: stretch;
+}
+
+.payment-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.stat-card {
+    background: var(--panel-bg);
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-1);
+}
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--admin-primary-a);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.stat-label { font-size: 13px; color: var(--muted); margin: 0; }
+.stat-value { font-size: 18px; font-weight: 700; margin: 0; color: #1e293b; }
+
+/* Form Styling */
+.form-panel {
+    background: var(--panel-bg);
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-1);
+}
+
+.payment-form .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.payment-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.payment-form input, .payment-form select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    font-size: 14px;
+}
+
+/* Table Management */
+.panel {
+    background: var(--panel-bg);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+}
+
+.panel-head {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-head h2 { font-size: 18px; margin: 0; }
+.panel-head p { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
+
+.table-wrap {
+    width: 100%;
+    overflow: auto;
+    max-height: min(60vh, 620px);
+    background: #fff;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    background: #f8fafc;
+    padding: 14px 24px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    color: #334155;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .top-grid {
+        grid-template-columns: 1fr;
+    }
+    .payment-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .payment-stats {
+        grid-template-columns: 1fr;
+    }
+    .payments-hero {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .payment-form .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
