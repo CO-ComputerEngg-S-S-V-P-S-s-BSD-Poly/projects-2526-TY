@@ -1,0 +1,625 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Journey Log | GoWheels Dashboard{% endblock %}
+
+{% block content %}
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* =========================================
+           1. DASHBOARD VARIABLES & SCOPE
+           ========================================= */
+        :root { 
+            --dash-bg: #09090b; 
+            --dash-card: #141417; 
+            --dash-accent: #1e1e22; 
+            --dash-border: #27272a; 
+            --dash-primary: #ff6a2a; 
+            --dash-primary-glow: rgba(255, 106, 42, 0.2); 
+            --dash-text: #fafafa; 
+            --dash-muted: #a1a1aa; 
+            --dash-success: #28c76f; 
+            --dash-star: #facc15;
+            --chart-grid: #27272a;
+            --chart-text: #a1a1aa;
+        }
+        
+        body.light { 
+            --dash-bg: #f8fafc; 
+            --dash-card: #ffffff; 
+            --dash-accent: #f1f5f9; 
+            --dash-border: #e2e8f0; 
+            --dash-text: #0f172a; 
+            --dash-muted: #64748b;
+            --chart-grid: #e2e8f0;
+            --chart-text: #64748b; 
+        }
+
+        .dashboard-wrapper {
+            font-family: 'Roboto', sans-serif;
+            background: var(--dash-bg);
+            color: var(--dash-text);
+            min-height: calc(100vh - 80px); 
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .dashboard-wrapper h1, .dashboard-wrapper h2, .dashboard-wrapper h3, .stat-value { font-family: 'Poppins', sans-serif; }
+        .stat-label, .dash-badge, .dash-btn { font-family: 'Open Sans', sans-serif; }
+
+        /* =========================================
+           2. HEADER & LAYOUT
+           ========================================= */
+        .dash-header {
+            padding: 30px 5vw;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--dash-border);
+            background: var(--dash-card);
+            flex-wrap: wrap;
+            gap: 20px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .dash-title-group { display: flex; align-items: center; gap: 20px; }
+        .dash-icon-box {
+            width: 48px; height: 48px; 
+            background: var(--dash-primary); color: #000; 
+            border-radius: 14px; display: grid; place-items: center; 
+            box-shadow: 0 8px 20px var(--dash-primary-glow); font-size: 1.4rem;
+        }
+
+        .scroll-area { padding: 40px 5vw; flex: 1; }
+
+        /* =========================================
+           3. BENTO GRID & STATS
+           ========================================= */
+        .membership-banner { 
+            background: var(--dash-card); padding: 28px 32px; border-radius: 24px; 
+            border: 1px solid var(--dash-border); margin-bottom: 30px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); flex-wrap: wrap; gap: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-container { height: 8px; background: var(--dash-border); border-radius: 10px; overflow: hidden; margin-top: 10px; width: 100%; min-width: 250px; }
+        .progress-fill { height: 100%; background: var(--dash-primary); box-shadow: 0 0 10px var(--dash-primary-glow); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .bento-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+            gap: 20px; margin-bottom: 30px; 
+        }
+        .stat-card { 
+            background: var(--dash-card); border: 1px solid var(--dash-border); 
+            border-radius: 24px; padding: 24px; position: relative; 
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s, border-color 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+        .stat-icon { position: absolute; top: 24px; right: 24px; font-size: 1.4rem; color: var(--dash-primary); opacity: 0.9; }
+        .stat-label { font-size: 0.8rem; text-transform: uppercase; color: var(--dash-muted); letter-spacing: 0.5px; font-weight: 700; }
+        .stat-value { font-size: 2.2rem; font-weight: 700; margin-top: 8px; color: var(--dash-text); line-height: 1.1; }
+
+        /* =========================================
+           4. CHARTS & LISTS
+           ========================================= */
+        .chart-row { 
+            display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 40px; 
+        }
+        .chart-box { 
+            background: var(--dash-card); border: 1px solid var(--dash-border); 
+            border-radius: 24px; padding: 30px; transition: all 0.3s ease;
+        }
+
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 15px; }
+        .search-box { position: relative; width: 100%; max-width: 450px; }
+        .search-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--dash-muted); }
+        .search-box input { 
+            width: 100%; padding: 14px 14px 14px 48px; border-radius: 14px; 
+            background: var(--dash-card); border: 1px solid var(--dash-border); 
+            color: var(--dash-text); font-size: 0.95rem; font-family: 'Roboto', sans-serif; transition: all 0.3s;
+        }
+        .search-box input:focus { outline: none; border-color: var(--dash-primary); box-shadow: 0 0 0 3px var(--dash-primary-glow); }
+
+        .trip-item { 
+            display: grid; grid-template-columns: 120px 2fr 1.5fr 1fr auto auto; 
+            align-items: center; gap: 20px; background: var(--dash-card); 
+            border: 1px solid var(--dash-border); padding: 20px; border-radius: 20px; 
+            margin-bottom: 12px; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .trip-item:hover { border-color: var(--dash-primary); background: var(--dash-accent); transform: translateX(6px); }
+        .trip-item img { width: 120px; height: 80px; border-radius: 12px; object-fit: cover; border: 1px solid var(--dash-border); }
+
+        .dash-badge { padding: 6px 14px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+        .dash-badge.Active { background: rgba(255,106,42,0.15); color: var(--dash-primary); border: 1px solid var(--dash-primary-glow); }
+        .dash-badge.Completed { background: rgba(40,199,111,0.1); color: var(--dash-success); border: 1px solid rgba(40,199,111,0.2); }
+        .dash-badge.Upcoming { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+        /* =========================================
+           5. MODAL & REVIEWS
+           ========================================= */
+        .dash-modal { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: none; place-items: center; z-index: 100000; padding: 20px; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .dash-modal.show { opacity: 1; display: grid; }
+        .dash-modal-content { 
+            background: var(--dash-card); width: 100%; max-width: 600px; max-height: 90vh; 
+            overflow-y: auto; padding: 40px; border-radius: 32px; border: 1px solid var(--dash-border); 
+            position: relative; transform: scale(0.95); transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .dash-modal.show .dash-modal-content { transform: scale(1); }
+        .close-modal { position: absolute; top: 24px; right: 24px; cursor: pointer; font-size: 1.5rem; color: var(--dash-muted); transition: 0.2s; }
+        .close-modal:hover { color: var(--dash-primary); transform: rotate(90deg); }
+
+        .modal-host-card { display: flex; justify-content: space-between; align-items: center; background: var(--dash-accent); border: 1px solid var(--dash-border); padding: 16px 20px; border-radius: 16px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .modal-host-info { display: flex; align-items: center; gap: 15px; }
+        .modal-host-avatar { width: 50px; height: 50px; background: var(--dash-border); border-radius: 50%; display: grid; place-items: center; font-size: 1.4rem; color: var(--dash-muted); }
+        .modal-host-card h4 { margin: 0; font-size: 1.05rem; color: var(--dash-text); }
+        .whatsapp-btn { background: #25D366; color: #fff; padding: 10px 16px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .whatsapp-btn:hover { background: #1ebd5a; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
+
+        .stars { display: flex; gap: 8px; }
+        .stars i { font-size: 1.4rem; color: var(--dash-border); cursor: pointer; transition: 0.2s; }
+        .stars i.active { color: var(--dash-star); }
+        textarea.review-box { width: 100%; background: var(--dash-accent); border: 1px solid var(--dash-border); border-radius: 14px; padding: 16px; color: var(--dash-text); font-family: inherit; margin-top: 12px; resize: vertical; min-height: 100px; outline: none; transition: 0.3s; }
+        textarea.review-box:focus { border-color: var(--dash-primary); box-shadow: 0 0 0 3px var(--dash-primary-glow); }
+
+        .dash-btn { padding: 12px 24px; border-radius: 14px; border: 1px solid var(--dash-border); background: var(--dash-card); color: var(--dash-text); cursor: pointer; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .dash-btn:hover { border-color: var(--dash-text); }
+        .dash-btn-primary { background: var(--dash-primary); color: #000; border: none; }
+        .dash-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--dash-primary-glow); border-color: transparent; }
+
+        /* Media Queries for Perfect Responsiveness */
+        @media (max-width: 1024px) {
+            .chart-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .trip-item { 
+                grid-template-columns: 1fr; 
+                text-align: center; 
+                justify-items: center; 
+                padding: 24px;
+            }
+            .trip-item img { width: 100%; height: 180px; }
+            .trip-dates-loc { text-align: center; }
+            .trip-item i.bi-chevron-right { display: none; } /* Hide arrow on mobile card view */
+            .dash-header { flex-direction: column; align-items: flex-start; }
+            .scroll-area { padding: 20px 5vw; }
+        }
+    </style>
+
+    <div class="dashboard-wrapper">
+       <br><br><br>
+
+        <div class="scroll-area">
+            <div class="membership-banner">
+                <div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 6px;">{{ tier }} Member <i class="bi bi-patch-check-fill" style="color: var(--dash-primary); font-size: 1.3rem; margin-left: 8px;"></i></h3>
+                    <p style="font-size: 0.95rem; color: var(--dash-muted); margin: 0;">
+                        {% if remaining > 0 %}₹{{ remaining|floatformat:"2" }} more to unlock next tier.{% else %}You’ve unlocked the highest tier <i class="bi bi-stars"></i>{% endif %}
+                    </p>
+                </div>
+                <div style="width: 100%; max-width: 400px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <small style="font-weight: 700; font-family: 'Open Sans', sans-serif;">Tier Progress</small>
+                        <span style="color: var(--dash-primary); font-size: 1rem; font-weight: 800; font-family: 'Poppins', sans-serif;">{{ progress_percent }}%</span>
+                    </div>
+                    <div class="progress-container"><div class="progress-fill" style="width: {{ progress_percent }}%;"></div></div>
+                </div>
+            </div>
+
+            <div class="bento-grid">
+                <div class="stat-card">
+                    <i class="bi bi-wallet2 stat-icon"></i>
+                    <small class="stat-label">Total Spend</small>
+                    <h2 class="stat-value">₹{{ stats.total_cash|default:"0" }}</h2>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-signpost-split stat-icon"></i>
+                    <small class="stat-label">Total Trips</small>
+                    <h2 class="stat-value">{{ stats.total_trips|default:"0" }}</h2>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-clock-history stat-icon"></i>
+                    <small class="stat-label">Longest Rental</small>
+                    <h2 class="stat-value">{{ stats.max_days|default:"0" }} <span style="font-size: 1rem; font-family: 'Roboto', sans-serif;">Days</span></h2>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-car-front-fill stat-icon"></i>
+                    <small class="stat-label">Favourite Ride</small>
+                    <h2 class="stat-value" style="font-size: 1.6rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ favourite_vehicle_name }}">{{ favourite_vehicle_name|default:"N/A" }}</h2>
+                    <p style="font-size: 0.85rem; color: var(--dash-muted); margin-top: 5px;">Booked {{ favourite_vehicle_count|default:"0" }} times</p>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="chart-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0;">Weekly Spending</h3>
+                        <span id="chartTotal" style="color: var(--dash-primary); font-weight: 800; font-size: 1.2rem; font-family: 'Poppins';">₹0</span>
+                    </div>
+                    <div style="position: relative; height: 240px; width: 100%;"><canvas id="timeChart"></canvas></div>
+                </div>
+                <div class="chart-box">
+                    <h3 style="margin-top: 0; margin-bottom: 20px;">By Category</h3>
+                    <div style="position: relative; height: 240px; width: 100%;"><canvas id="catChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <form method="GET" class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="search" placeholder="Search by vehicle name..." value="{{ request.GET.search }}">
+                </form>
+            </div>
+
+            <div class="trip-feed" id="tripDataContainer">
+                {% for r in rentals %}
+                <div class="trip-item" 
+                     data-invoice="{{ r.invoice_no }}"
+                     data-category="{{ r.vehicle.category }}"
+                     onclick="openTripModal(
+                    '{{ r.id }}', 
+                    '{{ r.vehicle.vehicle_name|escapejs }}', 
+                    '{{ r.invoice_no }}', 
+                    '{{ r.total_price }}', 
+                    '{{ r.start_date|date:'d M, Y' }}', 
+                    '{{ r.end_date|date:'d M, Y' }}', 
+                    '{% if r.vehicle.owner.first_name %}{{ r.vehicle.owner.first_name|escapejs }} {{ r.vehicle.owner.last_name|escapejs }}{% else %}{{ r.vehicle.owner.username|escapejs }}{% endif %}', 
+                    '{{ r.vehicle.contact_number }}', 
+                    '{{ r.status_label }}', 
+                    '{{ r.review.id|default_if_none:"" }}',
+                    '{% if r.driver %}{{ r.driver.name|escapejs }}{% else %}{% endif %}'
+                )">
+                    <img src="{% if r.vehicle.front_image %}{{ r.vehicle.front_image.image.url }}{% else %}https://via.placeholder.com/200x120?text=GoWheels{% endif %}">
+                    <div class="trip-info">
+                        <p style="font-weight: 700; font-size: 1.15rem; font-family: 'Poppins', sans-serif; margin-bottom: 4px;" class="trip-name">{{ r.vehicle.vehicle_name }}</p>
+                        <p style="font-size: 0.85rem; color: var(--dash-muted);">
+                            <i class="bi bi-star-fill" style="color: var(--dash-star);"></i> {{ r.vehicle.get_avg_rating }} ({{ r.vehicle.get_review_count }} Reviews) • {{ r.vehicle.category }}{% if r.vehicle.vehicle_number %} • <strong style="color: var(--dash-text);">{{ r.vehicle.vehicle_number }}</strong>{% endif %}
+                        </p>
+                    </div>
+                    <div class="trip-dates-loc">
+                        <p style="font-size: 0.95rem; font-weight: 700; margin-bottom: 4px;" class="trip-date">{{ r.start_date|date:"d M" }} - {{ r.end_date|date:"d M, Y" }}</p>
+                        <p style="font-size: 0.85rem; color: var(--dash-muted);" class="trip-loc">{{ r.vehicle.pickup_location }}</p>
+                    </div>
+                    <div><span class="dash-badge {{ r.status_label }} trip-status">{{ r.status_label }}</span></div>
+                    <div style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--dash-primary);" class="trip-price">₹{{ r.total_price }}</div>
+                    <i class="bi bi-chevron-right" style="color: var(--dash-muted); font-size: 1.2rem;"></i>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 80px 20px; background: var(--dash-card); border: 1px dashed var(--dash-border); border-radius: 24px;">
+                    <i class="bi bi-map-fill" style="font-size: 4rem; color: var(--dash-muted); opacity: 0.4;"></i>
+                    <h2 style="margin-top: 20px; font-size: 1.5rem;">No adventures logged yet</h2>
+                    <p style="color: var(--dash-muted); margin: 12px 0 30px;">Your travel history is currently empty.</p>
+                    <a href="{% url 'vehicles' %}" class="dash-btn dash-btn-primary">Book Your First Ride</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-modal" id="tripModal">
+        <div class="dash-modal-content">
+            <i class="bi bi-x-lg close-modal" onclick="closeTripModal()"></i>
+            
+            <h2 id="modalTitle" style="font-size: 1.8rem; margin-bottom: 8px;">Trip Details</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
+                <p id="modalRef" style="color: var(--dash-muted); font-weight: 600; font-family: 'Open Sans', sans-serif; margin: 0;"></p>
+                <span class="dash-badge" id="modalDriverBadge" style="display: none; border: 1px solid var(--dash-primary); color: var(--dash-primary); background: rgba(255,106,42,0.1);"></span>
+            </div>
+
+            <div class="modal-host-card">
+                <div class="modal-host-info">
+                    <div class="modal-host-avatar"><i class="bi bi-person-fill"></i></div>
+                    <div>
+                        <h4 id="modalHostName">Host Name</h4>
+                        <p id="modalHostPhone" style="margin: 4px 0 0; font-size: 0.85rem; color: var(--dash-muted);">+91 XXXXX XXXXX</p>
+                    </div>
+                </div>
+                <a href="#" id="modalWhatsapp" target="_blank" class="whatsapp-btn"><i class="bi bi-whatsapp"></i> Chat</a>
+            </div>
+
+            <div style="background: var(--dash-accent); padding: 24px; border-radius: 20px; border: 1px solid var(--dash-border); margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 16px;"><span style="font-family: 'Open Sans', sans-serif; color: var(--dash-muted);">Rental Duration</span><b id="modalDate"></b></div>
+                <div style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--dash-border);">
+                    <span style="font-weight: 700; font-family: 'Open Sans', sans-serif;">Total Amount</span>
+                    <b id="modalTotal" style="color: var(--dash-primary); font-size: 1.4rem; font-family: 'Poppins', sans-serif;"></b>
+                </div>
+            </div>
+            
+            <div id="reviewWrapper">
+                <div id="reviewFormSection" style="display: none; border-top: 1px solid var(--dash-border); padding-top: 24px; margin-top: 10px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 20px; margin-top: 0;">Rate your experience</h3>
+                    <form method="POST" action="{% url 'submit_review' %}" id="reviewActualForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="rental_id" id="reviewRentalId">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <span style="font-size: 0.95rem; color: var(--dash-muted); font-weight: 600;">Vehicle Cleanliness</span>
+                            <div class="stars" data-input="clean_input">
+                                <i class="bi bi-star-fill active" data-val="1"></i><i class="bi bi-star-fill active" data-val="2"></i><i class="bi bi-star-fill active" data-val="3"></i><i class="bi bi-star-fill active" data-val="4"></i><i class="bi bi-star-fill active" data-val="5"></i>
+                            </div>
+                            <input type="hidden" name="cleanliness" id="clean_input" value="5">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <span style="font-size: 0.95rem; color: var(--dash-muted); font-weight: 600;">Engine & Performance</span>
+                            <div class="stars" data-input="perf_input">
+                                <i class="bi bi-star-fill active" data-val="1"></i><i class="bi bi-star-fill active" data-val="2"></i><i class="bi bi-star-fill active" data-val="3"></i><i class="bi bi-star-fill active" data-val="4"></i><i class="bi bi-star-fill active" data-val="5"></i>
+                            </div>
+                            <input type="hidden" name="performance" id="perf_input" value="5">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <span style="font-size: 0.95rem; color: var(--dash-muted); font-weight: 600;">Overall Comfort</span>
+                            <div class="stars" data-input="comf_input">
+                                <i class="bi bi-star-fill active" data-val="1"></i><i class="bi bi-star-fill active" data-val="2"></i><i class="bi bi-star-fill active" data-val="3"></i><i class="bi bi-star-fill active" data-val="4"></i><i class="bi bi-star-fill active" data-val="5"></i>
+                            </div>
+                            <input type="hidden" name="comfort" id="comf_input" value="5">
+                        </div>
+
+                        <div id="driverReviewSection" style="display: none; justify-content: space-between; align-items: center; margin-bottom: 16px; border-top: 1px dashed var(--dash-border); padding-top: 16px;">
+                            <span style="font-size: 0.95rem; color: var(--dash-primary); font-weight: 700;">Chauffeur Service</span>
+                            <div class="stars" data-input="driver_input">
+                                <i class="bi bi-star-fill active" data-val="1"></i><i class="bi bi-star-fill active" data-val="2"></i><i class="bi bi-star-fill active" data-val="3"></i><i class="bi bi-star-fill active" data-val="4"></i><i class="bi bi-star-fill active" data-val="5"></i>
+                            </div>
+                            <input type="hidden" name="driver_rating" id="driver_input" value="5">
+                        </div>
+                        
+                        <textarea name="comment" class="review-box" placeholder="Tell us what you loved (or didn't) about this trip..."></textarea>
+                        <button type="submit" class="dash-btn dash-btn-primary" style="width: 100%; margin-top: 20px; justify-content: center; font-size: 1.05rem;">Submit Review</button>
+                    </form>
+                </div>
+                
+                <div id="reviewedMsgSection" style="display: none; text-align: center; color: var(--dash-success); border-top: 1px solid var(--dash-border); padding-top: 30px; margin-top: 10px;">
+                    <i class="bi bi-check-circle-fill" style="font-size: 2.5rem;"></i>
+                    <p style="margin-top: 12px; font-weight: 600; font-size: 1.1rem; color: var(--dash-text);">You have reviewed this trip.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for Chart JS instances
+        let timeChartInst = null;
+        let catChartInst = null;
+
+        // ==========================================
+        // MODAL LOGIC (With Strict State Reset)
+        // ==========================================
+        function openTripModal(id, title, ref, price, startDate, endDate, hostName, hostPhone, status, reviewId, driverName) {
+            // 1. Strict Form Reset (Prevents previous star inputs from leaking to new modals)
+            document.getElementById('reviewActualForm').reset();
+            document.querySelectorAll('.stars').forEach(container => {
+                const inputTarget = document.getElementById(container.getAttribute('data-input'));
+                if(inputTarget) inputTarget.value = 5;
+                container.querySelectorAll('i').forEach(s => s.classList.add('active'));
+            });
+
+            // 2. Populate Text Details
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalRef').innerText = "Invoice: " + ref;
+            document.getElementById('modalDate').innerText = startDate + " to " + endDate;
+            document.getElementById('modalTotal').innerText = "₹" + parseFloat(price).toLocaleString('en-IN');
+            
+            // 3. Driver Logic
+            const driverBadge = document.getElementById('modalDriverBadge');
+            const driverReviewSection = document.getElementById('driverReviewSection');
+            
+            if (driverName && driverName.trim() !== '') {
+                driverBadge.style.display = 'inline-block';
+                driverBadge.innerHTML = `<i class="bi bi-person-badge"></i> Chauffeur: ${driverName}`;
+                driverReviewSection.style.display = 'flex'; 
+            } else {
+                driverBadge.style.display = 'none';
+                driverReviewSection.style.display = 'none'; 
+            }
+            
+            // 4. Host Details
+            document.getElementById('modalHostName').innerText = hostName;
+            document.getElementById('modalHostPhone').innerText = hostPhone;
+            let waMsg = encodeURIComponent(`Hi ${hostName}, I booked your ${title} on GoWheels. Invoice Reference: ${ref}`);
+            document.getElementById('modalWhatsapp').href = `https://wa.me/91${hostPhone}?text=${waMsg}`;
+
+            // 5. Review Visibility Logic
+            document.getElementById('reviewRentalId').value = id;
+            document.getElementById('reviewFormSection').style.display = 'none';
+            document.getElementById('reviewedMsgSection').style.display = 'none';
+
+            if (status === 'Completed') {
+                if (reviewId && reviewId !== '') {
+                    document.getElementById('reviewedMsgSection').style.display = 'block';
+                } else {
+                    document.getElementById('reviewFormSection').style.display = 'block';
+                }
+            }
+
+            const modal = document.getElementById('tripModal');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; 
+        }
+        
+        function closeTripModal() { 
+            document.getElementById('tripModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // ==========================================
+        // INTERACTIVE STAR RATING
+        // ==========================================
+        document.querySelectorAll('.stars').forEach(starContainer => {
+            const stars = starContainer.querySelectorAll('i');
+            const targetInput = document.getElementById(starContainer.getAttribute('data-input'));
+
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.getAttribute('data-val'));
+                    targetInput.value = value;
+                    
+                    stars.forEach(s => {
+                        if (parseInt(s.getAttribute('data-val')) <= value) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+
+        // ==========================================
+        // ROBUST CSV EXPORT (Fixed comma injection)
+        // ==========================================
+        function downloadCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Vehicle Name,Invoice No,Category,Dates,Location,Status,Amount (INR)\n";
+            const rows = document.querySelectorAll('.trip-item');
+            if (rows.length === 0) { alert("No trips to export!"); return; }
+
+            rows.forEach(row => {
+                const name = row.querySelector('.trip-name').innerText.replace(/"/g, '""');
+                const invoice = row.dataset.invoice || "N/A";
+                const category = row.dataset.category || "N/A";
+                const dates = row.querySelector('.trip-date').innerText.replace(/"/g, '""');
+                const loc = row.querySelector('.trip-loc').innerText.replace(/"/g, '""');
+                const status = row.querySelector('.trip-status').innerText;
+                const price = row.querySelector('.trip-price').innerText.replace(/[₹,]/g, '').trim();
+
+                // Explicitly wrapping in double-quotes prevents commas inside locations/names from breaking columns
+                const rowArray = [`"${name}"`, `"${invoice}"`, `"${category}"`, `"${dates}"`, `"${loc}"`, `"${status}"`, `"${price}"`];
+                csvContent += rowArray.join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `GoWheels_Journey_Log_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ==========================================
+        // DYNAMIC THEME TOGGLE & CHART REDRAW
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            const themeBtn = document.getElementById("themeToggle");
+            
+            // Check initial state from LocalStorage or base template
+            if (localStorage.getItem("theme") === "light") {
+                document.body.classList.add("light");
+            }
+            
+            // Render charts on load
+            renderCharts();
+
+            // Toggle logic
+            themeBtn.addEventListener("click", () => {
+                document.body.classList.toggle("light");
+                const isLight = document.body.classList.contains("light");
+                localStorage.setItem("theme", isLight ? "light" : "dark");
+                
+                // Switch icon & Redraw charts instantly with new colors
+                themeBtn.innerHTML = isLight ? '<i class="bi bi-moon-fill"></i>' : '<i class="bi bi-moon-stars"></i>';
+                renderCharts();
+            });
+            
+            // Set initial icon state
+            if(document.body.classList.contains("light")) themeBtn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+        });
+
+        // ==========================================
+        // CHART.JS FACTORY
+        // ==========================================
+        function renderCharts() {
+            // Destroy existing charts to prevent hover-glitching
+            if(timeChartInst) timeChartInst.destroy();
+            if(catChartInst) catChartInst.destroy();
+
+            // Dynamic color extraction
+            const style = getComputedStyle(document.body);
+            const chartGridColor = style.getPropertyValue('--chart-grid').trim();
+            const chartTextColor = style.getPropertyValue('--chart-text').trim();
+            const dashBorderColor = style.getPropertyValue('--dash-border').trim();
+
+            Chart.defaults.font.family = "'Open Sans', sans-serif";
+
+            // 1. Bar Chart (Time)
+            const timeCanvas = document.getElementById('timeChart');
+            if(timeCanvas) {
+                const ctx = timeCanvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+                gradient.addColorStop(0, '#ff6a2a'); 
+                gradient.addColorStop(1, 'rgba(255, 106, 42, 0.1)'); 
+
+                const values = {{ time_values|safe|default:"[]" }};
+                const total = values.reduce((a, b) => a + b, 0);
+                document.getElementById('chartTotal').innerText = '₹' + total.toLocaleString('en-IN');
+
+                timeChartInst = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ time_labels|safe|default:"[]" }},
+                        datasets: [{ 
+                            label: 'Spent (₹)', 
+                            data: values, 
+                            backgroundColor: gradient, 
+                            borderRadius: 8, 
+                            hoverBackgroundColor: '#ff6a2a', 
+                            barThickness: 28 
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { legend: { display: false } }, 
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                grid: { color: chartGridColor, drawTicks: false }, 
+                                border: { display: false }, 
+                                ticks: { color: chartTextColor, font: { size: 11 } } 
+                            }, 
+                            x: { 
+                                grid: { display: false }, 
+                                border: { display: false }, 
+                                ticks: { color: chartTextColor, font: { size: 12 } } 
+                            } 
+                        } 
+                    }
+                });
+            }
+
+            // 2. Doughnut Chart (Category)
+            const catCanvas = document.getElementById('catChart');
+            if(catCanvas) {
+                catChartInst = new Chart(catCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: {{ cat_labels|safe|default:"[]" }},
+                        datasets: [{ 
+                            data: {{ cat_values|safe|default:"[]" }}, 
+                            backgroundColor: ['#ff6a2a', '#7367f0', '#28c76f', '#ec4899', '#facc15'], 
+                            borderWidth: 3, 
+                            borderColor: dashBorderColor, 
+                            hoverOffset: 10 
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { 
+                                position: 'right', 
+                                labels: { color: chartTextColor, boxWidth: 12, padding: 15, font: { weight: '600' } } 
+                            } 
+                        }, 
+                        cutout: '75%' 
+                    }
+                });
+            }
+        }
+    </script>
+{% endblock %}
