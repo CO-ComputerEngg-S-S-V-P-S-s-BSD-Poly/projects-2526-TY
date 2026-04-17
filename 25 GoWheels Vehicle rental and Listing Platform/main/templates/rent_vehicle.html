@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout – {{ vehicle.vehicle_name }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <script>
+    if (localStorage.getItem("theme") === "light") {
+      document.documentElement.classList.add("light");
+    }
+  </script>
+
+  <style>
+    /* =========================================
+       1. VARIABLES & RESET 
+       ========================================= */
+    :root {
+      --bg-main: #0a0a0a;
+      --bg-card: #121212;
+      --border: rgba(255,255,255,0.08);
+      --primary: #ff6a2a;
+      --primary-glow: rgba(255,106,42,0.15);
+      --text-main: #ffffff;
+      --text-muted: #b5b5b5;
+      --input-bg: #1a1a1a;
+      --card-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      --error-bg: #3f1010;
+      --error-text: #ff6b6b;
+      --success-text: #25D366;
+      --whatsapp: #25D366;
+    }
+
+    html.light {
+      --bg-main: #f5f7fa;
+      --bg-card: #ffffff;
+      --border: #e0e0e0;
+      --primary: #ff7c24;
+      --primary-glow: #fff8f5;
+      --text-main: #333333;
+      --text-muted: #666666;
+      --input-bg: #ffffff;
+      --card-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      --error-bg: #fee2e2;
+      --error-text: #b91c1c;
+      --success-text: #16a34a;
+    }
+
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { margin: 0; background: var(--bg-main); padding: 30px; color: var(--text-main); transition: background 0.3s ease, color 0.3s ease; }
+    
+    .checkout-container { max-width: 1000px; margin: auto; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+    .card { background: var(--bg-card); border-radius: 16px; padding: 25px; box-shadow: var(--card-shadow); border: 1px solid var(--border); }
+    
+    h2 { margin-bottom: 20px; font-size: 1.6rem; color: var(--text-main); margin-top: 0; }
+    h3 { margin-bottom: 15px; font-size: 1.2rem; color: var(--text-main); margin-top: 25px; }
+    h3:first-of-type { margin-top: 0; }
+    
+    .form-group { margin-bottom: 18px; }
+    label { font-weight: 600; display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.9rem;}
+    
+    input, textarea { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--border); font-size: 0.95rem; background: var(--input-bg); color: var(--text-main); transition: border-color 0.3s; }
+    input:focus, textarea:focus { outline: none; border-color: var(--primary); }
+    input[type="file"] { padding: 9px 14px; }
+    textarea { resize: vertical; min-height: 80px; }
+    
+    .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .summary-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.95rem; color: var(--text-muted); }
+    .summary-item strong { color: var(--text-main); text-align: right; }
+    
+    .checkout-btn { margin-top: 20px; width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+    .checkout-btn:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary-glow); }
+    .checkout-btn:disabled { background: var(--input-bg); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; border: 1px solid var(--border); }
+
+    /* Top Actions */
+    .header-actions { max-width: 1000px; margin: 0 auto 20px auto; display: flex; align-items: center; }
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: color 0.3s; }
+    .back-btn:hover { color: var(--primary); }
+
+    /* Promo Code Input Section */
+    .promo-group { display: flex; gap: 10px; margin-bottom: 15px; }
+    .promo-group input { text-transform: uppercase; }
+    .apply-btn { padding: 0 15px; background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .apply-btn:hover { border-color: var(--primary); color: var(--primary); }
+    #promo-message { font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; display: none; }
+
+    /* Offers UI */
+    .offers-container { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; max-height: 180px; overflow-y: auto; padding-right: 5px; }
+    .offers-container::-webkit-scrollbar { width: 4px; }
+    .offers-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    .offer-item { display: flex; justify-content: space-between; align-items: center; background: var(--input-bg); border: 1px dashed var(--border); padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .offer-item:hover { border-color: var(--primary); background: var(--primary-glow); }
+    .offer-code { font-weight: 700; color: var(--primary); font-size: 0.85rem; background: rgba(255,106,42,0.1); padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px; }
+    .offer-desc { font-size: 0.8rem; color: var(--text-muted); text-align: right; max-width: 60%; }
+
+    /* Terms & Conditions Checkbox */
+    .terms-group { display: flex; align-items: flex-start; gap: 10px; margin-top: 15px; }
+    .terms-group input { width: auto; margin-top: 4px; accent-color: var(--primary); cursor: pointer; }
+    .terms-group label { font-size: 0.85rem; font-weight: 400; display: inline; cursor: pointer; }
+
+    /* Quick Date Selectors */
+    .quick-dates { display: flex; gap: 10px; margin-top: -5px; margin-bottom: 15px; }
+    .quick-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+    .quick-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* Payment Grid */
+    .payment-options-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .pay-card { border: 1px solid var(--border); border-radius: 12px; padding: 15px; cursor: pointer; display: flex; flex-direction: column; gap: 5px; position: relative; background: var(--bg-card); transition: 0.2s; }
+    .pay-card:hover { border-color: var(--primary); }
+    .pay-card.selected-pay { border: 2px solid var(--primary); background: var(--primary-glow); }
+    .pay-card input { display: none; }
+    .pay-icon { font-size: 1.5rem; color: var(--primary); }
+    .pay-check { position: absolute; top: 10px; right: 10px; color: var(--primary); opacity: 0; }
+    .pay-card.selected-pay .pay-check { opacity: 1; }
+
+    #wallet-warning { color: var(--error-text); font-size: 0.85rem; margin-top: 5px; display: none; }
+    #date-warning { display: none; margin-top: 15px; font-size: 0.85rem; }
+    .message-box { background: var(--error-bg); color: var(--error-text); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; border: 1px solid var(--border); }
+
+    /* =========================================
+       2. UI COMPONENTS (Slider, Lightbox, Host)
+       ========================================= */
+    .slider-container { position: relative; width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border); }
+    .slider-track { display: flex; transition: transform 0.4s ease-in-out; width: 100%; }
+    .slider-track img { width: 100%; height: 200px; object-fit: cover; flex-shrink: 0; cursor: pointer; transition: 0.2s; }
+    .slider-track img:hover { filter: brightness(0.8); }
+    
+    .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.6); color: white; border: none; width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; z-index: 10; }
+    .slider-btn:hover { background: var(--primary); }
+    .slider-btn.prev { left: 10px; }
+    .slider-btn.next { right: 10px; }
+    
+    .slider-dots { position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: center; gap: 6px; z-index: 10; }
+    .dot { width: 8px; height: 8px; background: rgba(255, 255, 255, 0.5); border-radius: 50%; cursor: pointer; transition: 0.3s; }
+    .dot.active { background: var(--primary); transform: scale(1.2); }
+
+    /* Lightbox */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+    .lightbox.show { display: flex; opacity: 1; }
+    .lightbox img { max-width: 90%; max-height: 90%; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    .lightbox .close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; transition: 0.2s; }
+    .lightbox .close:hover { color: var(--primary); transform: scale(1.1); }
+    
+    /* Host Profile Section */
+    .host-card { background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin: 20px 0; }
+    .host-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .host-avatar { width: 40px; height: 40px; background: var(--border); border-radius: 50%; display: grid; place-items: center; font-size: 1.2rem; color: var(--text-muted); }
+    .host-info h4 { margin: 0; font-size: 0.95rem; color: var(--text-main); }
+    .host-info span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .whatsapp-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: transparent; border: 1px solid var(--whatsapp); color: var(--whatsapp); padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
+    .whatsapp-btn:hover { background: var(--whatsapp); color: #fff; border-color: var(--whatsapp); }
+
+    /* =========================================
+       3. DRIVE & PREMIUM DRIVER CARDS
+       ========================================= */
+    .drive-toggle-container { display: flex; background: var(--input-bg); border: 1px solid var(--border); border-radius: 14px; padding: 6px; margin-bottom: 25px; }
+    .drive-option { flex: 1; text-align: center; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--text-muted); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
+    .drive-option:hover { color: var(--text-main); }
+    .drive-option.selected { background: var(--bg-card); color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid var(--border); }
+    
+    .driver-grid { display: flex; flex-direction: column; gap: 12px; }
+    .driver-card { display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--input-bg); cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+    .driver-card:hover:not(.locked) { border-color: var(--primary); }
+    .driver-card.selected:not(.locked) { border: 2px solid var(--primary); background: var(--primary-glow); }
+    .driver-card input[type="radio"] { display: none; }
+    
+    /* Locked/Busy State styling */
+    .driver-card.locked { opacity: 0.55; cursor: not-allowed; background: rgba(0,0,0,0.1); filter: grayscale(100%); border-color: var(--border) !important; }
+    .driver-card.locked:hover { transform: none; box-shadow: none; }
+    .driver-card.locked .driver-price strong { color: var(--text-muted); }
+
+    .driver-info { display: flex; align-items: center; gap: 15px; }
+    .driver-img-wrapper { position: relative; }
+    .driver-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+    .driver-placeholder { width: 55px; height: 55px; border-radius: 50%; background: var(--border); display: grid; place-items: center; font-size: 1.5rem; color: var(--text-muted); }
+    .driver-rating { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: #FFD700; color: #000; font-size: 0.7rem; font-weight: 700; padding: 2px 5px; border-radius: 10px; display: flex; align-items: center; gap: 3px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+    .driver-price { text-align: right; }
+    .driver-price strong { display: block; color: var(--primary); font-size: 1.1rem; transition: color 0.3s; }
+    .driver-price small { color: var(--text-muted); font-size: 0.75rem; }
+    
+    /* SUCCESS ANIMATION (Ultra-Fast) */
+    .success-overlay { position: fixed; inset: 0; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.1s; }
+    .success-overlay.show { opacity: 1; pointer-events: all; }
+    .success-circle { width: 120px; height: 120px; background: var(--whatsapp); border-radius: 50%; display: grid; place-items: center; color: white; font-size: 60px; animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform: scale(0); box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); }
+    @keyframes popIn { to { transform: scale(1); } }
+    .success-text { margin-top: 25px; font-size: 1.8rem; font-weight: 700; color: var(--text-main); animation: slideUp 0.2s ease 0.1s forwards; opacity: 0; transform: translateY(20px); text-align: center; }
+    .success-subtext { color: var(--text-muted); font-size: 1rem; margin-top: 10px; animation: slideUp 0.2s ease 0.15s forwards; opacity: 0; transform: translateY(20px); text-align: center; padding: 0 20px;}
+    @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+    @media(max-width: 768px){ .checkout-container { grid-template-columns: 1fr; } .payment-options-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<div id="order-success-overlay" class="success-overlay">
+  <div class="success-circle"><i class="bi bi-check-lg"></i></div>
+  <div class="success-text">Booking Confirmed!</div>
+  <div class="success-subtext">Redirecting to your dashboard...</div>
+</div>
+
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+  <span class="close">&times;</span>
+  <img id="lightbox-img" src="" alt="Vehicle Fullscreen">
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="message-box">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<div class="header-actions">
+    <a href="/" class="back-btn"><i class="bi bi-arrow-left"></i> Back to Home</a>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="checkout-form">
+  {% csrf_token %}
+  <div class="checkout-container">
+
+    <div class="card">
+      <h2>Checkout</h2>
+      
+      <h3>Personal Details</h3>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" name="full_name" 
+               value="{% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}" 
+               required>
+      </div>
+      <div class="two-cols">
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age" min="18" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" name="phone_number" 
+                 value="{{ user.profile.phone_number|default:'' }}" 
+                 required>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 10px;">
+        <label>Special Requests / Trip Notes (Optional)</label>
+        <textarea name="special_notes" placeholder="E.g., I need the car delivered by 10 AM, etc."></textarea>
+      </div>
+
+      <h3>Rental Duration</h3>
+      
+      <div id="booked-dates-display" style="margin-bottom: 15px; font-size: 0.85rem; color: var(--text-muted); display: none; background: var(--input-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+          <strong style="color: var(--primary);"><i class="bi bi-calendar-x"></i> Not Available:</strong> 
+          <span id="booked-dates-list"></span>
+      </div>
+
+      <div class="two-cols">
+        <div class="form-group"><label>Start Date</label><input type="date" name="start_date" id="start_date" required></div>
+        <div class="form-group"><label>End Date</label><input type="date" name="end_date" id="end_date" required></div>
+      </div>
+      
+      <div class="quick-dates">
+  <button type="button" class="quick-btn" onclick="setQuickDate('today', 0)">Today</button>
+  
+  <button type="button" class="quick-btn" onclick="setQuickDate('tomorrow', 0)">Tomorrow</button>
+  
+  <button type="button" class="quick-btn" onclick="setQuickDate('today', 1)">2 Days</button>
+  
+  <button type="button" class="quick-btn" onclick="setQuickDate('today', 6)">1 Week</button>
+</div>
+
+      <h3>Drive Option</h3>
+      <div class="drive-toggle-container">
+        <label class="drive-option selected" id="opt-self" onclick="setDriveType('self')">
+          <input type="radio" name="drive_type" value="self" checked style="display:none;">
+          <i class="bi bi-steering"></i> Self-Drive
+        </label>
+        <label class="drive-option" id="opt-driver" onclick="setDriveType('driver')">
+          <input type="radio" name="drive_type" value="driver" style="display:none;">
+          <i class="bi bi-person-badge"></i> With Driver
+        </label>
+      </div>
+      
+      <div id="driver-section" style="display: none; margin-bottom: 25px;">
+        <h4 style="margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Select a Chauffeur</h4>
+        
+        <div id="date-prompt-msg" style="background: rgba(255,159,67,0.1); color: #ff9f43; padding: 12px 15px; border-radius: 12px; font-size: 0.9rem; font-weight: 600; margin-bottom: 20px; border: 1px solid rgba(255,159,67,0.3);">
+            <i class="bi bi-calendar-event"></i> Please select your Start and End dates above to check driver availability.
+        </div>
+
+        <div class="driver-grid">
+          {% for driver in available_drivers %}
+          <label class="driver-card locked" id="driver-card-{{ driver.id }}" onclick="if(!this.classList.contains('locked')) selectDriver(this)">
+              <input type="radio" name="driver_id" value="{{ driver.id }}" data-fee="{{ driver.price_per_day }}" disabled>
+              
+              <div class="driver-info">
+                  <div class="driver-img-wrapper">
+                      {% if driver.photo %}
+                          <img src="{{ driver.photo.url }}" class="driver-img" alt="{{ driver.name }}">
+                      {% else %}
+                          <div class="driver-placeholder"><i class="bi bi-person"></i></div>
+                      {% endif %}
+                      <div class="driver-rating"><i class="bi bi-star-fill"></i> {{ driver.rating|default:"5.0" }}</div>
+                  </div>
+                  
+                  <div>
+                      <strong style="color: var(--text-main); display: block; font-size: 1rem; margin-bottom: 2px;">{{ driver.name }}</strong> 
+                      <small style="color: var(--text-muted); display: block; margin-bottom: 6px;">Exp: {{ driver.experience_years }} yrs</small>
+                      
+                      <span id="driver-badge-{{ driver.id }}" style="background: var(--input-bg); color: var(--text-muted); padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border);">
+                          <i class="bi bi-clock-history"></i> Pending Dates
+                      </span>
+                  </div>
+              </div>
+              
+              <div class="driver-price">
+                  <strong>+₹{{ driver.price_per_day }}</strong>
+                  <small>per day</small>
+              </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <h3>Documents</h3>
+      <div class="form-group"><label>Aadhaar Card</label><input type="file" name="aadhaar_image" accept="image/*" required></div>
+      <div class="form-group"><label>Driving License</label><input type="file" name="license_image" accept="image/*" required></div>
+
+      <h3>Payment Method</h3>
+      <div class="payment-options-grid">
+          <label class="pay-card" id="wallet-card" onclick="selectPayment(this, 'wallet')">
+              <input type="radio" name="payment_mode" value="wallet" id="wallet-radio">
+              <i class="bi bi-wallet2 pay-icon"></i>
+              <div class="pay-check"><i class="bi bi-check-circle-fill"></i></div>
+              <div><strong style="display:block; color: var(--text-main);">My Wallet</strong><small style="color: var(--text-muted);">Bal: ₹{{ wallet_balance|default:"0" }}</small></div>
+          </label>
+          
+          <label class="pay-card selected-pay" onclick="selectPayment(this, 'upi')">
+              <input type="radio" name="payment_mode" value="upi" id="upi-radio" checked>
+              <i class="bi bi-qr-code-scan pay-icon" style="color: #25D366;"></i>
+              <div class="pay-check"><i class="bi bi-check-circle-fill"></i></div>
+              <div><strong style="display:block; color: var(--text-main);">Direct UPI</strong><small style="color: var(--text-muted);">0% Fees</small></div>
+          </label>
+
+          <label class="pay-card" onclick="selectPayment(this, 'online')">
+              <input type="radio" name="payment_mode" value="online">
+              <i class="bi bi-credit-card-2-front pay-icon"></i>
+              <div class="pay-check"><i class="bi bi-check-circle-fill"></i></div>
+              <div><strong style="display:block; color: var(--text-main);">Card/Gateway</strong><small style="color: var(--text-muted);">Secure Stripe</small></div>
+          </label>
+
+          <label class="pay-card" onclick="selectPayment(this, 'cash')">
+              <input type="radio" name="payment_mode" value="cash">
+              <i class="bi bi-cash-coin pay-icon"></i>
+              <div class="pay-check"><i class="bi bi-check-circle-fill"></i></div>
+              <div><strong style="display:block; color: var(--text-main);">Cash</strong><small style="color: var(--text-muted);">On Pickup</small></div>
+          </label>
+      </div>
+
+      <div id="upi-qr-section" style="margin-top: 20px; background: var(--input-bg); border: 1px solid var(--primary); border-radius: 12px; padding: 20px; text-align: center;">
+          <p style="margin-top: 0; font-weight: 600; color: var(--text-main);">Scan to Pay via any UPI App</p>
+          
+          <div style="background: white; padding: 15px; border-radius: 12px; display: inline-block; margin-bottom: 15px; min-width: 210px; min-height: 210px;">
+              
+              <div id="qr-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 180px; height: 180px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px;">
+                  <i class="bi bi-calendar-event" style="font-size: 2.2rem; color: #94a3b8; margin-bottom: 8px;"></i>
+                  <span style="color: #64748b; font-size: 0.8rem; font-weight: 600; line-height: 1.4;">Select dates<br>to generate QR</span>
+              </div>
+
+              <img id="dynamic-upi-qr" src="" alt="UPI QR Code" style="width: 180px; height: 180px; display: none;">
+          </div>
+          
+          <p style="margin: 0 0 15px 0; font-size: 0.9rem; color: var(--text-muted);">UPI ID: <strong id="upi-id-display" style="color: var(--primary);">Waiting for dates...</strong></p>
+          
+          <div style="text-align: left;">
+              <label style="font-size: 0.85rem;">Enter 12-Digit UTR / Reference Number <span style="color: var(--error-text);">*</span></label>
+              <input type="text" name="upi_utr" id="upi_utr" placeholder="e.g. 301234567890" maxlength="12">
+          </div>
+      </div>
+
+      <div id="wallet-warning">⚠️ Insufficient wallet balance. Please add funds or choose another method.</div>
+    </div>
+
+    <div class="card" style="align-self: start; position: sticky; top: 20px;">
+      <h3 style="margin-top: 0;">Summary</h3>
+      
+      <div class="slider-container">
+        <div class="slider-track" id="imageTrack">
+          {% for img in vehicle.images.all %}
+            <img src="{{ img.image.url }}" alt="{{ vehicle.vehicle_name }}" onclick="openLightbox(this.src)">
+          {% empty %}
+            <img src="https://via.placeholder.com/400x200?text=No+Image" alt="Placeholder">
+          {% endfor %}
+        </div>
+        
+        {% if vehicle.images.count > 1 %}
+          <button type="button" class="slider-btn prev" onclick="moveSlide(-1)"><i class="bi bi-chevron-left"></i></button>
+          <button type="button" class="slider-btn next" onclick="moveSlide(1)"><i class="bi bi-chevron-right"></i></button>
+          
+          <div class="slider-dots" id="sliderDots">
+            {% for img in vehicle.images.all %}
+              <div class="dot {% if forloop.first %}active{% endif %}" onclick="goToSlide({{ forloop.counter0 }})"></div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="summary-item"><span>Vehicle</span><strong>{{ vehicle.vehicle_name }}</strong></div>
+      {% if vehicle.avg_rating > 0 %}
+      <div class="summary-item">
+          <span>Rating</span>
+          <strong style="color: var(--star, #facc15); display: flex; align-items: center; gap: 5px;">
+              <i class="bi bi-star-fill"></i> {{ vehicle.avg_rating }} <span style="color: var(--text-muted); font-size: 0.8rem; font-weight: normal;">({{ vehicle.review_count }} Reviews)</span>
+          </strong>
+      </div>
+      {% endif %}
+      {% if vehicle.vehicle_number %}
+      <div class="summary-item">
+          <span>Vehicle No.</span>
+          <strong>{{ vehicle.vehicle_number }}</strong>
+      </div>
+      {% endif %}
+      <div class="summary-item"><span>Category</span><strong>{{ vehicle.category }}</strong></div>
+      <div class="summary-item"><span>Pickup</span><strong style="max-width: 60%; text-align: right;">{{ vehicle.pickup_location|default:"Contact Host" }}</strong></div>
+      
+      <div class="host-card">
+        <div class="host-header">
+          <div class="host-avatar"><i class="bi bi-person-fill"></i></div>
+          <div class="host-info">
+            <h4>{% if vehicle.owner.first_name %}{{ vehicle.owner.first_name }} {{ vehicle.owner.last_name }}{% else %}{{ vehicle.owner.username }}{% endif %}</h4>
+            <span>Vehicle Host</span>
+          </div>
+        </div>
+        <a href="javascript:void(0);" onclick="openWhatsApp('{{ vehicle.contact_number|escapejs }}', '{{ vehicle.vehicle_name|escapejs }}')" class="whatsapp-btn">
+          <i class="bi bi-whatsapp"></i> Chat on WhatsApp
+        </a>
+      </div>
+
+      <div class="summary-item"><span>Price/Day</span><span>₹{{ vehicle.price_per_day }}</span></div>
+      <div class="summary-item"><span>Days</span><span id="total_days">0</span></div>
+      <div class="summary-item"><span>Driver Fee</span><span id="driver_fee">₹0</span></div>
+      
+      <div class="summary-item" id="discount_row" style="display: none; color: var(--success-text);">
+          <span>Discount</span><span id="discount_amt">-₹0</span>
+      </div>
+
+      <hr style="border-color: var(--border);">
+      <div class="summary-item" style="font-size: 1.25rem;"><strong>Total</strong><strong id="total_price" style="color: var(--primary);">₹0</strong></div>
+
+      <div style="margin-top: 20px;">
+          <div class="promo-group">
+              <input type="text" id="promo_code" name="promo_code" placeholder="Enter Promo Code">
+              <button type="button" class="apply-btn" onclick="applyPromo()">Apply</button>
+          </div>
+          <div id="promo-message"></div>
+
+          <div style="margin-top: 15px;">
+              <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Available Offers (Click to apply)</p>
+              <div class="offers-container">
+                  <div class="offer-item" onclick="autoApplyPromo('EASY150')">
+                      <span class="offer-code">EASY150</span>
+                      <span class="offer-desc">Flat ₹150 off on your ride</span>
+                  </div>
+                  <div class="offer-item" onclick="autoApplyPromo('GO10')">
+                      <span class="offer-code">GO10</span>
+                      <span class="offer-desc">10% off instantly</span>
+                  </div>
+                  <div class="offer-item" onclick="autoApplyPromo('WEEKEND150')">
+                      <span class="offer-code">WEEKEND150</span>
+                      <span class="offer-desc">Flat ₹150 off</span>
+                  </div>
+                  
+                  {% if is_new_user %}
+                  <div class="offer-item" onclick="autoApplyPromo('FIRST200')">
+                      <span class="offer-code">FIRST200</span>
+                      <span class="offer-desc">₹200 off for your first ride</span>
+                  </div>
+                  {% endif %}
+                  
+                  <div class="offer-item" onclick="autoApplyPromo('LONG10')">
+                      <span class="offer-code">LONG10</span>
+                      <span class="offer-desc">10% off for 5+ days</span>
+                  </div>
+                  <div class="offer-item" onclick="autoApplyPromo('VIP25')">
+                      <span class="offer-code">VIP25</span>
+                      <span class="offer-desc">25% off on orders over ₹10k</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div id="date-warning" class="message-box">⚠️ This vehicle is already booked for some or all of the selected dates. Please choose different dates.</div>
+
+      <div style="margin-top: 25px; background: var(--input-bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">
+        <label>Verification</label>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;">
+            <img src="{% url 'captcha' %}" id="captcha_img" style="border-radius: 5px; border: 1px solid var(--border);">
+            <button type="button" onclick="document.getElementById('captcha_img').src='{% url 'captcha' %}?'+Math.random()" style="border:none; background:none; cursor:pointer; font-size: 1.5rem; color: var(--text-muted); transition: 0.2s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">↻</button>
+        </div>
+        <input type="text" name="captcha_input" placeholder="Enter text" required style="text-transform:uppercase;">
+      </div>
+
+      <div class="terms-group">
+          <input type="checkbox" id="terms" name="terms" required>
+          <label for="terms">I agree to the <a href="#" style="color: var(--primary); text-decoration: none;">Terms & Conditions</a> and the cancellation policy.</label>
+      </div>
+
+      <button type="submit" class="checkout-btn" id="confirm-btn">Confirm Booking</button>
+    </div>
+
+  </div>
+</form>
+
+<script>
+  // Context Data Injection
+  const bookedRanges = JSON.parse('{{ booked_dates_json|safe|default:"[]" }}');
+  const driverBookings = JSON.parse('{{ driver_bookings_json|safe|default:"[]" }}');
+  const isNewUser = {{ is_new_user|yesno:"true,false" }};
+
+  // UI Setup & Existing Logic
+  const bookedListSpan = document.getElementById('booked-dates-list');
+  const bookedDisplay = document.getElementById('booked-dates-display');
+  
+  if (bookedRanges.length > 0) {
+      let dateStrings = bookedRanges.map(r => {
+          let s = new Date(r.start).toLocaleDateString('en-GB', {day: 'numeric', month: 'short'});
+          let e = new Date(r.end).toLocaleDateString('en-GB', {day: 'numeric', month: 'short'});
+          return s === e ? s : `${s} to ${e}`;
+      });
+      bookedListSpan.innerText = dateStrings.join(', ');
+      bookedDisplay.style.display = 'block';
+  }
+
+  const checkoutForm = document.getElementById('checkout-form');
+  const confirmBtn = document.getElementById('confirm-btn');
+  
+  checkoutForm.addEventListener('submit', function(e) {
+      if(document.getElementById("wallet-radio").checked && userBalance < currentTotal) {
+          e.preventDefault();
+          return;
+      }
+      e.preventDefault();
+      
+      // Grab overlay elements
+      const overlay = document.getElementById('order-success-overlay');
+      const circle = overlay.querySelector('.success-circle');
+      const mainText = overlay.querySelector('.success-text');
+      const subText = overlay.querySelector('.success-subtext');
+      
+      // Check selected payment mode
+      const paymentModeInput = document.querySelector('input[name="payment_mode"]:checked');
+      const paymentMode = paymentModeInput ? paymentModeInput.value : '';
+      
+      let redirectDelay = 800; // 0.8 seconds baseline
+
+      if (paymentMode === 'upi') {
+          // UPI Specific Overlay
+          circle.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+          circle.style.background = '#f59e0b';
+          circle.style.boxShadow = '0 10px 30px rgba(245, 158, 11, 0.4)';
+          mainText.innerText = 'Payment Under Review';
+          subText.innerText = 'Please wait 6 to 12 hours for confirmation. Our staff will confirm it from the database shortly.';
+          
+          redirectDelay = 2000; // Give them 2 seconds to read the UPI notice
+          
+      } else {
+          // Cash, Wallet, or Online - Default Success Overlay
+          circle.innerHTML = '<i class="bi bi-check-lg"></i>';
+          circle.style.background = 'var(--whatsapp)';
+          circle.style.boxShadow = '0 10px 30px rgba(37, 211, 102, 0.4)';
+          mainText.innerText = 'Booking Confirmed!';
+          subText.innerText = 'Redirecting to your dashboard...';
+          
+          redirectDelay = 800; // Execute form submit in exactly 0.8 seconds
+      }
+
+      overlay.classList.add('show');
+      
+      // Submit the form after the delay
+      setTimeout(() => { checkoutForm.submit(); }, redirectDelay);
+  });
+
+  const startDate = document.getElementById("start_date");
+  const endDate = document.getElementById("end_date");
+  const datePromptMsg = document.getElementById('date-prompt-msg');
+  const pricePerDay = parseFloat("{{ vehicle.price_per_day }}");
+  const userBalance = parseFloat("{{ wallet_balance|default:0 }}");
+  
+  let currentTotal = 0;
+  let activeDiscountType = null;
+  let activeDiscountValue = 0;
+
+  function getLocalDateString(dateObj) {
+      const offset = dateObj.getTimezoneOffset() * 60000;
+      return new Date(dateObj.getTime() - offset).toISOString().split('T')[0];
+  }
+
+  const todayDateStr = getLocalDateString(new Date());
+  if(startDate && endDate) {
+      startDate.setAttribute('min', todayDateStr);
+      endDate.setAttribute('min', todayDateStr);
+      
+      startDate.addEventListener('change', function() {
+          endDate.setAttribute('min', this.value);
+          if(endDate.value && endDate.value < this.value) endDate.value = this.value;
+          updateSystem();
+      });
+      
+      endDate.addEventListener("change", updateSystem);
+  }
+
+  function setQuickDate(startType, daysTotal) {
+    let start = new Date();
+    if(startType === 'tomorrow') start.setDate(start.getDate() + 1);
+    
+    startDate.value = getLocalDateString(start);
+    endDate.setAttribute('min', startDate.value);
+
+    let end = new Date(start);
+    end.setDate(start.getDate() + daysTotal);
+    endDate.value = getLocalDateString(end);
+    
+    updateSystem();
+  }
+
+  // Unified Update Controller
+  function updateSystem() {
+      updateDriverAvailability();
+      updatePrice();
+  }
+
+  // --- NEW: Dynamic Frontend Driver Availability Logic ---
+  function updateDriverAvailability() {
+      const startVal = startDate.value;
+      const endVal = endDate.value;
+
+      if (!startVal || !endVal) {
+          datePromptMsg.style.display = 'block';
+          return;
+      }
+
+      datePromptMsg.style.display = 'none';
+      const userStart = new Date(startVal);
+      const userEnd = new Date(endVal);
+
+      document.querySelectorAll('.driver-card').forEach(card => {
+          const radioInput = card.querySelector('input[type="radio"]');
+          const driverId = parseInt(radioInput.value);
+          const badge = document.getElementById(`driver-badge-${driverId}`);
+          
+          let isDriverBusy = false;
+
+          // Scanning overlapping driver dates
+          for (let i = 0; i < driverBookings.length; i++) {
+              if (driverBookings[i].driver_id === driverId) {
+                  const bookingStart = new Date(driverBookings[i].start_date);
+                  const bookingEnd = new Date(driverBookings[i].end_date);
+                  
+                  if (bookingStart <= userEnd && bookingEnd >= userStart) {
+                      isDriverBusy = true;
+                      break;
+                  }
+              }
+          }
+
+          if (isDriverBusy) {
+              radioInput.disabled = true;
+              radioInput.checked = false; 
+              card.classList.add('locked');
+              card.classList.remove('selected');
+              
+              badge.innerHTML = '<i class="bi bi-x-circle-fill"></i> Busy';
+              badge.style.background = 'rgba(234,84,85,0.15)';
+              badge.style.color = '#ea5455';
+              badge.style.borderColor = 'transparent';
+          } else {
+              radioInput.disabled = false;
+              card.classList.remove('locked');
+              
+              badge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Available';
+              badge.style.background = 'rgba(40,199,111,0.15)';
+              badge.style.color = '#28c76f';
+              badge.style.borderColor = 'transparent';
+          }
+      });
+  }
+
+  function updatePrice() {
+    const sStr = startDate.value;
+    const eStr = endDate.value;
+    
+    // UI Elements for QR Code
+    const qrPlaceholder = document.getElementById("qr-placeholder");
+    const dynamicQr = document.getElementById("dynamic-upi-qr");
+    const upiIdDisplay = document.getElementById("upi-id-display");
+
+    // OVERLAP VALIDATION CHECK FOR VEHICLE
+    let isOverlapping = false;
+    if(sStr && eStr) {
+        for(let range of bookedRanges) {
+            if(sStr <= range.end && eStr >= range.start) {
+                isOverlapping = true;
+                break;
+            }
+        }
+    }
+
+    const dateWarning = document.getElementById("date-warning");
+    
+    if(isOverlapping) {
+        dateWarning.style.display = "block";
+        confirmBtn.disabled = true;
+        confirmBtn.innerText = "Dates Unavailable";
+        document.getElementById("total_days").innerText = "0";
+        document.getElementById("driver_fee").innerText = "₹0";
+        document.getElementById("total_price").innerText = "₹0";
+        
+        // Hide QR if dates overlap
+        if(qrPlaceholder) qrPlaceholder.style.display = "flex";
+        if(dynamicQr) dynamicQr.style.display = "none";
+        if(upiIdDisplay) upiIdDisplay.innerText = "Dates unavailable";
+        
+        return; 
+    } else {
+        dateWarning.style.display = "none";
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "Confirm Booking";
+    }
+
+    const s = new Date(sStr);
+    const e = new Date(eStr);
+    
+    // Make sure valid strings exist before calculating
+    if (sStr && eStr && s && e && e >= s) {
+      const days = Math.ceil((e - s) / (86400000)) + 1;
+      document.getElementById("total_days").innerText = days;
+      
+      let total = days * pricePerDay;
+      
+      const driveTypeInput = document.querySelector('input[name="drive_type"]:checked');
+      if (driveTypeInput && driveTypeInput.value === "driver") {
+        const driver = document.querySelector('input[name="driver_id"]:checked');
+        if (driver) {
+           const fee = parseFloat(driver.dataset.fee) * days;
+           document.getElementById("driver_fee").innerText = "₹" + fee;
+           total += fee;
+        } else {
+           document.getElementById("driver_fee").innerText = "₹0";
+        }
+      } else {
+        document.getElementById("driver_fee").innerText = "₹0";
+      }
+      
+      // APPLY DISCOUNTS
+      const discountRow = document.getElementById("discount_row");
+      const msgBox = document.getElementById("promo-message");
+      let discountAmt = 0;
+
+      let hasWeekend = false;
+      let tempDate = new Date(s);
+      while (tempDate <= e) {
+          if (tempDate.getDay() === 0 || tempDate.getDay() === 6) { 
+              hasWeekend = true;
+              break;
+          }
+          tempDate.setDate(tempDate.getDate() + 1);
+      }
+
+      if (document.getElementById("promo_code").value.toUpperCase() === "LONG10" && days < 5 && activeDiscountType !== null) {
+          activeDiscountType = null;
+          activeDiscountValue = 0;
+          msgBox.innerText = "LONG10 requires a minimum of 5 days.";
+          msgBox.style.color = "var(--error-text)";
+      }
+
+      if (document.getElementById("promo_code").value.toUpperCase() === "WEEKEND150" && !hasWeekend && activeDiscountType !== null) {
+          activeDiscountType = null;
+          activeDiscountValue = 0;
+          msgBox.innerText = "WEEKEND150 is only valid for trips that include a Saturday or Sunday.";
+          msgBox.style.color = "var(--error-text)";
+      }
+
+      if (document.getElementById("promo_code").value.toUpperCase() === "VIP25" && total < 10000 && activeDiscountType !== null) {
+          activeDiscountType = null;
+          activeDiscountValue = 0;
+          msgBox.innerText = "VIP25 requires a minimum booking value of ₹10,000.";
+          msgBox.style.color = "var(--error-text)";
+      }
+
+      if (activeDiscountType === "flat") {
+          discountAmt = activeDiscountValue;
+      } else if (activeDiscountType === "percent") {
+          discountAmt = total * activeDiscountValue;
+      }
+
+      if (discountAmt > 0) {
+          if (discountAmt > total) discountAmt = total;
+          total = total - discountAmt;
+          document.getElementById('discount_amt').innerText = "-₹" + discountAmt.toFixed(0);
+          discountRow.style.display = "flex";
+      } else {
+          discountRow.style.display = "none";
+      }
+
+      currentTotal = total;
+      document.getElementById("total_price").innerText = "₹" + total.toFixed(0);
+      checkWalletBalance();
+
+      // DYNAMIC UPI GENERATION
+      const MY_UPI_ID = "9322039676@ibl"; 
+      const MY_NAME = "GoWheels Rentals"; 
+      if (upiIdDisplay) upiIdDisplay.innerText = MY_UPI_ID;
+      const upiUri = `upi://pay?pa=${MY_UPI_ID}&pn=${encodeURIComponent(MY_NAME)}&am=${total.toFixed(2)}&cu=INR&tn=GoWheels+Rental`;
+      
+      // Hide placeholder and show actual QR
+      if(dynamicQr) {
+          dynamicQr.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUri)}`;
+          dynamicQr.style.display = "block";
+      }
+      if(qrPlaceholder) qrPlaceholder.style.display = "none";
+
+    } else {
+      // If dates are not properly selected yet, show placeholder
+      document.getElementById("total_days").innerText = "0";
+      document.getElementById("driver_fee").innerText = "₹0";
+      document.getElementById("total_price").innerText = "₹0";
+      
+      if(qrPlaceholder) qrPlaceholder.style.display = "flex";
+      if(dynamicQr) dynamicQr.style.display = "none";
+      if(upiIdDisplay) upiIdDisplay.innerText = "Waiting for dates...";
+    }
+  }
+
+  function autoApplyPromo(code) {
+      document.getElementById('promo_code').value = code;
+      applyPromo();
+      const input = document.getElementById('promo_code');
+      input.style.transform = "scale(1.02)";
+      input.style.borderColor = "var(--primary)";
+      setTimeout(() => { input.style.transform = "scale(1)"; }, 200);
+  }
+
+  function applyPromo() {
+      const codeInput = document.getElementById("promo_code").value.trim().toUpperCase();
+      const msgBox = document.getElementById("promo-message");
+      const days = parseInt(document.getElementById("total_days").innerText) || 0;
+      
+      let baseTotal = days * pricePerDay;
+      const driveTypeInput = document.querySelector('input[name="drive_type"]:checked');
+      if (driveTypeInput && driveTypeInput.value === "driver") {
+          const driver = document.querySelector('input[name="driver_id"]:checked');
+          if (driver) baseTotal += parseFloat(driver.dataset.fee) * days;
+      }
+
+      activeDiscountType = null;
+      activeDiscountValue = 0;
+
+      if (codeInput === "VIP25") {
+          if (baseTotal >= 10000) {
+              activeDiscountType = "percent";
+              activeDiscountValue = 0.25;
+              msgBox.innerText = "VIP Applied! 25% off.";
+              msgBox.style.color = "var(--success-text)";
+          } else {
+              msgBox.innerText = "VIP25 requires a minimum booking value of ₹10,000.";
+              msgBox.style.color = "var(--error-text)";
+          }
+          msgBox.style.display = "block";
+      }
+      else if (codeInput === "FIRST200") {
+          if (isNewUser) {
+              activeDiscountType = "flat";
+              activeDiscountValue = 200;
+              msgBox.innerText = "Welcome Aboard! ₹200 off applied.";
+              msgBox.style.color = "var(--success-text)";
+          } else {
+              msgBox.innerText = "FIRST200 is only valid for your very first booking.";
+              msgBox.style.color = "var(--error-text)";
+          }
+          msgBox.style.display = "block";
+      }
+      else if (codeInput === "EASY150") {
+          activeDiscountType = "flat";
+          activeDiscountValue = 150;
+          msgBox.innerText = "Easy Discount! ₹150 off applied.";
+          msgBox.style.color = "var(--success-text)";
+          msgBox.style.display = "block";
+      } 
+      else if (codeInput === "GO10") {
+          activeDiscountType = "percent";
+          activeDiscountValue = 0.10;
+          msgBox.innerText = "GoWheels Special! 10% off applied.";
+          msgBox.style.color = "var(--success-text)";
+          msgBox.style.display = "block";
+      }
+      else if (codeInput === "LONG10") {
+          if (days >= 5) {
+              activeDiscountType = "percent";
+              activeDiscountValue = 0.10;
+              msgBox.innerText = "Long Haul Special! 10% off applied.";
+              msgBox.style.color = "var(--success-text)";
+          } else {
+              msgBox.innerText = "Long Haul Special requires 5 or more days.";
+              msgBox.style.color = "var(--error-text)";
+          }
+          msgBox.style.display = "block";
+      } 
+      else if (codeInput === "WEEKEND150") {
+          let checkStart = new Date(document.getElementById("start_date").value);
+          let checkEnd = new Date(document.getElementById("end_date").value);
+          let hasWeekend = false;
+          
+          while (checkStart <= checkEnd) {
+              if (checkStart.getDay() === 0 || checkStart.getDay() === 6) {
+                  hasWeekend = true;
+                  break;
+              }
+              checkStart.setDate(checkStart.getDate() + 1);
+          }
+
+          if (hasWeekend) {
+              activeDiscountType = "flat";
+              activeDiscountValue = 150;
+              msgBox.innerText = "Weekend Warrior! ₹150 off applied.";
+              msgBox.style.color = "var(--success-text)";
+          } else {
+              msgBox.innerText = "WEEKEND150 is only valid for trips that include a Saturday or Sunday.";
+              msgBox.style.color = "var(--error-text)";
+          }
+          msgBox.style.display = "block";
+      } 
+      else if (codeInput === "") {
+          msgBox.style.display = "none";
+      } 
+      else {
+          msgBox.innerText = "Invalid Promo Code.";
+          msgBox.style.color = "var(--error-text)";
+          msgBox.style.display = "block";
+      }
+      
+      updatePrice(); 
+  }
+
+  function checkWalletBalance() {
+    if(document.getElementById("date-warning").style.display === "block") return; 
+
+    const walletRadio = document.getElementById("wallet-radio");
+    const walletWarning = document.getElementById("wallet-warning");
+
+    if (walletRadio && walletRadio.checked) {
+        if (userBalance < currentTotal) {
+            walletWarning.style.display = "block";
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = "Insufficient Wallet Balance";
+        } else {
+            walletWarning.style.display = "none";
+            confirmBtn.disabled = false;
+            confirmBtn.innerText = "Confirm Booking";
+        }
+    } else {
+        if (walletWarning) walletWarning.style.display = "none";
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "Confirm Booking";
+    }
+  }
+
+  function selectPayment(card, mode) {
+      document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected-pay'));
+      card.classList.add('selected-pay');
+      card.querySelector('input').checked = true;
+      
+      const upiSection = document.getElementById("upi-qr-section");
+      const upiInput = document.getElementById("upi_utr");
+      
+      if (mode === 'upi') {
+          upiSection.style.display = "block";
+          upiInput.required = true;
+      } else {
+          upiSection.style.display = "none";
+          upiInput.required = false;
+          upiInput.value = "";
+      }
+      
+      checkWalletBalance();
+  }
+
+  function setDriveType(type) {
+    document.getElementById("opt-self").classList.remove("selected");
+    document.getElementById("opt-driver").classList.remove("selected");
+    
+    if (type === 'self') {
+      document.getElementById("opt-self").classList.add("selected");
+      document.getElementById("driver-section").style.display = "none";
+      
+      const checkedDriver = document.querySelector('input[name="driver_id"]:checked');
+      if(checkedDriver) checkedDriver.checked = false;
+      document.querySelectorAll('.driver-card').forEach(c => c.classList.remove('selected'));
+    } else {
+      document.getElementById("opt-driver").classList.add("selected");
+      document.getElementById("driver-section").style.display = "block";
+    }
+    updateSystem(); 
+  }
+
+  function selectDriver(card) {
+    document.querySelectorAll('.driver-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    card.querySelector('input').checked = true;
+    updatePrice(); 
+  }
+
+  document.querySelectorAll('input[name="driver_id"]').forEach(el => {
+      el.addEventListener("change", updatePrice);
+  });
+
+  // Slider Logic
+  let slideIndex = 0;
+  const track = document.getElementById("imageTrack");
+  const dots = document.querySelectorAll(".dot");
+  const totalSlides = document.querySelectorAll(".slider-track img").length;
+
+  function updateSlider() {
+    if (!track) return;
+    track.style.transform = `translateX(-${slideIndex * 100}%)`;
+    dots.forEach(dot => dot.classList.remove("active"));
+    if (dots[slideIndex]) dots[slideIndex].classList.add("active");
+  }
+
+  function moveSlide(direction) {
+    slideIndex += direction;
+    if (slideIndex >= totalSlides) slideIndex = 0;
+    if (slideIndex < 0) slideIndex = totalSlides - 1;
+    updateSlider();
+  }
+
+  function goToSlide(index) {
+    slideIndex = index;
+    updateSlider();
+  }
+
+  // Lightbox Logic
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+  function openLightbox(src) { lightboxImg.src = src; lightbox.classList.add("show"); }
+  function closeLightbox() { lightbox.classList.remove("show"); }
+
+  function openWhatsApp(rawNumber, vehicleName) {
+      if (!rawNumber || rawNumber.trim() === '') {
+          alert("Sorry, the host hasn't provided a valid contact number.");
+          return;
+      }
+      let cleanNumber = rawNumber.replace(/\D/g, '');
+      if (cleanNumber.length === 10) cleanNumber = '91' + cleanNumber;
+      
+      const text = encodeURIComponent(`Hi! I am interested in renting your ${vehicleName} via GoWheels.`);
+      window.open(`https://wa.me/${cleanNumber}?text=${text}`, '_blank');
+  }
+</script>
+
+</body>
+</html>
