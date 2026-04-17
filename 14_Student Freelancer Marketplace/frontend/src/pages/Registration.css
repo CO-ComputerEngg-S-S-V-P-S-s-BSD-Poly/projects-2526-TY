@@ -1,0 +1,93 @@
+/* 1. General Body Styling - Scroll चालू करण्यासाठी */
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* आडवा स्क्रोल बंद */
+    overflow-y: auto !important; /* उभा स्क्रोल सुरू */
+    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 2. Main Container - Height dynamic ठेवली आहे */
+.register-container {
+    min-height: 100vh; /* कमीत कमी स्क्रीन एवढी उंची, जास्त डेटा असल्यास वाढेल */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px; /* मोबाईलवर फॉर्म चिपकू नये म्हणून */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* सुंदर बॅकग्राउंड */
+}
+
+/* 3. Register Card Styling */
+.register-container .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px; /* फॉर्मची रुंदी मर्यादित ठेवली आहे */
+    background: #ffffff;
+    padding: 20px;
+}
+
+/* 4. Form Controls - Small & Clean */
+.form-control-sm, .form-select-sm {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.form-control-sm:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+}
+
+/* 5. Typography */
+.extra-small {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.register-title {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 6. Button Styling */
+.btn-register {
+    background: #667eea;
+    color: white;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 8px;
+    transition: 0.3s;
+    border: none;
+    width: 100%;
+}
+
+.btn-register:hover {
+    background: #5a6fd1;
+    transform: translateY(-2px);
+}
+
+/* 7. Scrollbar Customization (Optional) */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
