@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Decorations | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./manage-decor.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body data-page="decorations" class="admin-theme">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="ph-fill ph-aperture"></i>
+                </div>
+                <div>
+                    <p class="brand-name">Vishva Decor</p>
+                    <p class="brand-sub">Owner Console</p>
+                </div>
+            </div>
+
+            <p class="menu-title">Navigation</p>
+            <nav class="nav">
+                <a class="nav-link" href="./dashboard.html">
+                    <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-link" href="./manage-bookings.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-check"></i></span>
+                    <span>Manage Bookings</span>
+                </a>
+                <a class="nav-link" href="./bookings-calendar.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-blank"></i></span>
+                    <span>Booking Calendar</span>
+                </a>
+                <a class="nav-link active" href="./manage-decor.html">
+                    <span class="nav-icon"><i class="ph ph-sparkle"></i></span>
+                    <span>Manage Decorations</span>
+                </a>
+                <a class="nav-link" href="./reviews.html">
+                    <span class="nav-icon"><i class="ph ph-chat-centered-dots"></i></span>
+                    <span>Customer Reviews</span>
+                </a>
+                <a class="nav-link" href="./manage-inventory.html">
+                    <span class="nav-icon"><i class="ph ph-package"></i></span>
+                    <span>Manage Inventory</span>
+                </a>
+                                <a class="nav-link" href="./manage-payments.html">
+                    <span class="nav-icon"><i class="ph ph-wallet"></i></span>
+                    <span>Manage Payments</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main decor-shell">
+            <header class="topbar">
+                <div class="search-wrap">
+                    <i class="ph ph-sparkle"></i>
+                    <strong>Manage Decorations</strong>
+                </div>
+                <div class="top-right">
+                    <div class="profile-chip">
+                        <div id="owner-avatar" class="avatar-dot" aria-label="Owner avatar">O</div>
+                        <span id="owner-email" class="sr-only">owner@vishva.com</span>
+                    </div>
+                    <button id="owner-logout-btn" class="btn-primary" type="button">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <header class="decor-topbar page-hero">
+                <div>
+                    <p class="kicker">OWNER PANEL</p>
+                    <h1>Manage Decorations</h1>
+                    <p class="subtitle">Create, organize, and update your decoration catalog.</p>
+                </div>
+            </header>
+
+            <section class="decor-stats">
+            <article class="stat-card">
+                <p class="stat-label">Total Decorations</p>
+                <p class="stat-value" id="decor-total">0</p>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Average Price</p>
+                <p class="stat-value" id="decor-avg-price">Rs 0</p>
+            </article>
+            <article class="stat-card">
+                <p class="stat-label">Budget-Friendly</p>
+                <p class="stat-value" id="decor-budget-friendly">0</p>
+            </article>
+            </section>
+
+            <section class="decor-grid">
+            <article class="panel">
+                <div class="panel-head">
+                    <h2 id="decor-form-title">Add New Decoration</h2>
+                    <p id="decor-form-subtitle">Create a catalog entry with image, budget and event type.</p>
+                </div>
+                <form id="add-decoration-form" class="decor-form">
+                    <input id="decor-id" name="id" type="hidden">
+                    <div class="form-grid">
+                        <label>
+                            <span>Title</span>
+                            <input id="decor-title" name="title" required>
+                        </label>
+                        <label>
+                            <span>Price</span>
+                            <input id="decor-price" name="price" type="number" required>
+                        </label>
+                        <label>
+                            <span>Event Type</span>
+                            <input id="decor-event-type" name="event_type">
+                        </label>
+                        <label>
+                            <span>Budget Category</span>
+                            <input id="decor-budget-category" name="budget_category">
+                        </label>
+                        <label class="wide">
+                            <span>Description</span>
+                            <input id="decor-description" name="description">
+                        </label>
+                        <label class="wide">
+                            <span>Image</span>
+                            <input id="decor-image" name="image" type="file" accept="image/*" required>
+                        </label>
+                    </div>
+                    <div class="decor-form-actions">
+                        <button id="decor-save-btn" class="btn-primary" type="submit">Add Decoration</button>
+                        <button id="decor-cancel-btn" class="btn-outline" type="button" hidden>Cancel Edit</button>
+                    </div>
+                </form>
+            </article>
+
+            <article class="panel">
+                <div class="panel-head">
+                    <h2>Decoration Catalog</h2>
+                    <p>Search, filter and manage existing decoration entries.</p>
+                </div>
+
+                <div class="table-tools">
+                    <input id="decor-search" type="text" placeholder="Search by title or event...">
+                    <select id="decor-event-filter">
+                        <option value="all">All Events</option>
+                    </select>
+                    <select id="decor-budget-filter">
+                        <option value="all">All Budgets</option>
+                    </select>
+                </div>
+                <p id="decor-results-count" class="results-count">0 results</p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Price</th>
+                                <th>Event</th>
+                                <th>Budget</th>
+                                <th>Image</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="decorations-body"></tbody>
+                    </table>
+                </div>
+            </article>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

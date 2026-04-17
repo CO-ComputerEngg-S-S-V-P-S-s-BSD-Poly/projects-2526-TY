@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Access | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./admin-login.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body class="admin-theme admin-theme-login">
+    <div class="bg-orb orb-left"></div>
+    <div class="bg-orb orb-right"></div>
+    <main class="owner-shell">
+        <section class="owner-auth owner-card">
+            <p class="badge">OWNER PORTAL</p>
+            <h2>Owner Sign In</h2>
+            <p class="subtitle">Welcome back. Login to continue.</p>
+
+            <form id="owner-login-form" novalidate>
+                <div class="field">
+                    <label for="owner-email">Email Address</label>
+                    <input type="email" id="owner-email" autocomplete="username" required>
+                </div>
+
+                <div class="field">
+                    <label for="owner-password">Password</label>
+                    <div class="input-with-action">
+                        <input type="password" id="owner-password" autocomplete="current-password" required>
+                        <button type="button" class="toggle-btn" data-target="owner-password">Show</button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="owner-key">Owner Key</label>
+                    <div class="input-with-action">
+                        <input type="password" id="owner-key" autocomplete="off" required>
+                        <button type="button" class="toggle-btn" data-target="owner-key">Show</button>
+                    </div>
+                </div>
+
+                <button id="owner-login-btn" type="submit">LOGIN</button>
+                <p id="owner-login-error" role="alert"></p>
+            </form>
+        </section>
+    </main>
+
+    <script src="../js/admin-auth.js"></script>
+    <script>
+        const form = document.getElementById("owner-login-form");
+        const errorEl = document.getElementById("owner-login-error");
+        const submitBtn = document.getElementById("owner-login-btn");
+
+        document.querySelectorAll(".toggle-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+                const input = document.getElementById(button.dataset.target);
+                const isPassword = input.type === "password";
+                input.type = isPassword ? "text" : "password";
+                button.textContent = isPassword ? "Hide" : "Show";
+            });
+        });
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            errorEl.textContent = "";
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Signing in...";
+
+            const email = document.getElementById("owner-email").value.trim();
+            const password = document.getElementById("owner-password").value;
+            const ownerKey = document.getElementById("owner-key").value;
+
+            if (!email || !password || !ownerKey) {
+                errorEl.textContent = "All fields are required";
+                submitBtn.disabled = false;
+                submitBtn.textContent = "LOGIN";
+                return;
+            }
+
+            try {
+                await loginOwner({ email, password, ownerKey });
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                errorEl.textContent = error.message || "Login failed";
+                submitBtn.disabled = false;
+                submitBtn.textContent = "LOGIN";
+            }
+        });
+    </script>
+</body>
+</html>
+
+

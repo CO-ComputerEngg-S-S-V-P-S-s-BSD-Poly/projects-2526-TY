@@ -1,0 +1,134 @@
+﻿[
+  {
+    "id": "wed-royal-mandap",
+    "title": "Royal Floral Mandap",
+    "description": "Grand marigold and rose mandap with brass lamps, entrance arches, and stage florals.",
+    "price": 62000,
+    "category": "wedding",
+    "budget": "high",
+    "inclusions": "Mandap setup, aisle decor, varmala stage, welcome gate",
+    "idealFor": "Traditional indoor weddings",
+    "image": "assest/images/wedding.jpg"
+  },
+  {
+    "id": "wed-pastel-day",
+    "title": "Pastel Day Wedding",
+    "description": "Soft pastel drapes, floral ceiling hangings, and minimal elegant stage styling.",
+    "price": 29000,
+    "category": "wedding",
+    "budget": "medium",
+    "inclusions": "Stage backdrop, table centerpieces, entrance frame",
+    "idealFor": "Daytime wedding functions",
+    "image": "assest/images/wedding 2.jpg"
+  },
+  {
+    "id": "wed-budget-intimate",
+    "title": "Intimate Wedding Essentials",
+    "description": "Affordable floral backdrop and compact mandap concept for close family weddings.",
+    "price": 14000,
+    "category": "wedding",
+    "budget": "low",
+    "inclusions": "Compact mandap, flower strings, seating accents",
+    "idealFor": "Small venue celebrations",
+    "image": "assest/images/wedding.jpg"
+  },
+  {
+    "id": "festival-diwali-glow",
+    "title": "Diwali Glow Courtyard",
+    "description": "Warm diya lines, marigold curtains, rangoli zone, and lantern highlights.",
+    "price": 18000,
+    "category": "festival",
+    "budget": "medium",
+    "inclusions": "Rangoli corner, diya decor, pooja backdrop",
+    "idealFor": "Society and home celebrations",
+    "image": "assest/images/festival.jpg"
+  },
+  {
+    "id": "festival-navratri-night",
+    "title": "Navratri Garba Arena",
+    "description": "Colorful fabric canopies, dandiya stage decor, and festive lighting clusters.",
+    "price": 36000,
+    "category": "festival",
+    "budget": "high",
+    "inclusions": "Stage decor, dance floor accents, entry arch",
+    "idealFor": "Community garba events",
+    "image": "assest/images/festival 3.jpg"
+  },
+  {
+    "id": "religious-pooja-premium",
+    "title": "Temple Pooja Premium Setup",
+    "description": "Sacred banana leaf columns, jasmine garlands, and devotional backdrop decor.",
+    "price": 26000,
+    "category": "religious",
+    "budget": "medium",
+    "inclusions": "Pooja stage, deity floral frame, seating arrangement",
+    "idealFor": "Satyanarayan and griha pravesh",
+    "image": "assest/images/religion function.jpg"
+  },
+  {
+    "id": "religious-simple",
+    "title": "Simple Pooja Decor",
+    "description": "Clean and devotional setup with fresh flowers, backdrop fabric, and lamp stands.",
+    "price": 12000,
+    "category": "religious",
+    "budget": "low",
+    "inclusions": "Backdrop, pooja table decor, lamp corners",
+    "idealFor": "Home rituals",
+    "image": "assest/images/religion function.jpg"
+  },
+  {
+    "id": "party-neon-birthday",
+    "title": "Neon Birthday Blast",
+    "description": "Bright neon signs, balloon tunnel, photo corner, and dessert table styling.",
+    "price": 17000,
+    "category": "party",
+    "budget": "medium",
+    "inclusions": "Balloon decor, cake table, selfie wall",
+    "idealFor": "Teen and young adult birthdays",
+    "image": "assest/images/birthday.jpg"
+  },
+  {
+    "id": "party-kids-carnival",
+    "title": "Kids Carnival Theme",
+    "description": "Cartoon cutouts, candy-color backdrop, game booth styling, and return gift desk.",
+    "price": 13000,
+    "category": "party",
+    "budget": "low",
+    "inclusions": "Theme stage, activity corner, balloon pillars",
+    "idealFor": "Children birthdays",
+    "image": "assest/images/birthday party 2.jpeg"
+  },
+  {
+    "id": "corporate-awards",
+    "title": "Corporate Awards Night",
+    "description": "Premium stage branding, elegant table setup, and focused ambient event lighting.",
+    "price": 48000,
+    "category": "corporate",
+    "budget": "high",
+    "inclusions": "Main stage, brand wall, VIP table decor",
+    "idealFor": "Annual meets and award events",
+    "image": "assest/images/corporate.jpg"
+  },
+  {
+    "id": "family-anniversary",
+    "title": "Family Anniversary Elegance",
+    "description": "Classic floral wall with romantic lights and sophisticated dining table decor.",
+    "price": 22000,
+    "category": "family",
+    "budget": "medium",
+    "inclusions": "Backdrop, seating decor, memory corner",
+    "idealFor": "Anniversary celebrations",
+    "image": "assest/images/Family & Social Events.jpg"
+  },
+  {
+    "id": "social-engagement",
+    "title": "Engagement Celebration Luxe",
+    "description": "Statement stage florals, aisle candles, and curated decor accents for photographs.",
+    "price": 34000,
+    "category": "family",
+    "budget": "high",
+    "inclusions": "Ring ceremony stage, welcome standees, floral props",
+    "idealFor": "Engagement and roka",
+    "image": "assest/images/Family & Social Events.jpg"
+  }
+]

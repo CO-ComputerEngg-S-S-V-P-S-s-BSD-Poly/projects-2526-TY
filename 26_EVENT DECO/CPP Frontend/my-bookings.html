@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings | Vishva Decorators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="travel-theme dashboard-page bg-light">
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Vishva <span>Decor</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="nav-dropdown">
+                    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                        <span>Gallery</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="nav-dropdown-menu" hidden>
+                        <a href="gallery.html">
+                            <i class="fas fa-images" aria-hidden="true"></i>
+                            <span>All Themes</span>
+                        </a>
+                        <a href="gallery.html?filter=wedding">
+                            <i class="fas fa-ring" aria-hidden="true"></i>
+                            <span>Wedding Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=festival">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <span>Festival Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=religious">
+                            <i class="fas fa-hands-praying" aria-hidden="true"></i>
+                            <span>Religious Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=party">
+                            <i class="fas fa-cake-candles" aria-hidden="true"></i>
+                            <span>Party Themes</span>
+                        </a>
+                    </div>
+                </li>
+                <li><a href="reviews.html">Customer Reviews</a></li>
+                <li class="nav-dropdown nav-dropdown-right">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+        <span>Contact Us</span>
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="nav-dropdown-menu" hidden>
+        <a href="contact.html">
+            <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+            <span>Contact Us Page</span>
+        </a>
+        <a href="tel:+911234567890">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Call Us</span>
+        </a>
+        <a href="mailto:vishvadecor@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Email Us</span>
+        </a>
+    </div>
+</li>
+            </ul>
+            <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <header class="dashboard-header section-padding">
+        <div class="container">
+            <span class="subtitle-accent">USER DASHBOARD</span>
+            <h2> My Bookings </h2>
+            <p>Manage your upcoming events and track your latest booking updates in one place.</p>
+        </div>
+    </header>
+
+    <section class="dashboard-content section-padding" style="padding-top: 0;">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="stat-info">
+                        <h3 id="stat-total-bookings">0</h3>
+                        <p>Total Bookings</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="color: #d97706; background: #fef3c7;"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info">
+                        <h3 id="stat-pending-bookings">0</h3>
+                        <p>Pending Approval</p>
+                    </div>
+                </div>
+                <a class="stat-card stat-card-link" id="unread-alerts-card" href="notifications.html">
+                    <div class="stat-icon" style="color: #0f766e; background: #d1fae5;"><i class="fas fa-bell"></i></div>
+                    <div class="stat-info">
+                        <h3 id="stat-unread-alerts">0</h3>
+                        <p>Unread Notifications</p>
+                    </div>
+                </a>
+            </div>
+<div class="bookings-section">
+                <h3 class="section-title-small">My Recent Bookings</h3>
+                <div class="bookings-list" id="bookings-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="payment-history-modal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-card modal-wide" role="dialog" aria-modal="true" aria-labelledby="payment-history-title">
+            <div class="modal-head">
+                <h3 id="payment-history-title">Payment History</h3>
+                <button type="button" class="modal-close" data-close-modal="payment-history" aria-label="Close payment history">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="table-wrapper">
+                <table class="payment-history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Type</th>
+                            <th>Recorded By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payment-history-body"></tbody>
+                </table>
+                <p id="payment-history-empty" class="gallery-empty-state">No payments recorded yet.</p>
+            </div>
+        </div>
+    </div>
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo white">Vishva <span>Decor</span></div>
+                <p>Transforming your celebrations with exquisite traditional decorations.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Vishva Decor. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const BOOKINGS_API_HOST = window.location.hostname || "localhost";
+        const BOOKINGS_API_BASE_URL = `http://${BOOKINGS_API_HOST}:5000`;
+
+        let activeCustomer = null;
+        let currentBookings = [];
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatDate(dateValue) {
+            const date = new Date(dateValue);
+            if (Number.isNaN(date.getTime())) return "-";
+            return date.toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            });
+        }
+
+        function formatDateRange(startValue, endValue) {
+            const startLabel = formatDate(startValue);
+            const endLabel = formatDate(endValue || startValue);
+            if (startLabel === "-" || endLabel === "-" || startLabel === endLabel) {
+                return { label: "Event Date", value: startLabel !== "-" ? startLabel : endLabel };
+            }
+            return { label: "Event Dates", value: `${startLabel} - ${endLabel}` };
+        }
+
+        function statusBadgeClass(status) {
+            const value = String(status || "").trim().toLowerCase();
+            if (value === "accepted" || value === "completed") return "status-badge status-accepted";
+            if (value === "pending") return "status-badge status-pending";
+            return "status-badge";
+        }
+
+        function resolveBookingImage(imagePath) {
+            const fallback = "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=200&auto=format&fit=crop";
+            const raw = String(imagePath || "").trim();
+            if (!raw) return fallback;
+            if (raw.startsWith("http://") || raw.startsWith("https://")) return raw;
+            const normalized = raw.startsWith("/") ? raw : `/${raw}`;
+            return `${BOOKINGS_API_BASE_URL}${encodeURI(normalized)}`;
+        }
+
+        async function ensureCustomerSession() {
+            const response = await fetch(`${BOOKINGS_API_BASE_URL}/api/customers/me`, { credentials: "include" });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.customer) {
+                return null;
+            }
+            activeCustomer = data.customer;
+            return activeCustomer;
+        }
+
+        function getNotificationBucket(item) {
+            const type = String(item?.type || "").toLowerCase();
+            if (type === "booking_reminder" || type === "owner_overdue_reminder" || type === "payment_due_reminder") return "reminders";
+            if (type === "owner_message" || type === "payment_notice" || type === "payment_update") return "messages";
+            return "alerts";
+        }
+
+        function updateNotificationSummary(notifications) {
+            const items = Array.isArray(notifications) ? notifications : [];
+            const unread = items.filter((item) => !item.is_read).length;
+            const alerts = items.filter((item) => getNotificationBucket(item) === "alerts").length;
+            const reminders = items.filter((item) => getNotificationBucket(item) === "reminders").length;
+            const messages = items.filter((item) => getNotificationBucket(item) === "messages").length;
+
+            const unreadEl = document.getElementById("stat-unread-alerts");
+            const alertCountEl = document.getElementById("quick-alert-count");
+            const reminderCountEl = document.getElementById("quick-reminder-count");
+            const messageCountEl = document.getElementById("quick-message-count");
+
+            if (unreadEl) unreadEl.textContent = String(unread);
+            if (alertCountEl) alertCountEl.textContent = String(alerts);
+            if (reminderCountEl) reminderCountEl.textContent = String(reminders);
+            if (messageCountEl) messageCountEl.textContent = String(messages);
+        }
+
+        function resetNotificationSummary() {
+            updateNotificationSummary([]);
+        }
+
+        async function loadNotificationSummary() {
+            if (!activeCustomer || !Number.isInteger(Number(activeCustomer.id))) {
+                resetNotificationSummary();
+                return;
+            }
+
+            const response = await fetch(`${BOOKINGS_API_BASE_URL}/api/notifications?customer_id=${encodeURIComponent(activeCustomer.id)}&limit=60`, {
+                credentials: "include"
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to load notifications");
+            }
+
+            updateNotificationSummary(Array.isArray(data.notifications) ? data.notifications : []);
+        }
+
+        function renderBookings(bookings) {
+            const listEl = document.getElementById("bookings-list");
+            const totalEl = document.getElementById("stat-total-bookings");
+            const pendingEl = document.getElementById("stat-pending-bookings");
+            if (!listEl || !totalEl || !pendingEl) return;
+
+            currentBookings = bookings;
+            totalEl.textContent = String(bookings.length);
+            pendingEl.textContent = String(bookings.filter((b) => String(b.status || "").trim().toLowerCase() === "pending").length);
+
+            if (!bookings.length) {
+                listEl.innerHTML = `<p class="gallery-empty-state">No bookings found for your account yet.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = bookings.map((booking) => {
+                const dateRange = formatDateRange(booking.event_date, booking.event_end_date || booking.event_date);
+                return `
+                <div class="booking-card js-open-booking" data-booking-id="${escapeHtml(booking.id)}" style="cursor: pointer;">
+                    <div class="booking-img">
+                        <img src="${resolveBookingImage(booking.decoration_image)}" alt="${escapeHtml(booking.decoration_title || "Booked Theme")}" onerror="this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=200&auto=format&fit=crop'">
+                    </div>
+                    <div class="booking-details">
+                        <div class="booking-header">
+                            <h4>${escapeHtml(booking.decoration_title || "Decoration Booking")}</h4>
+                            <span class="${statusBadgeClass(booking.status)}">${escapeHtml(booking.status || "pending")}</span>
+                        </div>
+                        <div class="booking-meta">
+                            <p><i class="fas fa-calendar-day"></i> ${escapeHtml(dateRange.label)}: <strong>${escapeHtml(dateRange.value)}</strong></p>
+                            <p><i class="fas fa-clock"></i> Time: <strong>${escapeHtml(booking.event_time || "-")}</strong></p>
+                            <p><i class="fas fa-map-marker-alt"></i> Venue: ${escapeHtml(booking.location || "-")}</p>
+                        </div>
+                        <div class="booking-footer booking-actions">
+                            ${String(booking.status || "").trim().toLowerCase() === "pending"
+                                ? `<button type="button" class="btn-text text-danger js-cancel-booking" data-booking-id="${escapeHtml(booking.id)}">Cancel Request</button>`
+                                : `<button type="button" class="btn-outline-small js-view-booking" data-booking-id="${escapeHtml(booking.id)}">View Details</button>`
+                            }
+                            <button type="button" class="btn-outline-small js-payment-history" data-booking-id="${escapeHtml(booking.id)}">View Payment History</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join("");
+        }
+
+        function toggleModal(modal, open) {
+            if (!modal) return;
+            modal.classList.toggle("open", open);
+            modal.setAttribute("aria-hidden", open ? "false" : "true");
+            document.body.style.overflow = open ? "hidden" : "";
+        }
+
+        async function openPaymentHistoryModal(bookingId) {
+            const modal = document.getElementById("payment-history-modal");
+            if (!modal) return;
+
+            const body = document.getElementById("payment-history-body");
+            const empty = document.getElementById("payment-history-empty");
+            if (body) body.innerHTML = "";
+            if (empty) empty.style.display = "none";
+
+            toggleModal(modal, true);
+
+            try {
+                const res = await fetch(`${BOOKINGS_API_BASE_URL}/api/payments/${bookingId}`, { credentials: "include" });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.message || "Failed to load payment history");
+
+                const payments = Array.isArray(data.payments) ? data.payments : [];
+                if (!payments.length) {
+                    if (empty) empty.style.display = "block";
+                    return;
+                }
+
+                if (body) {
+                    body.innerHTML = payments.map((payment) => `
+                        <tr>
+                            <td>${escapeHtml(formatDate(payment.payment_date || payment.created_at))}</td>
+                            <td>Rs. ${escapeHtml(Number(payment.amount || 0).toFixed(2))}</td>
+                            <td>${escapeHtml(payment.payment_method || "-")}</td>
+                            <td>${escapeHtml(payment.payment_type || "-")}</td>
+                            <td>${escapeHtml(payment.recorded_by || "-")}</td>
+                        </tr>
+                    `).join("");
+                }
+            } catch (error) {
+                if (empty) {
+                    empty.textContent = error.message || "Unable to load payment history.";
+                    empty.style.display = "block";
+                }
+            }
+        }
+
+        function bindHistoryModal() {
+            const historyModal = document.getElementById("payment-history-modal");
+            document.querySelectorAll("[data-close-modal]").forEach((button) => {
+                button.addEventListener("click", () => toggleModal(historyModal, false));
+            });
+            if (historyModal) {
+                historyModal.addEventListener("click", (event) => {
+                    if (event.target === historyModal) toggleModal(historyModal, false);
+                });
+            }
+            document.addEventListener("keydown", (event) => {
+                if (event.key !== "Escape") return;
+                toggleModal(historyModal, false);
+            });
+        }
+
+        async function loadMyBookings() {
+            const response = await fetch(`${BOOKINGS_API_BASE_URL}/api/bookings/mine`, { credentials: "include" });
+            if (!response.ok) {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.message || "Failed to load bookings");
+            }
+
+            const rows = await response.json();
+            const safeRows = Array.isArray(rows) ? rows : [];
+            renderBookings(safeRows);
+        }
+
+        async function cancelBooking(bookingId) {
+            const confirmed = window.confirm("Cancel this pending booking request?");
+            if (!confirmed) return;
+
+            const response = await fetch(`${BOOKINGS_API_BASE_URL}/api/bookings/${bookingId}/cancel`, {
+                method: "PUT",
+                credentials: "include"
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.message || "Unable to cancel booking");
+            }
+            alert("Booking cancelled successfully.");
+            await loadMyBookings();
+        }
+
+        window.addEventListener("load", async () => {
+            try {
+                const session = await ensureCustomerSession();
+                if (!session) {
+                    alert("Please log in to view your My Bookings.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const nameEl = document.getElementById("user-display-name");
+                if (nameEl) nameEl.textContent = session.name || "Guest";
+
+                await loadMyBookings();
+                await loadNotificationSummary();
+            } catch (error) {
+                const listEl = document.getElementById("bookings-list");
+                if (listEl) listEl.innerHTML = `<p class="gallery-empty-state">${escapeHtml(error.message || "Unable to load your bookings right now.")}</p>`;
+            }
+        });
+
+        const bookingsListEl = document.getElementById("bookings-list");
+        if (bookingsListEl) {
+            bookingsListEl.addEventListener("click", async (event) => {
+                const cancelButton = event.target.closest(".js-cancel-booking");
+                if (cancelButton) {
+                    try {
+                        await cancelBooking(cancelButton.dataset.bookingId);
+                    } catch (error) {
+                        alert(error.message || "Unable to cancel booking.");
+                    }
+                    return;
+                }
+
+                const historyButton = event.target.closest(".js-payment-history");
+                if (historyButton) {
+                    event.stopPropagation();
+                    openPaymentHistoryModal(historyButton.dataset.bookingId);
+                    return;
+                }
+
+                const viewButton = event.target.closest(".js-view-booking");
+                const card = event.target.closest(".js-open-booking");
+                const bookingId = (viewButton && viewButton.dataset.bookingId) || (card && card.dataset.bookingId);
+                if (!bookingId) return;
+
+                window.location.href = `booking-details.html?booking=${encodeURIComponent(bookingId)}`;
+            });
+        }
+
+        bindHistoryModal();
+    </script>
+    <script src="main.js?v=20260323-navfix"></script>
+</body>
+</html>
+
+
+
+
+
+
+

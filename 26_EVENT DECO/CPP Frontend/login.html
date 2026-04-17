@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Sign Up | Vishva Decorators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="travel-theme auth-page bg-light">
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Vishva <span>Decor</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="nav-dropdown">
+                    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                        <span>Gallery</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="nav-dropdown-menu" hidden>
+                        <a href="gallery.html">
+                            <i class="fas fa-images" aria-hidden="true"></i>
+                            <span>All Themes</span>
+                        </a>
+                        <a href="gallery.html?filter=wedding">
+                            <i class="fas fa-ring" aria-hidden="true"></i>
+                            <span>Wedding Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=festival">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <span>Festival Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=religious">
+                            <i class="fas fa-hands-praying" aria-hidden="true"></i>
+                            <span>Religious Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=party">
+                            <i class="fas fa-cake-candles" aria-hidden="true"></i>
+                            <span>Party Themes</span>
+                        </a>
+                    </div>
+                </li>
+                <li><a href="my-bookings.html">My Bookings</a></li>
+                <li class="nav-dropdown nav-dropdown-right">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+        <span>Contact Us</span>
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="nav-dropdown-menu" hidden>
+        <a href="contact.html">
+            <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+            <span>Contact Us Page</span>
+        </a>
+        <a href="tel:+911234567890">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Call Us</span>
+        </a>
+        <a href="mailto:vishvadecor@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Email Us</span>
+        </a>
+    </div>
+</li>
+            </ul>
+            <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="auth-section section-padding">
+        <div class="container">
+            <div class="auth-card">
+                
+                <div class="auth-content">
+                    
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" id="tab-login" onclick="switchForm('login')">Login</button>
+                        <button class="auth-tab" id="tab-register" onclick="switchForm('register')">Sign Up</button>
+                    </div>
+
+                    <form id="login-form" class="auth-form active-form">
+                        <div class="form-header">
+                            <h2>Welcome Back</h2>
+                            <p>Log in to view your bookings and saved designs.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="login-identifier">Email or Phone</label>
+                            <input type="text" id="login-identifier" class="form-control" placeholder="Enter your email or phone" autocomplete="username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <div class="password-field">
+                                <input type="password" id="login-password" class="form-control password-input" placeholder="Enter your password" autocomplete="current-password" required>
+                                <button type="button" class="password-toggle" data-password-target="login-password" aria-label="Show password" aria-pressed="false">
+                                    <i class="fas fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="remember-me">
+                                <input type="checkbox"> Remember me
+                            </label>
+                            <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+                        </div>
+
+                        <button type="submit" class="btn-primary full-width" id="login-submit">Login to Portal</button>
+                        <p id="login-status" class="auth-form-status" aria-live="polite"></p>
+                    </form>
+
+                    <form id="register-form" class="auth-form" style="display: none;">
+                        <div class="form-header">
+                            <h2>Create an Account</h2>
+                            <p>Join us to book your dream traditional event.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-name">Full Name</label>
+                            <input type="text" id="reg-name" class="form-control" placeholder="John Doe" autocomplete="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-phone">Phone Number</label>
+                            <input type="tel" id="reg-phone" class="form-control" placeholder="+91 98765 43210" autocomplete="tel" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-email">Email Address</label>
+                            <input type="email" id="reg-email" class="form-control" placeholder="name@example.com" autocomplete="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-password">Password</label>
+                            <div class="password-field">
+                                <input type="password" id="reg-password" class="form-control password-input" placeholder="Create a strong password" autocomplete="new-password" required>
+                                <button type="button" class="password-toggle" data-password-target="reg-password" aria-label="Show password" aria-pressed="false">
+                                    <i class="fas fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="reg-confirm">Confirm Password</label>
+                            <div class="password-field">
+                                <input type="password" id="reg-confirm" class="form-control password-input" placeholder="Re-enter your password" autocomplete="new-password" required>
+                                <button type="button" class="password-toggle" data-password-target="reg-confirm" aria-label="Show password" aria-pressed="false">
+                                    <i class="fas fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary full-width" id="register-submit">Create Account</button>
+                        <p id="register-status" class="auth-form-status" aria-live="polite"></p>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo white">Vishva <span>Decor</span></div>
+                <p>Transforming your celebrations with exquisite traditional decorations.</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Vishva Decor. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const API_HOST = window.location.hostname || "localhost";
+        const API_BASE_URL = `http://${API_HOST}:5000`;
+
+        const loginForm = document.getElementById("login-form");
+        const registerForm = document.getElementById("register-form");
+        const loginStatus = document.getElementById("login-status");
+        const registerStatus = document.getElementById("register-status");
+        const loginSubmit = document.getElementById("login-submit");
+        const registerSubmit = document.getElementById("register-submit");
+        const passwordToggleButtons = document.querySelectorAll(".password-toggle");
+
+        function setStatus(element, message, type = "") {
+            if (!element) return;
+            element.textContent = message || "";
+            element.classList.remove("is-success", "is-error");
+            if (type === "success") element.classList.add("is-success");
+            if (type === "error") element.classList.add("is-error");
+        }
+
+        function switchForm(formType) {
+            const tabLogin = document.getElementById("tab-login");
+            const tabRegister = document.getElementById("tab-register");
+
+            setStatus(loginStatus, "");
+            setStatus(registerStatus, "");
+
+            if (formType === "login") {
+                loginForm.style.display = "block";
+                registerForm.style.display = "none";
+                tabLogin.classList.add("active");
+                tabRegister.classList.remove("active");
+            } else {
+                loginForm.style.display = "none";
+                registerForm.style.display = "block";
+                tabRegister.classList.add("active");
+                tabLogin.classList.remove("active");
+            }
+        }
+
+        async function ensureNotLoggedIn() {
+            const response = await fetch(`${API_BASE_URL}/api/customers/me`, { credentials: "include" });
+            const data = await response.json().catch(() => ({}));
+            if (response.ok && data.customer) {
+                window.location.href = "my-bookings.html";
+            }
+        }
+
+        function looksLikeEmail(value) {
+            return /^\S+@\S+\.\S+$/.test(value);
+        }
+
+        function bindPasswordToggles() {
+            passwordToggleButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const input = document.getElementById(button.dataset.passwordTarget);
+                    if (!input) return;
+
+                    const icon = button.querySelector("i");
+                    const willShow = input.type === "password";
+                    input.type = willShow ? "text" : "password";
+                    button.setAttribute("aria-pressed", willShow ? "true" : "false");
+                    button.setAttribute("aria-label", willShow ? "Hide password" : "Show password");
+                    if (icon) {
+                        icon.className = willShow ? "fas fa-eye-slash" : "fas fa-eye";
+                    }
+                });
+            });
+        }
+
+        loginForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const identifier = document.getElementById("login-identifier").value.trim();
+            const password = document.getElementById("login-password").value;
+
+            if (!identifier || !password) {
+                setStatus(loginStatus, "Please enter your email/phone and password.", "error");
+                return;
+            }
+
+            const payload = looksLikeEmail(identifier)
+                ? { email: identifier, password }
+                : { phone: identifier, password };
+
+            try {
+                loginSubmit.disabled = true;
+                setStatus(loginStatus, "Signing you in...");
+
+                const response = await fetch(`${API_BASE_URL}/api/customers/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(data.message || "Login failed");
+                }
+
+                setStatus(loginStatus, "Login successful. Redirecting...", "success");
+                setTimeout(() => {
+                    window.location.href = "my-bookings.html";
+                }, 600);
+            } catch (error) {
+                setStatus(loginStatus, error.message || "Unable to login right now.", "error");
+            } finally {
+                loginSubmit.disabled = false;
+            }
+        });
+
+        registerForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("reg-name").value.trim();
+            const phone = document.getElementById("reg-phone").value.trim();
+            const email = document.getElementById("reg-email").value.trim();
+            const password = document.getElementById("reg-password").value;
+            const confirm = document.getElementById("reg-confirm").value;
+
+            if (!name || !phone || !email || !password || !confirm) {
+                setStatus(registerStatus, "Please fill all fields.", "error");
+                return;
+            }
+            if (!looksLikeEmail(email)) {
+                setStatus(registerStatus, "Please enter a valid email address.", "error");
+                return;
+            }
+            if (password.length < 6) {
+                setStatus(registerStatus, "Password must be at least 6 characters.", "error");
+                return;
+            }
+            if (password !== confirm) {
+                setStatus(registerStatus, "Passwords do not match.", "error");
+                return;
+            }
+
+            try {
+                registerSubmit.disabled = true;
+                setStatus(registerStatus, "Creating your account...");
+
+                const response = await fetch(`${API_BASE_URL}/api/customers/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ name, phone, email, password })
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    throw new Error(data.message || "Registration failed");
+                }
+
+                setStatus(registerStatus, "Account created successfully. Redirecting...", "success");
+                setTimeout(() => {
+                    window.location.href = "my-bookings.html";
+                }, 700);
+            } catch (error) {
+                setStatus(registerStatus, error.message || "Unable to register right now.", "error");
+            } finally {
+                registerSubmit.disabled = false;
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            bindPasswordToggles();
+            ensureNotLoggedIn().catch(() => {});
+        });
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Payments | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./manage-payments.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body data-page="payments" class="admin-theme">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="ph-fill ph-aperture"></i>
+                </div>
+                <div>
+                    <p class="brand-name">Vishva Decor</p>
+                    <p class="brand-sub">Owner Console</p>
+                </div>
+            </div>
+
+            <p class="menu-title">Navigation</p>
+            <nav class="nav">
+                <a class="nav-link" href="./dashboard.html"><span class="nav-icon"><i class="ph ph-squares-four"></i></span><span>Dashboard</span></a>
+                <a class="nav-link" href="./manage-bookings.html"><span class="nav-icon"><i class="ph ph-calendar-check"></i></span><span>Manage Bookings</span></a>
+                <a class="nav-link" href="./bookings-calendar.html"><span class="nav-icon"><i class="ph ph-calendar-blank"></i></span><span>Booking Calendar</span></a>
+                <a class="nav-link" href="./manage-decor.html"><span class="nav-icon"><i class="ph ph-sparkle"></i></span><span>Manage Decorations</span></a>
+                <a class="nav-link" href="./reviews.html"><span class="nav-icon"><i class="ph ph-chat-centered-dots"></i></span><span>Customer Reviews</span></a>
+                <a class="nav-link" href="./manage-inventory.html"><span class="nav-icon"><i class="ph ph-package"></i></span><span>Manage Inventory</span></a>
+                <a class="nav-link active" href="./manage-payments.html"><span class="nav-icon"><i class="ph ph-wallet"></i></span><span>Manage Payments</span></a>
+            </nav>
+        </aside>
+
+        <main class="main payments-shell">
+            <header class="topbar">
+                <div class="search-wrap">
+                    <i class="ph ph-wallet"></i>
+                    <strong>Manage Payments</strong>
+                </div>
+                <div class="top-right">
+                    <div class="profile-chip">
+                        <div id="owner-avatar" class="avatar-dot">O</div>
+                    </div>
+                    <button id="owner-logout-btn" class="btn-primary" type="button">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <section class="payments-hero page-hero">
+                <div>
+                    <p class="kicker">OWNER PANEL</p>
+                    <h1>Manage Customer Payments</h1>
+                    <p class="subtitle">Track every offline payment and outstanding balance.</p>
+                </div>
+                <div class="payments-search">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input id="payments-search" placeholder="Search customer or booking ID...">
+                </div>
+            </section>
+
+            <div class="top-grid">
+                <section class="payment-stats">
+                    <article class="stat-card">
+                        <div class="stat-icon"><i class="ph ph-receipt"></i></div>
+                        <div>
+                            <p class="stat-label">Total Payments</p>
+                            <p class="stat-value" id="payments-total">0</p>
+                        </div>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-icon"><i class="ph ph-trend-up"></i></div>
+                        <div>
+                            <p class="stat-label">Total Received</p>
+                            <p class="stat-value" id="payments-amount">Rs. 0</p>
+                        </div>
+                    </article>
+                    <article class="stat-card">
+                        <div class="stat-icon"><i class="ph ph-warning-circle"></i></div>
+                        <div>
+                            <p class="stat-label">Pending Balance</p>
+                            <p class="stat-value" id="payments-pending">Rs. 0</p>
+                        </div>
+                    </article>
+                </section>
+
+                <article class="panel form-panel">
+                    <div class="panel-head">
+                        <h2>Record Offline Payment</h2>
+                    </div>
+                    <form id="admin-add-payment-form" class="payment-form">
+                        <div class="form-grid">
+                            <label>
+                                <span>Booking ID</span>
+                                <input type="number" id="admin-payment-booking" required placeholder="Ex: 47">
+                            </label>
+                            <label>
+                                <span>Amount</span>
+                                <input type="number" id="admin-payment-amount" min="0" step="0.01" required placeholder="0.00">
+                            </label>
+                            <label>
+                                <span>Type</span>
+                                <select id="admin-payment-type" required>
+                                    <option value="">Select type</option>
+                                    <option value="Advance">Advance</option>
+                                    <option value="Partial">Partial</option>
+                                    <option value="Final">Final</option>
+                                </select>
+                            </label>
+                            <label>
+                                <span>Method</span>
+                                <select id="admin-payment-method" required>
+                                    <option value="">Select method</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="UPI Transfer">UPI Transfer</option>
+                                    <option value="Bank Transfer">Bank Transfer</option>
+                                </select>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn-primary" style="margin-top: 15px; width: 100%;">Save Payment</button>
+                    </form>
+                </article>
+            </div>
+
+            <section class="panel table-panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Payment History</h2>
+                        <p>Full customer payment trail.</p>
+                    </div>
+                    <button class="icon-btn" id="refresh-manage-payments"><i class="ph ph-arrow-clockwise"></i></button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Booking ID</th>
+                                <th>Decoration</th>
+                                <th>Event Date</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Method</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manage-payments-body"></tbody>
+                    </table>
+                    <p id="manage-payments-empty" class="empty-note">No payments recorded yet.</p>
+                </div>
+            </section>
+
+            <section class="panel table-panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Pending Balances</h2>
+                        <p>Bookings awaiting payment.</p>
+                    </div>
+                    <button class="icon-btn" id="refresh-pending-payments"><i class="ph ph-arrow-clockwise"></i></button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Booking</th>
+                                <th>Total Amount</th>
+                                <th>Total Paid</th>
+                                <th>Pending</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-payments-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
+

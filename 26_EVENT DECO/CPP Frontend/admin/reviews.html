@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Reviews | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./reviews.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body data-page="reviews" class="admin-theme">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="ph-fill ph-aperture"></i>
+                </div>
+                <div>
+                    <p class="brand-name">Vishva Decor</p>
+                    <p class="brand-sub">Owner Console</p>
+                </div>
+            </div>
+
+            <p class="menu-title">Navigation</p>
+            <nav class="nav">
+                <a class="nav-link" href="./dashboard.html">
+                    <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-link" href="./manage-bookings.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-check"></i></span>
+                    <span>Manage Bookings</span>
+                </a>
+                <a class="nav-link" href="./bookings-calendar.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-blank"></i></span>
+                    <span>Booking Calendar</span>
+                </a>
+                <a class="nav-link" href="./manage-decor.html">
+                    <span class="nav-icon"><i class="ph ph-sparkle"></i></span>
+                    <span>Manage Decorations</span>
+                </a>
+                <a class="nav-link active" href="./reviews.html">
+                    <span class="nav-icon"><i class="ph ph-chat-centered-dots"></i></span>
+                    <span>Customer Reviews</span>
+                </a>
+                <a class="nav-link" href="./manage-inventory.html">
+                    <span class="nav-icon"><i class="ph ph-package"></i></span>
+                    <span>Manage Inventory</span>
+                </a>
+                <a class="nav-link" href="./manage-payments.html">
+                    <span class="nav-icon"><i class="ph ph-wallet"></i></span>
+                    <span>Manage Payments</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main reviews-shell">
+            <header class="topbar">
+                <div class="search-wrap">
+                    <i class="ph ph-chat-centered-text"></i>
+                    <strong>Customer Reviews</strong>
+                </div>
+                <div class="top-right">
+                    <div class="profile-chip">
+                        <div id="owner-avatar" class="avatar-dot" aria-label="Owner avatar">O</div>
+                        <span id="owner-email" class="sr-only">owner@vishva.com</span>
+                    </div>
+                    <button id="owner-logout-btn" class="btn-primary" type="button">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <header class="reviews-topbar page-hero">
+                <div>
+                    <p class="kicker">OWNER PANEL</p>
+                    <h1>Customer Review Management</h1>
+                    <p class="subtitle">Review posted experiences, control visibility, and remove inappropriate content.</p>
+                </div>
+            </header>
+
+            <section class="reviews-stats">
+                <article class="stat-card">
+                    <p class="stat-label">Total Reviews</p>
+                    <p class="stat-value" id="reviews-total">0</p>
+                </article>
+                <article class="stat-card">
+                    <p class="stat-label">Published</p>
+                    <p class="stat-value" id="reviews-published">0</p>
+                </article>
+                <article class="stat-card">
+                    <p class="stat-label">Hidden</p>
+                    <p class="stat-value" id="reviews-hidden">0</p>
+                </article>
+            </section>
+
+            <section class="panel reviews-panel">
+                <div class="panel-head">
+                    <div>
+                        <h2>Review Filters</h2>
+                        <p>Search by title, customer, or review text. Filter by source and visibility.</p>
+                    </div>
+                    <button id="reviews-refresh" class="btn-outline" type="button">
+                        Refresh
+                    </button>
+                </div>
+                <div class="table-tools">
+                    <input id="reviews-search" type="text" placeholder="Search reviews...">
+                    <select id="reviews-source">
+                        <option value="all">All Sources</option>
+                        <option value="public">Community Reviews</option>
+                        <option value="booking">Booking Reviews</option>
+                    </select>
+                    <select id="reviews-status">
+                        <option value="all">All Status</option>
+                        <option value="published">Published</option>
+                        <option value="hidden">Hidden</option>
+                    </select>
+                </div>
+                <p id="reviews-count" class="results-count">0 reviews</p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title & Comment</th>
+                                <th>Customer</th>
+                                <th>Source</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviews-body"></tbody>
+                    </table>
+                </div>
+                <p id="reviews-empty" class="empty-note" style="display: none;">No customer reviews found.</p>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
+
+
+
+
+
+

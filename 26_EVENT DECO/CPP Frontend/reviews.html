@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Reviews | Vishva Decorators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=reviews-fix-20260320">
+</head>
+<body class="travel-theme gallery-page public-reviews-page">
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Vishva <span>Decor</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="nav-dropdown">
+                    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                        <span>Gallery</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="nav-dropdown-menu" hidden>
+                        <a href="gallery.html"><i class="fas fa-images" aria-hidden="true"></i><span>All Themes</span></a>
+                        <a href="gallery.html?filter=wedding"><i class="fas fa-ring" aria-hidden="true"></i><span>Wedding Decor</span></a>
+                        <a href="gallery.html?filter=festival"><i class="fas fa-star" aria-hidden="true"></i><span>Festival Decor</span></a>
+                        <a href="gallery.html?filter=religious"><i class="fas fa-hands-praying" aria-hidden="true"></i><span>Religious Decor</span></a>
+                        <a href="gallery.html?filter=party"><i class="fas fa-cake-candles" aria-hidden="true"></i><span>Party Themes</span></a>
+                        <a href="reviews.html"><i class="fas fa-camera-retro" aria-hidden="true"></i><span>Customer Reviews</span></a>
+                    </div>
+                </li>
+                <li><a href="reviews.html" class="active">Customer Reviews</a></li>
+                <li class="nav-dropdown nav-dropdown-right">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+        <span>Contact Us</span>
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="nav-dropdown-menu" hidden>
+        <a href="contact.html">
+            <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+            <span>Contact Us Page</span>
+        </a>
+        <a href="tel:+911234567890">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Call Us</span>
+        </a>
+        <a href="mailto:vishvadecor@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Email Us</span>
+        </a>
+    </div>
+</li>
+            </ul>
+            <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+            <a href="login.html" class="btn-nav">Login / Sign Up</a>
+        </div>
+    </nav>
+
+    <header class="gallery-header section-padding">
+        <div id="public-reviews-page" class="container public-reviews-hero-shell">
+            <div class="public-reviews-hero-copy">
+                <span class="subtitle-accent">REAL CUSTOMER REVIEWS</span>
+                <h2>Customer Reviews</h2>
+                <p>Browse well-organized customer reviews from real visitors, then add your own experience when you are ready.</p>
+                <div class="public-reviews-hero-actions">
+                    <button type="button" id="toggle-public-review-form" class="btn-primary public-review-cta" aria-expanded="false">
+                        Add Your Review
+                    </button>
+                </div>
+                <p id="public-reviews-page-status" class="review-feedback-message public-review-page-message" hidden></p>
+            </div>
+            <div class="public-reviews-hero-stats">
+                <div class="public-review-stat">
+                    <span id="public-reviews-count">0</span>
+                    <p>Total Reviews</p>
+                </div>
+                <div class="public-review-stat">
+                    <span id="public-reviews-rating">0.0</span>
+                    <p>Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section-padding public-review-composer-wrap">
+        <div class="container">
+            <div id="public-review-compose-panel" class="review-form-card public-review-compose-panel" hidden>
+                <div class="public-review-panel-head">
+                    <div>
+                        <span class="subtitle-accent">SHARE YOUR EXPERIENCE</span>
+                        <h3 class="section-title-small">Add Customer Review</h3>
+                    </div>
+                    <button type="button" id="close-public-review-form" class="btn-outline-small">Close</button>
+                </div>
+                <p class="review-upload-hint">Upload decoration photos, choose your star rating, and share your honest review for other visitors.</p>
+                <form id="public-review-form" class="public-review-form" novalidate>
+                    <!-- <p class="review-form-note">Your review name is taken from your logged-in email.</p> -->
+                    <input id="public-review-title" class="review-comment" type="text" placeholder="Decoration title or occasion (optional)">
+                    <div id="public-review-stars" class="review-stars-input"></div>
+                    <div class="review-field-stack">
+                        <textarea id="public-review-comment" class="review-comment" rows="4" placeholder="Write your honest review..."></textarea>
+                    </div>
+                    <div class="public-review-upload-row">
+                        <label class="review-upload-trigger" for="public-review-photos">
+                            <i class="fas fa-image" aria-hidden="true"></i>
+                            <span>Choose Photos</span>
+                        </label>
+                        <span id="public-review-photo-meta" class="public-review-photo-meta">Add at least 1 photo and up to 6 photos.</span>
+                    </div>
+                    <input id="public-review-photos" class="review-photo-input review-photo-input-hidden" type="file" accept="image/*" multiple>
+                    <div id="public-review-photo-preview" class="review-photo-preview-grid"></div>
+                    <div class="public-review-actions">
+                        <button type="button" id="public-review-submit" class="btn-card public-review-submit">Post Customer Review</button>
+                    </div>
+                    <p id="public-review-message" class="review-feedback-message" aria-live="polite"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="public-review-grid-head">
+                <div>
+                    
+                    <h3 class="section-title-small">Latest Reviews</h3>
+                </div>
+                <div id="public-review-admin-actions" class="public-review-admin-actions" hidden>
+                    <button type="button" id="public-review-delete-all" class="story-action-btn story-delete-btn">
+                        <i class="fas fa-trash-can" aria-hidden="true"></i>
+                        <span>Delete All Reviews</span>
+                    </button>
+                </div>
+            </div>
+            <div id="public-reviews-grid" class="public-review-list"></div>
+        </div>
+    </section>
+
+    <div id="review-detail-overlay" class="review-detail-overlay" hidden>
+        <div class="review-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="review-detail-title">
+            <button type="button" id="review-detail-close" class="review-detail-close" aria-label="Close review details">&times;</button>
+            <div id="review-detail-body"></div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="logo white">Vishva <span>Decor</span></div>
+                <p>Transforming your celebrations with exquisite traditional decorations for every special occasion.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js?v=reviews-fix-20260322-delete"></script>
+</body>
+</html>
+
+
+
+

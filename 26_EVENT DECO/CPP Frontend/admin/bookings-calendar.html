@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Calendar | Vishva Decor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="./dashboard.css">
+    <link rel="stylesheet" href="./bookings-calendar.css">
+    <link rel="stylesheet" href="./admin-theme.css">
+</head>
+<body data-page="bookings-calendar" class="admin-theme">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <i class="ph-fill ph-aperture"></i>
+                </div>
+                <div>
+                    <p class="brand-name">Vishva Decor</p>
+                    <p class="brand-sub">Owner Console</p>
+                </div>
+            </div>
+
+            <p class="menu-title">Navigation</p>
+            <nav class="nav">
+                <a class="nav-link" href="./dashboard.html">
+                    <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="nav-link" href="./manage-bookings.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-check"></i></span>
+                    <span>Manage Bookings</span>
+                </a>
+                <a class="nav-link active" href="./bookings-calendar.html">
+                    <span class="nav-icon"><i class="ph ph-calendar-blank"></i></span>
+                    <span>Booking Calendar</span>
+                </a>
+                <a class="nav-link" href="./manage-decor.html">
+                    <span class="nav-icon"><i class="ph ph-sparkle"></i></span>
+                    <span>Manage Decorations</span>
+                </a>
+                <a class="nav-link" href="./reviews.html">
+                    <span class="nav-icon"><i class="ph ph-chat-centered-dots"></i></span>
+                    <span>Customer Reviews</span>
+                </a>
+                <a class="nav-link" href="./manage-inventory.html">
+                    <span class="nav-icon"><i class="ph ph-package"></i></span>
+                    <span>Manage Inventory</span>
+                </a>
+                                <a class="nav-link" href="./manage-payments.html">
+                    <span class="nav-icon"><i class="ph ph-wallet"></i></span>
+                    <span>Manage Payments</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="search-wrap">
+                    <i class="ph ph-calendar"></i>
+                    <strong>Booking Calendar</strong>
+                </div>
+                <div class="top-right">
+                    <div class="profile-chip">
+                        <div id="owner-avatar" class="avatar-dot" aria-label="Owner avatar">O</div>
+                        <span id="owner-email" class="sr-only">owner@vishva.com</span>
+                    </div>
+                    <button id="owner-logout-btn" type="button">
+                        <i class="ph ph-sign-out"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <section class="page-hero">
+                <div>
+                    <p class="kicker">OWNER PANEL</p>
+                    <h1>Booking Calendar</h1>
+                    <p class="subtitle">View schedules by date, filter by status, and inspect daily booking load.</p>
+                </div>
+            </section>
+
+            <section class="calendar-workspace">
+                <section class="calendar-shell">
+                    <div class="calendar-toolbar">
+                        <div class="calendar-month-controls">
+                            <button id="calendar-prev-month" class="cal-btn" type="button"><i class="ph ph-caret-left"></i></button>
+                            <h2 id="calendar-month-label">Month</h2>
+                            <button id="calendar-next-month" class="cal-btn" type="button"><i class="ph ph-caret-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="filter-wrap">
+                        <div>
+                            <p class="filter-title">Status</p>
+                            <div id="status-filter-group" class="filter-group"></div>
+                        </div>
+                        <div>
+                            <p class="filter-title">Event Type</p>
+                            <div id="event-filter-group" class="filter-group"></div>
+                        </div>
+                    </div>
+
+                    <div class="legend-wrap">
+                        <div id="density-legend" class="legend-items"></div>
+                        <div class="legend-overlays">
+                            <span><i class="ph ph-warning-circle"></i> Inventory Shortage</span>
+                        </div>
+                    </div>
+
+                    <div class="calendar-grid-head">
+                        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                    </div>
+                    <div id="owner-booking-calendar" class="calendar-grid"></div>
+                </section>
+
+                <section class="day-panel">
+                    <div class="day-panel-head">
+                        <h3 id="day-panel-title">Select a day</h3>
+                        <p id="day-panel-summary">Click any calendar day to inspect detailed bookings and operational load.</p>
+                    </div>
+                    <div id="day-panel-content" class="day-panel-content"></div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

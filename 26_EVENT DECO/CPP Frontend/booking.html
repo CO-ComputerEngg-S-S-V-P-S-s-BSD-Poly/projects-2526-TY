@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Theme | Vishva Decorators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="travel-theme booking-page bg-light">
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">Vishva <span>Decor</span></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="nav-dropdown">
+                    <button type="button" class="nav-dropdown-toggle active" aria-expanded="false" aria-haspopup="true">
+                        <span>Gallery</span>
+                        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="nav-dropdown-menu" hidden>
+                        <a href="gallery.html">
+                            <i class="fas fa-images" aria-hidden="true"></i>
+                            <span>All Themes</span>
+                        </a>
+                        <a href="gallery.html?filter=wedding">
+                            <i class="fas fa-ring" aria-hidden="true"></i>
+                            <span>Wedding Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=festival">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <span>Festival Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=religious">
+                            <i class="fas fa-hands-praying" aria-hidden="true"></i>
+                            <span>Religious Decor</span>
+                        </a>
+                        <a href="gallery.html?filter=party">
+                            <i class="fas fa-cake-candles" aria-hidden="true"></i>
+                            <span>Party Themes</span>
+                        </a>
+                    </div>
+                </li>
+                <li><a href="my-bookings.html">My Bookings</a></li>
+                <li class="nav-dropdown nav-dropdown-right">
+    <button type="button" class="nav-dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+        <span>Contact Us</span>
+        <i class="fas fa-chevron-down" aria-hidden="true"></i>
+    </button>
+    <div class="nav-dropdown-menu" hidden>
+        <a href="contact.html">
+            <i class="fas fa-envelope-open-text" aria-hidden="true"></i>
+            <span>Contact Us Page</span>
+        </a>
+        <a href="tel:+911234567890">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>Call Us</span>
+        </a>
+        <a href="mailto:vishvadecor@gmail.com">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Email Us</span>
+        </a>
+    </div>
+</li>
+            </ul>
+            <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Toggle dark mode">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <section class="auth-section section-padding">
+        <div class="container">
+            <div class="auth-card">
+                <div class="auth-content" style="width: 100%;">
+                    <div class="form-header">
+                        <h2>Complete Your Booking</h2>
+                        <p>Fill in customer and event details to book this decoration theme.</p>
+                    </div>
+
+                    <div id="selected-theme-box" class="booking-card" style="margin-bottom: 1.2rem;"></div>
+
+                    <form id="booking-form" class="auth-form active-form">
+                        <div class="form-group">
+                            <label for="customer-name">Customer Name</label>
+                            <input type="text" id="customer-name" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-phone">Phone Number</label>
+                            <input type="tel" id="customer-phone" class="form-control" placeholder="Enter phone number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-email">Email (for reference)</label>
+                            <input type="email" id="customer-email" class="form-control" placeholder="name@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="event-date">Event Date</label>
+                            <input type="date" id="event-date" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="event-end-date">Event End Date (optional for multi-day booking)</label>
+                            <input type="date" id="event-end-date" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="event-time">Event Time</label>
+                            <div style="display: flex; gap: 12px; align-items: stretch;">
+                                <input type="text" id="event-time" class="form-control" style="flex: 1;" placeholder="hh:mm (e.g. 10:30)" inputmode="numeric" pattern="^(0?[1-9]|1[0-2]):([0-5]\d)$" required>
+                                <select id="event-time-period" class="form-control" style="max-width: 130px;" aria-label="Select AM or PM">
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="event-location">Event Location</label>
+                            <textarea id="event-location" class="form-control" rows="3" required></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="submit" class="btn-primary">Submit Booking</button>
+                            <a href="gallery.html" class="btn-outline-small">Back to Gallery</a>
+                        </div>
+                        <p style="margin-top: 10px; color: #6b7280;">Note: A 20% advance payment is required to confirm the booking.</p>
+                        <p id="booking-feedback" style="margin-top: 10px;" aria-live="polite"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const API_HOST = window.location.hostname || "localhost";
+        const API_BASE_URL = `http://${API_HOST}:5000`;
+
+        const params = new URLSearchParams(window.location.search);
+        const themeId = Number.parseInt(params.get("theme"), 10);
+
+        const themeBox = document.getElementById("selected-theme-box");
+        const form = document.getElementById("booking-form");
+        const feedback = document.getElementById("booking-feedback");
+        const dateInput = document.getElementById("event-date");
+        const endDateInput = document.getElementById("event-end-date");
+
+        const nameInput = document.getElementById("customer-name");
+        const phoneInput = document.getElementById("customer-phone");
+        const emailInput = document.getElementById("customer-email");
+        const timeInput = document.getElementById("event-time");
+        const timePeriodInput = document.getElementById("event-time-period");
+        const locationInput = document.getElementById("event-location");
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatPrice(amount) {
+            const n = Number(amount);
+            return Number.isFinite(n) ? `Rs. ${n.toLocaleString("en-IN")}` : "-";
+        }
+
+        function setFeedback(message, isError = false) {
+            feedback.textContent = message;
+            feedback.style.color = isError ? "#b91c1c" : "#166534";
+        }
+
+        function normalizeTimeToHourMinute(value, meridiem = "AM") {
+            const raw = String(value || "").trim();
+            const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+            if (!match) return "";
+
+            const hour12 = Number.parseInt(match[1], 10);
+            const minute = Number.parseInt(match[2], 10);
+            const period = String(meridiem || "AM").trim().toUpperCase();
+
+            if (hour12 < 1 || hour12 > 12 || minute < 0 || minute > 59) return "";
+
+            let hour24 = hour12 % 12;
+            if (period === "PM") hour24 += 12;
+
+            return `${String(hour24).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+        }
+
+        function normalizeTimeDisplay(value) {
+            const raw = String(value || "").trim();
+            const match = raw.match(/^(\d{1,2}):(\d{2})$/);
+            if (!match) return "";
+
+            const hour12 = Number.parseInt(match[1], 10);
+            const minute = Number.parseInt(match[2], 10);
+            if (hour12 < 1 || hour12 > 12 || minute < 0 || minute > 59) return "";
+
+            return `${String(hour12).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+        }
+
+        async function loadTheme() {
+            if (!Number.isInteger(themeId) || themeId <= 0) {
+                throw new Error("Invalid theme selected.");
+            }
+
+            const response = await fetch(`${API_BASE_URL}/api/decorations/${themeId}`);
+            if (!response.ok) throw new Error("Theme not found.");
+            const theme = await response.json();
+            if (!theme || !theme.id) throw new Error("Theme not found.");
+
+            const imagePath = String(theme.image || theme.image_url || "").trim();
+            const imageUrl = imagePath
+                ? (imagePath.startsWith("http") ? imagePath : `${API_BASE_URL}${imagePath.startsWith("/") ? imagePath : `/${imagePath}`}`)
+                : "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=200&auto=format&fit=crop";
+
+            themeBox.innerHTML = `
+                <div class="booking-img">
+                    <img src="${imageUrl}" alt="${escapeHtml(theme.title || "Selected Theme")}" onerror="this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=200&auto=format&fit=crop'">
+                </div>
+                <div class="booking-details">
+                    <div class="booking-header">
+                        <h4>${escapeHtml(theme.title || "Selected Theme")}</h4>
+                        <span class="status-badge status-pending">Selected</span>
+                    </div>
+                    <div class="booking-meta">
+                        <p><i class="fas fa-tag"></i> Price: <strong>${escapeHtml(formatPrice(theme.price))}</strong></p>
+                        <p><i class="fas fa-layer-group"></i> Theme ID: <strong>${escapeHtml(theme.id)}</strong></p>
+                    </div>
+                </div>
+            `;
+        }
+
+        let activeCustomer = null;
+
+        async function submitBooking(event) {
+            event.preventDefault();
+            setFeedback("");
+
+            const payload = {
+                customerName: nameInput.value.trim(),
+                phone: phoneInput.value.trim(),
+                email: emailInput.value.trim() || undefined,
+                eventDate: dateInput.value,
+                eventEndDate: endDateInput.value || undefined,
+                eventTime: normalizeTimeToHourMinute(timeInput.value, timePeriodInput.value),
+                location: locationInput.value.trim(),
+                decorationId: themeId
+            };
+
+            if (!payload.customerName || !payload.phone || !payload.eventDate || !payload.eventTime || !payload.location) {
+                setFeedback("Please fill all required fields.", true);
+                return;
+            }
+            if (!normalizeTimeDisplay(timeInput.value)) {
+                setFeedback("Event time must be in hh:mm format with AM or PM.", true);
+                return;
+            }
+            if (payload.eventEndDate && payload.eventEndDate < payload.eventDate) {
+                setFeedback("Event end date cannot be earlier than event date.", true);
+                return;
+            }
+
+            try {
+                form.querySelector("button[type='submit']").disabled = true;
+                setFeedback("Submitting booking...");
+
+                const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    if (response.status === 409 && Array.isArray(data.conflictDates) && data.conflictDates.length) {
+                        const prefix = data.message || "Selected dates are not available";
+                        throw new Error(`${prefix} (${data.conflictDates.join(", ")})`);
+                    }
+                    throw new Error(data.message || "Failed to create booking.");
+                }
+
+                setFeedback("Booking request sent successfully.");
+                setTimeout(() => {
+                    window.location.href = "my-bookings.html";
+                }, 700);
+            } catch (error) {
+                setFeedback(error.message || "Unable to submit booking.", true);
+            } finally {
+                form.querySelector("button[type='submit']").disabled = false;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const sessionRes = await fetch(`${API_BASE_URL}/api/customers/me`, { credentials: "include" });
+            const sessionData = await sessionRes.json().catch(() => ({}));
+            if (!sessionRes.ok || !sessionData.customer) {
+                alert("Please log in first to continue booking.");
+                window.location.href = "login.html";
+                return;
+            }
+
+            activeCustomer = sessionData.customer;
+            if (activeCustomer?.name) nameInput.value = activeCustomer.name;
+            if (activeCustomer?.phone) phoneInput.value = activeCustomer.phone;
+            if (activeCustomer?.email) emailInput.value = activeCustomer.email;
+
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, "0");
+            const dd = String(today.getDate()).padStart(2, "0");
+            dateInput.min = `${yyyy}-${mm}-${dd}`;
+            endDateInput.min = dateInput.min;
+            dateInput.addEventListener("change", () => {
+                endDateInput.min = dateInput.value || dateInput.min;
+                if (endDateInput.value && dateInput.value && endDateInput.value < dateInput.value) {
+                    endDateInput.value = dateInput.value;
+                }
+            });
+
+            try {
+                await loadTheme();
+            } catch (error) {
+                setFeedback(error.message || "Unable to load selected theme.", true);
+                form.style.display = "none";
+            }
+        });
+
+        timeInput.addEventListener("blur", () => {
+            const normalized = normalizeTimeDisplay(timeInput.value);
+            if (normalized) timeInput.value = normalized;
+        });
+
+        form.addEventListener("submit", submitBooking);
+    </script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+
