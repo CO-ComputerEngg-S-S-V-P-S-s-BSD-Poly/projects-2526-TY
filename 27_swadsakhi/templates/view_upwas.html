@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="/static/css/style.css">
+<h2>upwas Products</h2>
+
+<div class="product-container">
+
+{% for p in upwas %}
+
+<div class="product-card">
+
+<img src="/static/uploads/{{p[7]}}" width="150">
+
+<h3>{{p[2]}}</h3>
+
+<p>Price: ₹{{p[3]}}</p>
+<p>ingredients:{{p[6]}}</p>
+
+<a href="/add_to_cart/{{ p[0] }}">Add</a>
+</div>
+
+{% endfor %}
+
+</div>

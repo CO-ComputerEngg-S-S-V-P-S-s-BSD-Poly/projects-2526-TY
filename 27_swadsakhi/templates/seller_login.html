@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Seller Login</title>
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<h2>Seller Login</h2>
+
+<form method="POST" action="/seller_login">
+
+<input type="text" name="phone" placeholder="10 digit number">
+
+<input type="password" name="password" placeholder="Password">
+
+<button type="submit">Login</button>
+
+<a href="/seller_register">
+<button type="button">Register</button>
+</a>
+
+</form>
+
+<p style="color:red">{{msg}}</p>
+
+</body>
+</html>

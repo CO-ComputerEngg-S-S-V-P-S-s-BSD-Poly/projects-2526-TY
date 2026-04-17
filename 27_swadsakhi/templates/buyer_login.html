@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Seller Login</title>
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+<h2>buyer Login</h2>
+
+<form method="POST" action="/buyer_login">
+
+<input type="email" name="email" placeholder="email">
+
+<input type="password" name="password" placeholder="Password">
+
+<button type="submit">Login</button>
+
+<a href="/buyer_register">
+<button type="button">Register</button>
+</a>
+
+</form>
+
+<p style="color:red">{{msg}}</p>
+
+</body>
+</html>
+
