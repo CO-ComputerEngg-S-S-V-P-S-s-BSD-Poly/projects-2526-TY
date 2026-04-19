@@ -1,6 +1,4 @@
-🎓 Blockchain for Student Record System - Group No 12
-Group No 12
-Topic: Blockchain for Student Record System
+## Blockchain for Student Record System - Group No 12
 Group Members :-
 Durgesh Pradip Upasani
 Latikesh Subhash Marathe
