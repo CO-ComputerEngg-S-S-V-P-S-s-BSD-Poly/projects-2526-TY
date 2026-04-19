@@ -1,0 +1,83 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Recommendations - {{ profession }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5 pb-3 border-bottom">
+        <div class="row align-items-end">
+            <div class="col-md-8">
+                <span class="text-muted text-uppercase small fw-bold">Smart Consultant</span>
+                <h1 class="display-6 mt-2">Setup for {{ profession }}</h1>
+                <p class="lead text-muted">{{ recommendations.description }}</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-dark">New Search</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <h2 class="h5 fw-bold mb-3">Key Priorities</h2>
+        <div class="d-flex flex-wrap gap-2">
+            {% for priority in recommendations.priority %}
+                <span class="badge bg-dark px-3 py-2 fw-normal">{{ priority }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% set categories = [('cpu','Processor'),('gpu','Graphics Card'),('ram','Memory'),('monitor','Monitor'),('storage','Storage')] %}
+        {% for key, display_name in categories %}
+            {% if key in recommendations and recommendations[key] %}
+                <div class="col-12">
+                    <h3 class="h4 mb-3">{{ display_name }}</h3>
+                    <div class="row g-3">
+                        {% if products[key] %}
+                            {% for product in products[key] %}
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="card h-100">
+                                        <img src="{{ product_image(product) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('product-fallback', product.id) }}'" class="card-img-top" alt="{{ product.name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ product.name }}</h5>
+                                            <p class="small text-muted">{{ product.description }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold">{{ product.price|inr }}</span>
+                                                <span class="badge bg-dark">{{ product.stock }} left</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-white border-0 d-flex justify-content-between">
+                                            <button class="btn btn-sm btn-outline-dark add-to-cart" data-id="{{ product.id }}" data-name="{{ product.name }}">
+                                                <i class="fas fa-cart-plus"></i> Add
+                                            </button>
+                                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-sm btn-link text-dark p-0">Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            {% for rec in recommendations[key] %}
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="card h-100 bg-light border-0">
+                                        <div class="card-body text-center">
+                                            <h6>{{ rec }}</h6>
+                                            <p class="small text-muted mb-0">Recommended option</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <div class="mt-5 pt-4 text-center border-top">
+        <h3 class="mb-3">Need help with installation?</h3>
+        <p class="text-muted mb-4">Request expert setup for your selected components.</p>
+        <a href="{{ url_for('service_request') }}" class="btn btn-dark px-5 py-3">Request Service</a>
+    </div>
+</div>
+{% endblock %}
+

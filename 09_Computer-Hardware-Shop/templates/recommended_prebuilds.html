@@ -1,0 +1,77 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Recommended Pre-Builds{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+        <div>
+            <p class="recommendation-kicker mb-1">Recommended Pre-Builds</p>
+            <h1 class="display-6 mb-2">{{ recommendations.profile_label }} Setups</h1>
+            <p class="text-muted mb-1">{{ recommendations.description }}</p>
+            <p class="small text-muted mb-0">Showing {{ setup_cards|length }} recommended setup options.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-dark">Back to Home</a>
+            <a href="{{ url_for('custom_pc_builder', preset=recommendations.profile_key) }}" class="btn btn-dark">Customize Instead</a>
+        </div>
+    </div>
+
+    {% if recommendations.priority %}
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        {% for priority in recommendations.priority %}
+            <span class="badge bg-dark-subtle text-dark-emphasis border">{{ priority }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+        {% for setup in setup_cards %}
+            <div class="col-lg-4 col-md-6">
+                <div class="product-list-card h-100">
+                    <a href="{{ url_for('recommended_prebuild_detail', profile_key=recommendations.profile_key, setup_index=setup.setup_index) }}" class="text-decoration-none">
+                        <img src="{{ setup.image_url or pc_fallback_image('prebuild', setup.setup_key or setup.setup_index) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('prebuild-fallback', setup.setup_key or setup.setup_index) }}'" class="product-image" alt="{{ setup.name }}">
+                    </a>
+                    <div class="p-3 d-flex flex-column h-100">
+                        <h2 class="h5 mb-1">{{ setup.name }}</h2>
+                        <p class="small text-muted mb-2">{{ setup.summary }}</p>
+                        <p class="small text-muted mb-3">{{ setup.preview }}</p>
+                        <div class="small mb-3">
+                            {% for component in setup.components[:3] %}
+                                <div class="d-flex justify-content-between gap-2 mb-1">
+                                    <span class="text-muted">{{ component.category_label }}</span>
+                                    <span class="text-end">{{ component.product_name }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mt-auto d-flex justify-content-between align-items-center mb-3">
+                            <span class="h5 mb-0">{{ setup.total|inr }}</span>
+                            <span class="badge bg-success">Ready</span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('recommended_prebuild_detail', profile_key=recommendations.profile_key, setup_index=setup.setup_index) }}" class="btn btn-outline-dark btn-sm flex-grow-1">View Details</a>
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger btn-sm flex-grow-1 add-prebuild-to-wishlist"
+                                    data-profile-key="{{ recommendations.profile_key }}"
+                                    data-setup-index="{{ setup.setup_index }}"
+                                    data-name="{{ setup.name }}"
+                                >
+                                    <i class="fas fa-heart me-1"></i> Wishlist
+                                </button>
+                            </div>
+                            <form method="POST" action="{{ url_for('prebuild_checkout') }}" class="w-100">
+                                <input type="hidden" name="profile_key" value="{{ recommendations.profile_key }}">
+                                <input type="hidden" name="setup_index" value="{{ setup.setup_index }}">
+                                <button class="btn btn-dark btn-sm w-100" type="submit">Select & Checkout</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+

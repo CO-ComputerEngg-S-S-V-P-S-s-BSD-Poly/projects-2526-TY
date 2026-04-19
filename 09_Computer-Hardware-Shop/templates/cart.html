@@ -1,0 +1,267 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex align-items-center mb-4">
+        <i class="fas fa-shopping-cart fa-lg me-2"></i>
+        <h1 class="mb-0">Your Cart</h1>
+    </div>
+
+    {% if items %}
+        <div id="cart-select-toolbar" class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="select-all-cart-items" {% if all_selected %}checked{% endif %}>
+                <label class="form-check-label fw-semibold" for="select-all-cart-items">Select all items</label>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <small id="selected-items-count" class="text-muted"></small>
+                <button type="button" class="btn btn-sm btn-outline-danger" id="remove-selected-cart-items">Remove Selected</button>
+                <button type="button" class="btn btn-sm btn-outline-dark" id="clear-cart-items">Clear Cart</button>
+            </div>
+        </div>
+
+        <div id="cart-items" class="list-group mb-4">
+            {% for item in items %}
+                <div class="list-group-item cart-item d-flex align-items-center gap-3" data-item-key="{{ item.item_key }}" data-item-type="{{ item.item_type }}" data-product-id="{{ item.product_id or '' }}" data-product-ids="{{ item.product_ids|join(',') }}" data-price="{{ item.price }}" data-detail-url="{{ item.detail_url }}" role="link" tabindex="0">
+                    <input class="form-check-input cart-select-item" type="checkbox" {% if item.is_selected %}checked{% endif %} aria-label="Select item">
+                    <a href="{{ item.detail_url }}" class="text-decoration-none">
+                        <img src="{{ product_image(item) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('cart-item-fallback', item.item_key) }}'" alt="{{ item.name }}" class="rounded" style="width:72px;height:72px;object-fit:cover;">
+                    </a>
+                    <div class="flex-grow-1">
+                        <a href="{{ item.detail_url }}" class="fw-semibold text-dark text-decoration-none d-inline-block mb-1">{{ item.name }}</a>
+                        {% if item.summary %}
+                            <div class="small text-muted mb-1">{{ item.summary }}</div>
+                        {% endif %}
+                        <div class="mt-2 d-flex gap-2 flex-wrap">
+                            {% if item.item_type == 'product' %}
+                                <button type="button" class="btn btn-sm btn-outline-dark move-to-wishlist">
+                                    <i class="fas fa-heart me-1"></i>Move to Wishlist
+                                </button>
+                            {% else %}
+                                <a href="{{ item.detail_url }}" class="btn btn-sm btn-outline-dark">
+                                    <i class="fas fa-pen-to-square me-1"></i>Edit Setup
+                                </a>
+                            {% endif %}
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                                <i class="fas fa-trash-alt me-1"></i>Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    {% if item.item_type == 'product' %}
+                        <div class="d-flex align-items-center qty-pill">
+                            <button class="btn btn-sm qty-btn dec-btn text-danger" data-action="dec" aria-label="Decrease">
+                                <i class="fas {% if item.quantity > 1 %}fa-minus{% else %}fa-trash{% endif %}"></i>
+                            </button>
+                            <span class="cart-qty-value px-3">{{ item.quantity }}</span>
+                            <button class="btn btn-sm qty-btn text-success" data-action="inc" aria-label="Increase"><i class="fas fa-plus"></i></button>
+                        </div>
+                    {% else %}
+                        <span class="badge text-bg-light border">Full Setup</span>
+                        <span class="cart-qty-value d-none">1</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="cart-empty" class="alert alert-secondary d-none">Your cart is empty.</div>
+
+        <div id="address-section" class="card mb-4 shadow-sm border-0">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Saved Addresses</h5>
+                {% if current_user.is_authenticated %}
+                    <button class="btn btn-sm btn-dark" data-bs-toggle="modal" data-bs-target="#addressModal">
+                        Add Address
+                    </button>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if current_user.is_authenticated %}
+                    {% if addresses %}
+                        <div class="address-list">
+                            {% for address in addresses %}
+                                <div class="address-card {% if address.is_default %}default{% endif %}">
+                                    <div class="d-flex align-items-start gap-2">
+                                        <input
+                                            class="form-check-input mt-1"
+                                            type="radio"
+                                            name="address_id"
+                                            form="proceed-payment-form"
+                                            value="{{ address.id }}"
+                                            {% if selected_address_id == address.id or (selected_address_id is none and loop.first) %}checked{% endif %}
+                                        >
+                                        <div class="flex-grow-1">
+                                            <div class="fw-semibold">{{ address.full_name }}</div>
+                                            <div class="small text-muted mb-1">{{ address.mobile }}</div>
+                                            <div>{{ address.address }}</div>
+                                            {% if address.is_default %}
+                                                <span class="badge bg-dark mt-2">Default</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-outline-dark edit-address-btn"
+                                                data-id="{{ address.id }}"
+                                                data-full-name="{{ address.full_name }}"
+                                                data-mobile="{{ address.mobile }}"
+                                                data-address="{{ address.address }}"
+                                                data-default="{{ '1' if address.is_default else '0' }}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editAddressModal"
+                                            >
+                                                Edit
+                                            </button>
+                                            <form method="POST" action="{{ url_for('delete_address', address_id=address.id) }}">
+                                                <input type="hidden" name="next" value="{{ url_for('cart_page') }}">
+                                                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No saved addresses yet. Add an address to continue.</p>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted mb-0">Log in during checkout to save and reuse addresses.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="payment-summary" class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="mb-0">Selected Total: <span id="cart-total">{{ total|inr }}</span></h4>
+                <small class="text-muted">Only selected items will be purchased.</small>
+            </div>
+            <div class="d-flex gap-2">
+                {% if current_user.is_authenticated %}
+                    <form id="proceed-payment-form" method="POST" action="{{ url_for('proceed_payment') }}">
+                        <input type="hidden" name="selected_product_ids" id="selected-product-ids" value="">
+                        <button id="proceed-payment-btn" class="btn btn-dark" type="submit">Proceed to Payment</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-dark" href="{{ url_for('login_page', next=url_for('cart_page')) }}">Proceed to Payment</a>
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <div id="cart-empty" class="alert alert-secondary">Your cart is empty.</div>
+    {% endif %}
+</div>
+
+{% if items and current_user.is_authenticated %}
+<div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content amazon-modal">
+            <form method="POST" action="{{ url_for('add_address') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Add a delivery address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="next" value="{{ url_for('cart_page') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" name="full_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mobile number</label>
+                        <input type="tel" class="form-control" name="mobile" maxlength="10" minlength="10" pattern="[0-9]{10}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" name="address" rows="4" placeholder="House no, Area, Street, City, State, Pincode" required></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_default" id="isDefaultAdd">
+                        <label class="form-check-label" for="isDefaultAdd">Make this my default address</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-dark" type="submit">Use this address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editAddressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content amazon-modal">
+            <form id="edit-address-form" method="POST" action="">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Edit delivery address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="next" value="{{ url_for('cart_page') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" name="full_name" id="edit-full-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mobile number</label>
+                        <input type="tel" class="form-control" name="mobile" id="edit-mobile" maxlength="10" minlength="10" pattern="[0-9]{10}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" name="address" id="edit-address" rows="4" required></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_default" id="edit-default">
+                        <label class="form-check-label" for="edit-default">Make this my default address</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-dark" type="submit">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .qty-pill {
+        border: 2px solid var(--accent);
+        border-radius: 999px;
+        padding: 4px 8px;
+        min-width: 110px;
+        justify-content: space-between;
+    }
+    .qty-pill .btn {
+        border: none;
+        box-shadow: none;
+    }
+    .cart-select-item {
+        margin-top: 0;
+    }
+    .cart-item .remove-item,
+    .cart-item .move-to-wishlist {
+        line-height: 1.1;
+    }
+    .address-list {
+        display: grid;
+        gap: 10px;
+    }
+    .address-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+    }
+    .address-card.default {
+        border-color: var(--brand);
+        background: #edf8f5;
+    }
+    .amazon-modal .modal-header {
+        border-bottom: 1px solid var(--line);
+    }
+</style>
+{% endblock %}

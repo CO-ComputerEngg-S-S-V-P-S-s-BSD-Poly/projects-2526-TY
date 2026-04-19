@@ -1,0 +1,73 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Wishlist{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex align-items-center mb-4">
+        <i class="fas fa-heart text-danger me-2"></i>
+        <h1 class="mb-0">Your Wishlist</h1>
+    </div>
+
+    {% if items %}
+        <div id="wishlist-toolbar" class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="select-all-wishlist-items" checked>
+                <label class="form-check-label fw-semibold" for="select-all-wishlist-items">Select all items</label>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-outline-danger" id="remove-selected-wishlist-items">Remove Selected</button>
+                <button type="button" class="btn btn-sm btn-outline-dark" id="clear-wishlist-items">Clear Wishlist</button>
+            </div>
+        </div>
+
+        <div id="wishlist-items" class="list-group mb-4">
+            {% for item in items %}
+                <div
+                    class="list-group-item wishlist-item d-flex align-items-center gap-3"
+                    data-item-type="{{ item.item_type }}"
+                    data-product-id="{{ item.product_id or '' }}"
+                    data-setup-id="{{ item.setup_id or '' }}"
+                    data-detail-url="{{ item.detail_url }}"
+                    role="link"
+                    tabindex="0"
+                >
+                    <input class="form-check-input wishlist-select-item" type="checkbox" checked aria-label="Select wishlist item">
+                    <a href="{{ item.detail_url }}" class="text-decoration-none">
+                        <img src="{{ item.image_url }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('wishlist-fallback', item.setup_id or item.product_id or item.name) }}'" alt="{{ item.name }}" class="rounded" style="width:72px;height:72px;object-fit:cover;">
+                    </a>
+                    <div class="flex-grow-1">
+                        <a href="{{ item.detail_url }}" class="fw-semibold text-dark text-decoration-none d-inline-block mb-1">{{ item.name }}</a>
+                        <small class="text-muted d-block">{{ item.category }}</small>
+                        <div class="small text-muted mt-1">{{ item.description }}</div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-semibold mb-2">{{ item.price|inr }}</div>
+                        <div class="d-flex gap-2">
+                            {% if item.item_type == 'setup' %}
+                                <button type="button" class="btn btn-sm btn-dark wishlist-move-to-cart" data-setup-id="{{ item.setup_id }}" data-name="{{ item.name }}">
+                                    Move Setup to Cart
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger wishlist-remove" data-setup-id="{{ item.setup_id }}">
+                                    Remove
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-sm btn-dark wishlist-move-to-cart" data-id="{{ item.product_id }}" data-name="{{ item.name }}">
+                                    Move to Cart
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger wishlist-remove" data-id="{{ item.product_id }}">
+                                    Remove
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div id="wishlist-empty" class="alert alert-secondary d-none">Your wishlist is empty.</div>
+    {% else %}
+        <div id="wishlist-empty" class="alert alert-secondary">Your wishlist is empty.</div>
+    {% endif %}
+</div>
+{% endblock %}
+

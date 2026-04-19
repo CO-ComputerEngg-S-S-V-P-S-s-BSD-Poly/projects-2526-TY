@@ -1,0 +1,79 @@
+﻿{% extends "base.html" %}
+
+{% block title %}{{ setup.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <img src="{{ setup.image_url or pc_fallback_image('prebuild', setup.setup_key or setup.setup_index) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('prebuild-fallback', setup.setup_key or setup.setup_index) }}'" class="img-fluid rounded" alt="{{ setup.name }}">
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <p class="recommendation-kicker mb-1">{{ recommendations.profile_label }} Pre-Build</p>
+            <h1 class="display-6 mb-2">{{ setup.name }}</h1>
+            <p class="text-muted mb-3">{{ setup.summary }}</p>
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="h3 mb-0">{{ setup.total|inr }}</span>
+                <span class="badge bg-success">Ready To Order</span>
+            </div>
+            <p class="small text-muted mb-1">Includes {{ setup.components|length }} components selected for {{ recommendations.profile_label }} workflow.</p>
+            <p class="small text-muted">Preview: {{ setup.preview }}</p>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <form method="POST" action="{{ url_for('prebuild_checkout') }}">
+                    <input type="hidden" name="profile_key" value="{{ recommendations.profile_key }}">
+                    <input type="hidden" name="setup_index" value="{{ setup.setup_index }}">
+                    <button class="btn btn-dark" type="submit">Select This Pre-Build</button>
+                </form>
+                <button
+                    type="button"
+                    class="btn btn-outline-danger add-prebuild-to-wishlist"
+                    data-profile-key="{{ recommendations.profile_key }}"
+                    data-setup-index="{{ setup.setup_index }}"
+                    data-name="{{ setup.name }}"
+                >
+                    <i class="fas fa-heart me-1"></i> Add to Wishlist
+                </button>
+                <a href="{{ url_for('custom_pc_builder', preset=recommendations.profile_key, setup_index=setup.setup_index) }}" class="btn btn-outline-dark">Customize</a>
+                <a href="{{ url_for('recommended_prebuilds', profession=recommendations.profile_label) }}" class="btn btn-outline-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h2 class="h5 mb-3">Setup Components</h2>
+            <div class="row g-3">
+                {% for component in setup.components %}
+                    <div class="col-lg-6">
+                        <div class="border rounded-3 p-3 h-100 bg-light-subtle">
+                            <div class="d-flex gap-3">
+                                <img src="{{ product_image(component) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('product-fallback', component.product_id or component.product_name) }}'" alt="{{ component.product_name }}" style="width:88px;height:88px;object-fit:cover;" class="rounded">
+                                <div class="flex-grow-1">
+                                    <div class="small text-muted">{{ component.category_label }}</div>
+                                    <h3 class="h6 mb-1">{{ component.product_name }}</h3>
+                                    <p class="small text-muted mb-2">{{ component.description }}</p>
+                                    <div class="fw-semibold">{{ component.price|inr }}</div>
+                                </div>
+                            </div>
+                            {% if component.specs %}
+                                <div class="mt-2 small">
+                                    {% for key, value in component.specs.items() %}
+                                        <div class="d-flex justify-content-between gap-2">
+                                            <span class="text-muted">{{ key|replace('_',' ')|title }}</span>
+                                            <span>{{ value }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

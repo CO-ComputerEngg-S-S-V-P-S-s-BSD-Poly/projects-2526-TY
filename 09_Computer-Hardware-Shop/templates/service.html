@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+
+{% block title %}Hardware Services{% endblock %}
+
+{% block content %}
+<div class="container py-5 service-page">
+    <div class="text-center mb-4">
+        <p class="service-kicker mb-1">Service Desk</p>
+        <h1 class="mb-2">Professional Hardware Services</h1>
+        <p class="text-muted mb-0">Repair, installation, and upgrades with transparent workflow and saved address support.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-10 mx-auto">
+            <div class="service-shell">
+                <form id="serviceForm" method="POST" action="{{ url_for('service_request') }}">
+                    <section class="service-block mb-4">
+                        <h2 class="h5 mb-3">1) Select Service Type</h2>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="service-option-card" for="repair">
+                                    <input class="form-check-input d-none" type="radio" name="service_type" value="repair" id="repair" required>
+                                    <div class="icon text-danger"><i class="fas fa-tools"></i></div>
+                                    <h3>Repair</h3>
+                                    <p>Fix hardware issues quickly</p>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="service-option-card" for="installation">
+                                    <input class="form-check-input d-none" type="radio" name="service_type" value="installation" id="installation">
+                                    <div class="icon text-success"><i class="fas fa-download"></i></div>
+                                    <h3>OS Installation</h3>
+                                    <p>Windows / Linux setup</p>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="service-option-card" for="upgrade">
+                                    <input class="form-check-input d-none" type="radio" name="service_type" value="upgrade" id="upgrade">
+                                    <div class="icon text-warning"><i class="fas fa-chart-line"></i></div>
+                                    <h3>Upgrade</h3>
+                                    <p>RAM / SSD / GPU improvements</p>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="service-block mb-4">
+                        <h2 class="h5 mb-3">2) Device Information</h2>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Device Model</label>
+                                <input type="text" class="form-control" name="device_model" placeholder="e.g., XPS 13, MacBook Pro 2020, Custom PC" required>
+                            </div>
+                        </div>
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" name="home_visit" id="homeVisitCheck" {% if selected_address %}checked{% endif %}>
+                            <label class="form-check-label" for="homeVisitCheck">Need engineer home visit</label>
+                        </div>
+                    </section>
+
+                    <section class="service-block mb-4 {% if not selected_address and not saved_addresses %}d-none{% endif %}" id="addressField">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h5 mb-0">3) Service Address</h2>
+                            {% if current_user.is_authenticated %}
+                                <button type="button" class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#serviceAddressModal">
+                                    Add Address
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        {% if current_user.is_authenticated and saved_addresses %}
+                            <div class="service-address-list mb-3">
+                                {% for addr in saved_addresses %}
+                                    <label class="service-address-card {% if selected_address_id == addr.id %}active{% endif %}">
+                                        <input
+                                            type="radio"
+                                            class="form-check-input mt-1 service-address-radio"
+                                            name="saved_address_choice"
+                                            value="{{ addr.id }}"
+                                            data-address="{{ addr.address }}"
+                                            {% if selected_address_id == addr.id %}checked{% endif %}
+                                        >
+                                        <div>
+                                            <div class="fw-semibold">{{ addr.full_name or 'Saved Address' }}</div>
+                                            {% if addr.mobile %}<div class="small text-muted">{{ addr.mobile }}</div>{% endif %}
+                                            <div class="small">{{ addr.address }}</div>
+                                            {% if addr.is_default %}<span class="badge bg-dark mt-1">Default</span>{% endif %}
+                                        </div>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        {% elif current_user.is_authenticated %}
+                            <p class="text-muted mb-0">No saved addresses found. Add one to continue with home visit.</p>
+                        {% else %}
+                            <p class="text-muted mb-0">Log in to save and select your service address.</p>
+                        {% endif %}
+
+                        <input type="hidden" name="address" id="addressInput" value="{{ selected_address or '' }}">
+                        <input type="hidden" name="address_id" id="addressIdInput" value="{{ selected_address_id or '' }}">
+                    </section>
+
+                    <section class="service-block mb-4 d-none" id="repairDetails">
+                        <h2 class="h5 mb-3">Repair Details</h2>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Issued Part</label>
+                                <select class="form-select" name="part_to_repair">
+                                    <option value="">Select part</option>
+                                    <option>Power Supply</option>
+                                    <option>Lagging</option>
+                                    <option>Display/Screen</option>
+                                    <option>Keyboard/Trackpad</option>
+                                    <option>Don't Know</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Issue Description</label>
+                                <textarea class="form-control" name="issue_description" rows="3" placeholder="Describe the issue in detail"></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="service-block mb-4 d-none" id="installationDetails">
+                        <h2 class="h5 mb-3">Installation Details</h2>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Operating System</label>
+                                <select class="form-select" name="os_type">
+                                    <option value="">Select OS</option>
+                                    <option>Windows 11</option>
+                                    <option>Windows 10</option>
+                                    <option>Ubuntu Linux</option>
+                                    <option>Fedora Linux</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Version / Edition</label>
+                                <input type="text" class="form-control" name="os_version" placeholder="e.g., Pro, Home, LTS">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="service-block mb-4 d-none" id="upgradeDetails">
+                        <h2 class="h5 mb-3">Upgrade Details</h2>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Upgrade Type</label>
+                                <select class="form-select" name="upgrade_type">
+                                    <option value="">Select upgrade</option>
+                                    <option>RAM Installation</option>
+                                    <option>SSD Installation</option>
+                                    <option>RAM + SSD Combo</option>
+                                    <option>GPU Upgrade</option>
+                                    <option>CPU Upgrade</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Current RAM/Storage</label>
+                                <input type="text" class="form-control" name="current_specs" placeholder="e.g., 8GB DDR4, 256GB SSD">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Desired Specifications</label>
+                                <textarea class="form-control" name="desired_specs" rows="2" placeholder="What would you like to upgrade to?"></textarea>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-dark btn-lg px-5">
+                            <i class="fas fa-paper-plane me-2"></i>Continue to Payment (Rs 50)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="modal fade" id="serviceAddressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content amazon-modal">
+            <form method="POST" action="{{ url_for('add_address') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Add a service address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="next" value="{{ url_for('service_request') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" name="full_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mobile number</label>
+                        <input type="tel" class="form-control" name="mobile" maxlength="10" minlength="10" pattern="[0-9]{10}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" name="address" rows="4" placeholder="House no, Area, Street, City, State, Pincode" required></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_default" id="serviceIsDefaultAdd">
+                        <label class="form-check-label" for="serviceIsDefaultAdd">Make this my default address</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-dark" type="submit">Use this address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .service-kicker {
+        text-transform: uppercase;
+        letter-spacing: .14em;
+        font-size: .72rem;
+        font-weight: 800;
+        color: var(--brand-deep);
+    }
+    .service-shell {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 14px 28px rgba(30, 25, 20, 0.08);
+        padding: 20px;
+    }
+    .service-block {
+        border: 1px solid #ece2d6;
+        border-radius: 12px;
+        padding: 14px;
+        background: #fffdfa;
+    }
+    .service-option-card {
+        border: 1px solid #e4d8c8;
+        border-radius: 12px;
+        padding: 12px;
+        display: block;
+        height: 100%;
+        cursor: pointer;
+        background: #fff;
+        transition: all .2s ease;
+    }
+    .service-option-card .icon {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    .service-option-card h3 {
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+    .service-option-card p {
+        font-size: .88rem;
+        color: var(--ink-soft);
+        margin: 0;
+    }
+    .service-option-card.active {
+        border-color: var(--brand);
+        box-shadow: 0 8px 18px rgba(23, 124, 111, 0.2);
+        transform: translateY(-2px);
+    }
+    .service-address-list {
+        display: grid;
+        gap: 10px;
+    }
+    .service-address-card {
+        border: 1px solid #e4d8c8;
+        border-radius: 10px;
+        padding: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: #fff;
+        cursor: pointer;
+    }
+    .service-address-card.active {
+        border-color: var(--brand);
+        background: #edf8f5;
+    }
+    .amazon-modal .modal-header {
+        border-bottom: 1px solid var(--line);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const serviceForm = document.getElementById('serviceForm');
+const serviceRadios = document.querySelectorAll('input[name="service_type"]');
+const optionCards = document.querySelectorAll('.service-option-card');
+const repairDetails = document.getElementById('repairDetails');
+const installationDetails = document.getElementById('installationDetails');
+const upgradeDetails = document.getElementById('upgradeDetails');
+const homeVisitCheck = document.getElementById('homeVisitCheck');
+const addressField = document.getElementById('addressField');
+const addressInput = document.getElementById('addressInput');
+const addressIdInput = document.getElementById('addressIdInput');
+const addressRadios = document.querySelectorAll('.service-address-radio');
+const addressCards = document.querySelectorAll('.service-address-card');
+
+function updateServiceSection(value) {
+    if (repairDetails) repairDetails.classList.add('d-none');
+    if (installationDetails) installationDetails.classList.add('d-none');
+    if (upgradeDetails) upgradeDetails.classList.add('d-none');
+    if (value === 'repair' && repairDetails) repairDetails.classList.remove('d-none');
+    if (value === 'installation' && installationDetails) installationDetails.classList.remove('d-none');
+    if (value === 'upgrade' && upgradeDetails) upgradeDetails.classList.remove('d-none');
+}
+
+function setActiveServiceCard() {
+    optionCards.forEach(card => {
+        const radio = card.querySelector('input[type="radio"]');
+        card.classList.toggle('active', radio.checked);
+    });
+}
+
+serviceRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+        updateServiceSection(radio.value);
+        setActiveServiceCard();
+    });
+});
+
+optionCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const radio = card.querySelector('input[type="radio"]');
+        radio.checked = true;
+        radio.dispatchEvent(new Event('change'));
+    });
+});
+
+function setAddressSelection(radio) {
+    if (!radio || !addressInput) return;
+    addressInput.value = (radio.dataset.address || '').trim();
+    if (addressIdInput) {
+        addressIdInput.value = radio.value || '';
+    }
+    addressCards.forEach(card => card.classList.remove('active'));
+    const parent = radio.closest('.service-address-card');
+    if (parent) parent.classList.add('active');
+}
+
+function updateAddressVisibility() {
+    if (!homeVisitCheck || !addressField || !addressInput) return;
+    if (homeVisitCheck.checked) {
+        addressField.classList.remove('d-none');
+        const selectedRadio = document.querySelector('.service-address-radio:checked');
+        if (selectedRadio) {
+            setAddressSelection(selectedRadio);
+        }
+    } else {
+        addressField.classList.add('d-none');
+        addressInput.value = '';
+        if (addressIdInput) {
+            addressIdInput.value = '';
+        }
+    }
+}
+
+addressRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+        if (radio.checked) {
+            setAddressSelection(radio);
+        }
+    });
+});
+
+if (serviceForm) {
+    serviceForm.addEventListener('submit', (event) => {
+        const selectedService = document.querySelector('input[name="service_type"]:checked');
+        if (!selectedService) {
+            event.preventDefault();
+            alert('Please select a service type');
+            return;
+        }
+
+        if (homeVisitCheck && homeVisitCheck.checked) {
+            const selectedAddressRadio = document.querySelector('.service-address-radio:checked');
+            if (selectedAddressRadio) {
+                setAddressSelection(selectedAddressRadio);
+            }
+            if (!addressInput.value.trim()) {
+                event.preventDefault();
+                alert('Please select or add a service address for home visit.');
+            }
+        }
+    });
+}
+
+if (homeVisitCheck) {
+    homeVisitCheck.addEventListener('change', updateAddressVisibility);
+}
+
+const selectedService = document.querySelector('input[name="service_type"]:checked');
+if (selectedService) {
+    updateServiceSection(selectedService.value);
+}
+const selectedAddress = document.querySelector('.service-address-radio:checked');
+if (selectedAddress) {
+    setAddressSelection(selectedAddress);
+}
+setActiveServiceCard();
+updateAddressVisibility();
+</script>
+{% endblock %}
+

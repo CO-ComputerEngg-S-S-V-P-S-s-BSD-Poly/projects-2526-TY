@@ -1,0 +1,144 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid admin-dashboard" style="margin-top: 4px;">
+    <section class="admin-hero">
+        <div class="admin-hero-copy">
+            <h1 class="admin-title">Bulk Product Image Assignment</h1>
+            <p class="admin-subtitle">Upload or paste CSV to map image URLs to product records in one run.</p>
+        </div>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <div class="col-lg-8 mb-3">
+            <article class="card admin-surface-card">
+                <div class="card-header"><strong>Image Mapping Input</strong></div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="mapping_file">CSV file (.csv)</label>
+                            <input id="mapping_file" class="form-control" type="file" name="mapping_file" accept=".csv,text/csv">
+                            <small class="form-text text-muted">Header must include product reference and image URL.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="mapping_text">Or paste CSV</label>
+                            <textarea id="mapping_text" class="form-control" name="mapping_text" rows="10" placeholder="{{ sample_csv }}">{{ request.form.get('mapping_text', '') }}</textarea>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="overwrite_existing" name="overwrite_existing" {% if request.method != 'POST' or request.form.get('overwrite_existing') == 'on' %}checked{% endif %}>
+                            <label class="form-check-label" for="overwrite_existing">
+                                Overwrite products that already have a custom image URL
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Run Bulk Update</button>
+                    </form>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-lg-4 mb-3">
+            <article class="card admin-surface-card mb-3">
+                <div class="card-header"><strong>Accepted CSV Columns</strong></div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Product reference (one required):</strong></p>
+                    <ul class="mb-3">
+                        <li><code>id</code> or <code>product_id</code></li>
+                        <li><code>name</code> or <code>product_name</code></li>
+                    </ul>
+                    <p class="mb-2"><strong>Image field:</strong> <code>image_url</code> (also accepts <code>image</code>, <code>url</code>)</p>
+                    <p class="mb-0"><strong>Allowed URL format:</strong> <code>/static/...</code> or <code>http(s)://...</code></p>
+                </div>
+            </article>
+
+            <article class="card admin-surface-card">
+                <div class="card-header"><strong>Sample CSV</strong></div>
+                <div class="card-body" style="max-height: 190px; overflow: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">{{ sample_csv }}</pre>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    {% if summary %}
+        <article class="card admin-surface-card mb-3">
+            <div class="card-header"><strong>Last Run Summary</strong></div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Processed</th>
+                                <th>Updated</th>
+                                <th>Skipped</th>
+                                <th>Failed</th>
+                                <th>Overwrite Existing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ summary.processed }}</td>
+                                <td>{{ summary.updated }}</td>
+                                <td>{{ summary.skipped }}</td>
+                                <td>{{ summary.failed }}</td>
+                                <td>{{ 'Yes' if summary.overwrite_existing else 'No' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+    {% endif %}
+
+    {% if errors %}
+        <article class="card admin-surface-card mb-3">
+            <div class="card-header"><strong>Validation Errors</strong></div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </article>
+    {% endif %}
+
+    {% if success_rows %}
+        <article class="card admin-surface-card">
+            <div class="card-header"><strong>Updated Rows (first {{ success_rows|length }})</strong></div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Product</th>
+                                <th>Image URL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in success_rows %}
+                                <tr>
+                                    <td>{{ row.id }}</td>
+                                    <td>{{ row.name }}</td>
+                                    <td><code>{{ row.image_url }}</code></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+    {% endif %}
+</div>
+{% endblock %}
