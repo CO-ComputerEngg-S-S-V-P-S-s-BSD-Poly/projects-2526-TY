@@ -1,0 +1,73 @@
+.about-container {
+  padding: 80px 10%;
+  text-align: center;
+  background-color: #f8fafc;
+  min-height: 80vh;
+}
+
+.about-hero h1 {
+  font-size: 3.5rem;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.about-hero h1 span {
+  color: #3b82f6;
+}
+
+.about-hero p {
+  font-size: 1.2rem;
+  color: #64748b;
+  max-width: 800px;
+  margin: 0 auto 60px;
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.about-card {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.about-card:hover {
+  transform: translateY(-10px);
+}
+
+.about-card .icon {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.about-card h3 {
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin-bottom: 15px;
+}
+
+.about-card p {
+  color: #475569;
+  line-height: 1.6;
+}
+
+.learn-more-btn {
+  margin-top: 50px;
+  background: #3b82f6;
+  color: white;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.learn-more-btn:hover {
+  background: #2563eb;
+}

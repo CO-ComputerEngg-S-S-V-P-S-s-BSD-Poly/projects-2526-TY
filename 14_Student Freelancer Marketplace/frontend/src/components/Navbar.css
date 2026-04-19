@@ -1,0 +1,32 @@
+/* Container for the whole Navbar */
+.navbar {
+  display: flex;                   /* This aligns Logo and Links in one row */
+  justify-content: space-between;  /* Puts Logo on left and Links on right */
+  align-items: center;             /* Centers everything vertically */
+  padding: 15px 40px;              /* Adds space inside the navbar */
+  background-color: #2c3e50;       /* Professional Dark Blue color */
+  color: white;                    /* Text color white */
+  font-family: 'Arial', sans-serif;
+}
+
+/* Styling for the Logo */
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Styling for the Navigation Links */
+.nav-links a {
+  color: white;                    /* Links text color */
+  text-decoration: none;           /* Removes the blue underline */
+  margin-left: 25px;               /* Adds gap between menu items */
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s;                /* Smooth animation on hover */
+}
+
+/* Change color when mouse hovers over links */
+.nav-links a:hover {
+  color: #1abc9c;                  /* Changes to a nice Teal color */
+}

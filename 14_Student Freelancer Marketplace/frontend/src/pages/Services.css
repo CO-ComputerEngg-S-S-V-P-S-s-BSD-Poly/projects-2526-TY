@@ -1,0 +1,73 @@
+/* General Page Styling */
+.services-page {
+    background-color: #f8f9fa;
+}
+
+.services-header {
+    background: linear-gradient(135deg, #212529 0%, #343a40 100%);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+}
+
+/* Card Styling */
+.service-card {
+    padding: 30px;
+    text-align: center;
+    border: none !important;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease-in-out;
+}
+
+.service-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+}
+
+.icon-box {
+    margin-bottom: 20px;
+}
+
+/* Dynamic Top Borders */
+.border-top-primary { border-top: 6px solid #007bff !important; }
+.border-top-danger { border-top: 6px solid #dc3545 !important; }
+.border-top-success { border-top: 6px solid #28a745 !important; }
+.border-top-warning { border-top: 6px solid #ffc107 !important; }
+.border-top-info { border-top: 6px solid #17a2b8 !important; }
+.border-top-secondary { border-top: 6px solid #6c757d !important; }
+.border-top-dark { border-top: 6px solid #212529 !important; }
+.border-top-pink { border-top: 6px solid #e83e8c !important; }
+.border-top-teal { border-top: 6px solid #20c997 !important; }
+
+/* Custom Colors for Pink & Teal (Bootstrap defaults are limited) */
+.text-pink { color: #e83e8c !important; }
+.btn-pink { background-color: #e83e8c; color: white; border: none; }
+.btn-pink:hover { background-color: #d63384; color: white; }
+
+.text-teal { color: #20c997 !important; }
+.btn-teal { background-color: #20c997; color: white; border: none; }
+.btn-teal:hover { background-color: #1ba87e; color: white; }
+
+/* Process Section */
+.process-section {
+    background-color: #ffffff;
+    border-top: 1px solid #dee2e6;
+}
+
+.step-number {
+    background-color: #007bff;
+    color: white;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    font-size: 1.25rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+}
+
+.process-step h5 {
+    font-weight: 700;
+}
