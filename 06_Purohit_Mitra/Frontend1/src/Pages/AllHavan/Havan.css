@@ -1,0 +1,104 @@
+.havan-page {
+  min-height: 100vh;
+  padding: 70px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, #fff5e6, #ffe0b3);
+}
+
+.havan-title {
+  font-size: 38px;
+  font-weight: bold;
+  color: #b34700;
+  margin-bottom: 50px;
+}
+
+/* Grid Layout */
+.havan-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+/* Card */
+.havan-card {
+  background: #f3f3f3;
+  border-radius: 25px;
+  padding: 40px 20px;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.havan-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon */
+.havan-icon {
+  font-size: 40px;
+  color: #ff5c00;
+  margin-bottom: 25px;
+  transition: 0.3s ease;
+}
+
+.havan-card:hover .havan-icon {
+  transform: scale(1.15);
+  color: #e64a00;
+}
+
+/* Title */
+.havan-card h3 {
+  color: #cc5200;
+  margin-bottom: 20px;
+}
+
+/* Button */
+.havan-btn {
+  background: #ff7a00;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.havan-btn:hover {
+  background: #e65c00;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .havan-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .havan-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* LEFT TOP MANDALA */
+.home-mandala-left {
+  position: absolute;
+  top: -50px;
+  left: -180px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+/* RIGHT BOTTOM MANDALA (already there) */
+.home-mandala {
+  position: absolute;
+  right: -180px;
+  top: -50px;
+  width: 750px;
+  opacity: 0.15;
+  z-index: 0;
+}

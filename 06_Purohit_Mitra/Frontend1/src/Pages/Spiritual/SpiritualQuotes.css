@@ -1,0 +1,229 @@
+.spiritual-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #fff, #fff3e0);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Mandala background */
+.mandala {
+  position: absolute;
+  width: 700px;
+  opacity: 0.12;
+}
+
+.mandala.left {
+  top: -100px;
+  left: -150px;
+}
+
+.mandala.right {
+  top: -100px;
+  right: -150px;
+}
+
+/* Grid (3 cards in one row) */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 80px;
+  padding: 40px;
+  max-width: 1000px;
+  margin: auto;
+  z-index: 2;
+  position: relative;
+}
+
+/* Card */
+.spiritual-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  background: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.spiritual-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+}
+
+.spiritual-card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+/* Title on image */
+.card-title {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: #fff;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* ================= SLIDER ================= */
+
+.slider-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Box */
+.slider-box {
+  background: linear-gradient(135deg, #fff7e6, #ffe0b2);
+  width: 80%;
+  max-width: 600px;
+  padding: 35px 30px;
+  border-radius: 28px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from { transform: translateY(40px) scale(0.9); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Om */
+.slider-box::before {
+  content: "ॐ";
+  font-size: 36px;
+  color: #ff8f00;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Title */
+.slider-box h2 {
+  font-size: 24px;
+  color: #3e2723;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+/* Quote */
+.slider-box p {
+  font-size: 20px;
+  color: #5d4037;
+  line-height: 1.7;
+  margin: 20px 0;
+  font-weight: 500;
+}
+
+/* Buttons */
+.slider-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.slider-buttons button {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  font-size: 22px;
+  border: none;
+  cursor: pointer;
+  background: radial-gradient(circle, #ff9800, #e65100);
+  color: white;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  transition: 0.25s;
+}
+
+.slider-buttons button:hover {
+  transform: scale(1.15);
+  background: radial-gradient(circle, #ffa726, #ef6c00);
+}
+
+/* Close */
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 15px;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.close-btn:hover {
+  background: #b71c1c;
+}
+.slider-box {
+  background: linear-gradient(to bottom, #fff8ec, #ffe6c9);
+  width: 80%;
+  max-width: 600px;
+  padding: 35px 30px;
+  border-radius: 28px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+  border: 3px solid #ffb300;
+}
+
+/* mandala watermark */
+.slider-box::after {
+  content: "";
+  background: url("../../Assets/mandalaright-removebg-preview.png") no-repeat center;
+  background-size: 300px;
+  opacity: 0.08;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.category-desc {
+  font-size: 14px;
+  color: #6d4c41;
+}
+
+.sanskrit {
+  font-size: 22px;
+  color: #bf360c;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.english {
+  font-size: 18px;
+  color: #5d4037;
+  margin-top: 10px;
+}
+
+.counter {
+  font-size: 13px;
+  margin-top: 10px;
+  color: #8d6e63;
+}
+.sanskrit {
+  font-size: 22px;
+  color: #bf360c;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.english {
+  font-size: 18px;
+  color: #5d4037;
+  margin-top: 10px;
+}
