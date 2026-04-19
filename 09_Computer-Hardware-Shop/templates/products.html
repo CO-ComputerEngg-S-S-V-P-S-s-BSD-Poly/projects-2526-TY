@@ -1,0 +1,266 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1 class="display-6 fw-bold mb-2">Product Catalog</h1>
+        <p class="text-muted mb-0">Filter by category, brand, memory details, and price to find your exact build.</p>
+
+        {% if recommendation_context %}
+            <div class="alert alert-info mt-3 mb-0">
+                Pre-build suggestions are now shown on a separate page.
+                <a class="fw-semibold" href="{{ url_for('recommended_prebuilds', profession=recommendation_context.input) }}">View recommended pre-builds</a>.
+            </div>
+        {% endif %}
+
+        {% if filters.q %}
+            <p class="small text-muted mt-3 mb-0">
+                Showing {{ result_count }} result{% if result_count != 1 %}s{% endif %} for "{{ filters.q }}"
+            </p>
+        {% endif %}
+
+        {% if search_feedback.fuzzy_terms %}
+            <div class="alert alert-info py-2 mt-2 small mb-0">
+                No exact match found. Showing close results for: {{ search_feedback.fuzzy_terms|join(', ') }}.
+            </div>
+        {% endif %}
+
+        {% if search_feedback.expanded_scope %}
+            <div class="alert alert-warning py-2 mt-2 small mb-0">
+                Active filters returned no results, so search was expanded across the full catalog price range.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="row mb-4 sticky-catalog-search">
+        <div class="col-lg-9 mx-auto">
+            <form method="GET" action="{{ url_for('products') }}" id="catalog-search-form" class="position-relative product-search-shell">
+                <input type="hidden" name="category" value="all">
+                <input type="hidden" name="brand" value="">
+                <input type="hidden" name="size" value="">
+                <input type="hidden" name="memory_type" value="">
+                <input type="hidden" name="sort" value="">
+                <input type="hidden" name="scope" value="global">
+                <input type="hidden" name="min_price" value="{{ price_bounds.min }}">
+                <input type="hidden" name="max_price" value="{{ price_bounds.max }}">
+
+                <i class="fas fa-search search-input-icon" aria-hidden="true"></i>
+                <input
+                    type="text"
+                    class="form-control form-control-lg product-search-input"
+                    id="product-search"
+                    name="q"
+                    value="{{ filters.q }}"
+                    placeholder="Search products by model, category, or specs (e.g., processor, RTX 4070, DDR5)"
+                    autocomplete="off"
+                >
+                <button class="btn btn-dark search-submit-btn" type="submit" aria-label="Search products">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div id="product-suggestions" class="suggestions-dropdown"></div>
+            </form>
+            <div class="small text-muted mt-2 ms-2">Global search scans all categories and ignores current filters.</div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xxl-3 col-xl-4 col-lg-4 catalog-filter-col">
+            <div class="filter-panel p-3 p-lg-4">
+                <h2 class="h5 mb-3">Filters</h2>
+                <form method="GET" id="product-filter-form">
+                    <input type="hidden" name="q" value="{{ filters.q }}">
+                    {% if filters.recommend_for %}
+                        <input type="hidden" name="recommend_for" value="{{ filters.recommend_for }}">
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category" id="filter-category">
+                            <option value="all" {% if filters.category == 'all' %}selected{% endif %}>All Categories</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.slug }}" {% if filters.category == cat.slug %}selected{% endif %}>{{ cat.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Brand / Manufacturer</label>
+                        <select class="form-select" name="brand">
+                            <option value="">All Brands</option>
+                            {% for b in brand_options %}
+                                <option value="{{ b }}" {% if filters.brand == b %}selected{% endif %}>{{ b }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Price Range</label>
+                        <div class="price-range-label mb-2" id="price-range-label">{{ filters.min_price|inr }} - {{ filters.max_price|inr }}</div>
+                        <div class="dual-range-wrap">
+                            <input type="range" min="{{ price_bounds.min }}" max="{{ price_bounds.max }}" step="100" value="{{ filters.min_price }}" id="min-range">
+                            <input type="range" min="{{ price_bounds.min }}" max="{{ price_bounds.max }}" step="100" value="{{ filters.max_price }}" id="max-range">
+                        </div>
+                        <input type="hidden" name="min_price" id="min-price-input" value="{{ filters.min_price }}">
+                        <input type="hidden" name="max_price" id="max-price-input" value="{{ filters.max_price }}">
+                    </div>
+
+                    {% if size_options %}
+                    <div class="mb-3">
+                        <label class="form-label">Size</label>
+                        <select class="form-select" name="size">
+                            <option value="">Any Size</option>
+                            {% for s in size_options %}
+                                <option value="{{ s }}" {% if filters.size == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    {% if memory_type_options %}
+                    <div class="mb-3">
+                        <label class="form-label">Memory Type</label>
+                        <select class="form-select" name="memory_type">
+                            <option value="">Any Type</option>
+                            {% for m in memory_type_options %}
+                                <option value="{{ m }}" {% if filters.memory_type == m %}selected{% endif %}>{{ m }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <label class="form-label">Sort</label>
+                        <select class="form-select" name="sort">
+                            <option value="">Featured</option>
+                            <option value="price_asc" {% if filters.sort == 'price_asc' %}selected{% endif %}>Price (Low to High)</option>
+                            <option value="price_desc" {% if filters.sort == 'price_desc' %}selected{% endif %}>Price (High to Low)</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-dark flex-grow-1">Apply</button>
+                        <a href="{{ url_for('products') }}" class="btn btn-outline-secondary">Reset</a>
+                    </div>
+                </form>
+        </div>
+        </div>
+
+        <div class="col-xxl-9 col-xl-8 col-lg-8">
+            <div class="mb-4">
+                <h2 class="h5 mb-3">Trending Picks</h2>
+                <div class="row g-3">
+                    {% for fp in featured_products %}
+                        <div class="col-md-3 col-6">
+                            <a href="{{ url_for('product_detail', product_id=fp.id) }}" class="featured-mini card h-100 text-decoration-none">
+                                <img src="{{ product_image(fp) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('product-fallback', fp.id) }}'" class="card-img-top" alt="{{ fp.name }}">
+                                <div class="card-body p-2">
+                                    <div class="small fw-semibold">{{ fp.name }}</div>
+                                    <div class="small text-muted">{{ fp.price|inr }}</div>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="row g-4">
+                {% if product_cards %}
+                    {% for card in product_cards %}
+                        {% set p = card.product %}
+                        <div class="col-xl-4 col-md-6">
+                            <div class="product-list-card catalog-product-card h-100">
+                                <a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none">
+                                    <img src="{{ product_image(p) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('product-fallback', p.id) }}'" alt="{{ p.name }}" class="product-image">
+                                </a>
+                                <div class="p-3 catalog-product-card-body d-flex flex-column h-100">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge text-bg-light border">{{ p.category }}</span>
+                                        {% if card.brand %}<span class="small text-muted">{{ card.brand }}</span>{% endif %}
+                                    </div>
+                                    <h3 class="h6 mb-2"><a href="{{ url_for('product_detail', product_id=p.id) }}" class="text-decoration-none text-dark">{{ p.name }}</a></h3>
+                                    <p class="small text-muted mb-3 catalog-product-description">{{ p.description }}</p>
+                                    <ul class="small mb-3 product-spec-points">
+                                        {% if card.size %}<li>Size: {{ card.size }}</li>{% endif %}
+                                        {% if card.memory_type %}<li>Memory Type: {{ card.memory_type }}</li>{% endif %}
+                                        <li>Stock: {{ p.stock }}</li>
+                                    </ul>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-auto catalog-product-price-row">
+                                        <span class="h5 mb-0">{{ p.price|inr }}</span>
+                                        <span class="small text-success">In stock</span>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-dark btn-sm flex-grow-1 add-to-cart" data-id="{{ p.id }}" data-name="{{ p.name }}">
+                                            <i class="fas fa-cart-plus me-1"></i>Add
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm add-to-wishlist" data-id="{{ p.id }}" data-name="{{ p.name }}" title="Add to wishlist">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                        <a href="{{ url_for('product_detail', product_id=p.id) }}" class="btn btn-outline-dark btn-sm">Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-secondary">
+                            No products matched your filters{% if filters.q %} for "{{ filters.q }}"{% endif %}. Try broadening your search or resetting filters.
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+    const minRange = document.getElementById('min-range');
+    const maxRange = document.getElementById('max-range');
+    const minInput = document.getElementById('min-price-input');
+    const maxInput = document.getElementById('max-price-input');
+    const label = document.getElementById('price-range-label');
+    const categorySelect = document.getElementById('filter-category');
+    const form = document.getElementById('product-filter-form');
+
+    const formatInr = (value) => `Rs. ${Number(value).toLocaleString('en-IN')}`;
+
+    const sync = (source = '') => {
+        let minVal = Number(minRange.value);
+        let maxVal = Number(maxRange.value);
+        if (minVal > maxVal) {
+            if (source === 'min') {
+                maxVal = minVal;
+                maxRange.value = maxVal;
+            } else {
+                minVal = maxVal;
+                minRange.value = minVal;
+            }
+        }
+        minInput.value = minVal;
+        maxInput.value = maxVal;
+        label.textContent = `${formatInr(minVal)} - ${formatInr(maxVal)}`;
+    };
+
+    if (minRange && maxRange) {
+        minRange.addEventListener('input', () => sync('min'));
+        maxRange.addEventListener('input', () => sync('max'));
+        sync();
+    }
+
+    if (categorySelect && form) {
+        categorySelect.addEventListener('change', () => form.submit());
+    }
+})();
+</script>
+{% endblock %}
+
+
+
+
+
+

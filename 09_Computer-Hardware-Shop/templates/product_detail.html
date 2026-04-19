@@ -1,0 +1,76 @@
+﻿{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <img
+                    src="{{ product_image(product) }}"
+                    onerror="this.onerror=null;this.src='{{ pc_fallback_image('product-fallback', product.id) }}'"
+                    class="img-fluid rounded"
+                    alt="{{ product.name }}"
+                >
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <span class="badge bg-dark mb-2">{{ product.category }}</span>
+            <h1 class="display-6 fw-bold">{{ product.name }}</h1>
+            <p class="lead text-muted">{{ product.description }}</p>
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <span class="h3 mb-0">{{ product.price|inr }}</span>
+                <span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-secondary{% endif %}">
+                    {% if product.stock > 0 %}In Stock{% else %}Out of Stock{% endif %}
+                </span>
+            </div>
+            <p class="small text-muted">Available stock: {{ product.stock }}</p>
+
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body">
+                    <h2 class="h5">Product Information</h2>
+                    <table class="table table-sm table-borderless mb-0">
+                        {% for key, value in specs.items() %}
+                            <tr>
+                                <td class="text-muted" style="width:40%">{{ key|replace('_', ' ')|title }}</td>
+                                <td class="fw-semibold">{{ value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-dark btn-lg add-to-cart" data-id="{{ product.id }}" data-name="{{ product.name }}">
+                    <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                </button>
+                <button class="btn btn-outline-danger btn-lg add-to-wishlist" data-id="{{ product.id }}" data-name="{{ product.name }}">
+                    <i class="fas fa-heart me-2"></i>Add to Wishlist
+                </button>
+                <a href="{{ url_for('products') }}" class="btn btn-outline-dark btn-lg">Back to Products</a>
+            </div>
+        </div>
+    </div>
+
+    {% if related_products %}
+    <section class="mt-5">
+        <h2 class="h4 mb-3">Similar Products</h2>
+        <div class="row g-3">
+            {% for rp in related_products %}
+                <div class="col-md-3 col-6">
+                    <a href="{{ url_for('product_detail', product_id=rp.id) }}" class="card h-100 text-decoration-none text-dark shadow-sm">
+                        <img src="{{ product_image(rp) }}" onerror="this.onerror=null;this.src='{{ pc_fallback_image('product-fallback', rp.id) }}'" class="card-img-top" alt="{{ rp.name }}">
+                        <div class="card-body">
+                            <div class="small fw-semibold">{{ rp.name }}</div>
+                            <div class="small text-muted">{{ rp.price|inr }}</div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,222 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="admin-dashboard">
+    <section class="admin-hero">
+        <div class="admin-hero-copy">
+            <h1 class="admin-title">Admin Dashboard</h1>
+            <p class="admin-subtitle">Operational snapshot for catalog, orders, customers, and service workflow.</p>
+        </div>
+        <div class="admin-hero-actions">
+            {% for link in quick_links %}
+            <a href="{{ link.url }}" class="btn btn-sm btn-outline-light admin-action-pill">
+                <i class="fa {{ link.icon }}"></i> {{ link.label }}
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="row admin-kpi-grid">
+        <div class="col-md-4 col-xl-2 mb-3">
+            <article class="card admin-kpi-card">
+                <div class="kpi-label">Users</div>
+                <div class="kpi-value">{{ stats.users }}</div>
+            </article>
+        </div>
+        <div class="col-md-4 col-xl-2 mb-3">
+            <article class="card admin-kpi-card">
+                <div class="kpi-label">Products</div>
+                <div class="kpi-value">{{ stats.products }}</div>
+            </article>
+        </div>
+        <div class="col-md-4 col-xl-2 mb-3">
+            <article class="card admin-kpi-card">
+                <div class="kpi-label">Orders</div>
+                <div class="kpi-value">{{ stats.orders }}</div>
+            </article>
+        </div>
+        <div class="col-md-4 col-xl-2 mb-3">
+            <article class="card admin-kpi-card">
+                <div class="kpi-label">Service Requests</div>
+                <div class="kpi-value">{{ stats.service_requests }}</div>
+            </article>
+        </div>
+        <div class="col-md-4 col-xl-2 mb-3">
+            <article class="card admin-kpi-card">
+                <div class="kpi-label">Inventory Units</div>
+                <div class="kpi-value">{{ stats.inventory_units }}</div>
+            </article>
+        </div>
+        <div class="col-md-4 col-xl-2 mb-3">
+            <article class="card admin-kpi-card">
+                <div class="kpi-label">Inventory Value</div>
+                <div class="kpi-value">{{ stats.inventory_value|inr }}</div>
+            </article>
+        </div>
+    </section>
+
+    <section class="row">
+        <div class="col-lg-8 mb-3">
+            <article class="card admin-surface-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Recent Orders</strong>
+                    <span class="badge badge-pill badge-light">{{ recent_orders|length }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>User</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_orders %}
+                                    {% for order in recent_orders %}
+                                    {% set order_status = (order.status or 'placed')|lower %}
+                                    <tr>
+                                        <td>{{ order.order_number }}</td>
+                                        <td>{{ order.user.username if order.user else 'User #' ~ order.user_id }}</td>
+                                        <td>{{ order.total_amount|inr }}</td>
+                                        <td>
+                                            <span class="badge {% if order_status == 'placed' %}badge-success{% elif order_status in ['cancelled', 'failed'] %}badge-danger{% else %}badge-secondary{% endif %}">
+                                                {{ order_status|replace('_', ' ')|title }}
+                                            </span>
+                                        </td>
+                                        <td>{{ order.created_at.strftime('%d %b %Y, %I:%M %p') if order.created_at else 'N/A' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">No orders yet.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-lg-4 mb-3">
+            <article class="card admin-surface-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Service Queue</strong>
+                    <span class="badge badge-pill badge-warning">Pending: {{ stats.pending_services }}</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_services %}
+                                    {% for req in recent_services %}
+                                    {% set req_status = (req.status or 'pending')|lower %}
+                                    <tr>
+                                        <td>#{{ req.id }}</td>
+                                        <td>{{ (req.service_type or 'general')|title }}</td>
+                                        <td>
+                                            <span class="badge {% if req_status == 'completed' %}badge-success{% elif req_status == 'in_progress' %}badge-info{% else %}badge-warning{% endif %}">
+                                                {{ req_status|replace('_', ' ')|title }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">No service requests yet.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="row">
+        <div class="col-lg-6 mb-3">
+            <article class="card admin-surface-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Category Distribution</strong>
+                    <span class="badge badge-pill badge-light">{{ category_breakdown|length }} categories</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Products</th>
+                                    <th>Units</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in category_breakdown %}
+                                <tr>
+                                    <td>{{ row.category }}</td>
+                                    <td>{{ row.product_count }}</td>
+                                    <td>{{ row.stock_units or 0 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-lg-6 mb-3">
+            <article class="card admin-surface-card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Low Stock Watchlist</strong>
+                    <span class="badge badge-pill badge-danger">{{ stats.low_stock_count }} items</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if low_stock_products %}
+                                    {% for product in low_stock_products %}
+                                    <tr>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.category }}</td>
+                                        <td>
+                                            <span class="badge {% if product.stock <= 1 %}badge-danger{% elif product.stock <= 3 %}badge-warning{% else %}badge-secondary{% endif %}">
+                                                {{ product.stock }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">No low-stock items.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Service Approval{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-9 col-lg-10">
+            <div class="card border-0 shadow-lg service-approval-card">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
+                        <div>
+                            <p class="text-uppercase small fw-bold text-success mb-1">Approval Generated</p>
+                            <h1 class="h3 mb-1">Service Request Approved</h1>
+                            <p class="text-muted mb-0">Request #{{ request_id }} | {{ date }}</p>
+                        </div>
+                        <span class="badge bg-success fs-6">Confirmed</span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="approval-stat">
+                                <div class="small text-muted">Booking Payment</div>
+                                <div class="h5 mb-0">{{ paid_amount|default(booking_fee, true)|inr }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="approval-stat">
+                                <div class="small text-muted">Payment Mode</div>
+                                <div class="fw-semibold">{{ payment_label|default('N/A', true) }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="approval-stat">
+                                <div class="small text-muted">Estimated Service Fee</div>
+                                <div class="h5 mb-0">{{ estimated_cost|inr }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h2 class="h5 mb-3">Service Details</h2>
+                            <div class="detail-list">
+                                <div><span>Type</span><strong>{{ service_type|capitalize }}</strong></div>
+                                <div><span>Device</span><strong>{{ device_model }}</strong></div>
+                                <div><span>Issue / Requirement</span><strong>{{ issue_or_requirement }}</strong></div>
+                                <div><span>Estimated Time</span><strong>{{ estimated_time }}</strong></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h2 class="h5 mb-3">Visit & Execution</h2>
+                            <div class="detail-list">
+                                <div><span>Home Visit</span><strong>{{ 'Yes' if home_visit else 'No' }}</strong></div>
+                                <div><span>Address</span><strong>{{ address or 'Service center visit' }}</strong></div>
+                                <div><span>Status</span><strong>Pending Engineer Assignment</strong></div>
+                                <div><span>Validity</span><strong>14 days</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row gap-2 mt-4 pt-3 border-top">
+                        <a href="{{ url_for('service_request') }}" class="btn btn-outline-dark">New Service Request</a>
+                        <a href="{{ url_for('index') }}" class="btn btn-dark">Go to Home</a>
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">Print Approval</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .service-approval-card {
+        border-radius: 16px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfaf7 100%);
+    }
+    .approval-stat {
+        border: 1px solid #e8decf;
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+    }
+    .detail-list {
+        border: 1px solid #e8decf;
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+        display: grid;
+        gap: 10px;
+    }
+    .detail-list > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px dashed #eadfce;
+        padding-bottom: 8px;
+    }
+    .detail-list > div:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .detail-list span {
+        color: #6b7280;
+    }
+    .detail-list strong {
+        text-align: right;
+        max-width: 60%;
+    }
+</style>
+{% endblock %}
+

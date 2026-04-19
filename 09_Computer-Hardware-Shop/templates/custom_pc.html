@@ -1,0 +1,665 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Customize PC{% endblock %}
+
+{% block content %}
+<div class="container py-5 custom-builder">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+        <div>
+            <p class="recommendation-kicker mb-1">Build Assistant</p>
+            <h1 class="display-6 fw-bold mb-2">Make Your Customize PC</h1>
+            <p class="text-muted mb-0">Select one part per category, monitor pricing live, and continue to address and payment.</p>
+            {% if preset_label %}
+                <div class="badge bg-dark mt-2">{{ preset_label }}</div>
+            {% endif %}
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('recommended_prebuilds', profession='Student') }}" class="btn btn-outline-dark">View Pre-Builds</a>
+            <a href="{{ url_for('products') }}" class="btn btn-dark">Browse Catalog</a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-3 col-lg-4">
+            <div class="builder-panel builder-progress-panel sticky-lg-top">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h5 mb-0">Build Progress</h2>
+                    <span class="small fw-semibold" id="builder-progress-count">0/{{ required_category_count }}</span>
+                </div>
+                <div class="progress builder-progress mb-3">
+                    <div id="builder-progress-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                </div>
+
+                <div id="builder-step-list" class="d-grid gap-2 mb-4"></div>
+
+                <h3 class="h6 mb-2">Quick Actions</h3>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-dark btn-sm" id="builder-auto-fill">Auto-fill Missing (Best Value)</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="builder-clear-current">Clear Current Step</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" id="builder-clear-all">Clear Full Build</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-5 col-lg-8">
+            <div class="builder-panel h-100">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <p id="builder-step-badge" class="small text-uppercase fw-bold text-muted mb-1"></p>
+                        <h2 id="builder-category-title" class="h4 mb-1"></h2>
+                        <p id="builder-category-help" class="text-muted mb-0"></p>
+                    </div>
+                    <div class="btn-group">
+                        <button id="builder-prev" class="btn btn-outline-dark btn-sm" type="button">Previous</button>
+                        <button id="builder-next" class="btn btn-dark btn-sm" type="button">Next</button>
+                    </div>
+                </div>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="builder-product-search" placeholder="Search in this category...">
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="builder-sort">
+                            <option value="smart">Smart Sort</option>
+                            <option value="price_low">Price: Low to High</option>
+                            <option value="price_high">Price: High to Low</option>
+                            <option value="name">Name A-Z</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="builder-products" class="row g-3"></div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-12">
+            <div class="builder-panel builder-summary-panel sticky-lg-top">
+                <h2 class="h5 mb-3">Selected Components</h2>
+                <div id="builder-selected-list" class="d-grid gap-2 mb-3"></div>
+
+                <div class="summary-metrics small mb-3">
+                    <div class="d-flex justify-content-between"><span>Subtotal</span><strong id="builder-subtotal">{{ 0|inr }}</strong></div>
+                    <div class="d-flex justify-content-between"><span>Estimated GST (18%)</span><strong id="builder-tax">{{ 0|inr }}</strong></div>
+                    <div class="d-flex justify-content-between"><span>Estimated Power Draw</span><strong id="builder-power">0 W</strong></div>
+                    <div class="d-flex justify-content-between"><span>Estimated Monthly (6x)</span><strong id="builder-monthly">{{ 0|inr }}</strong></div>
+                    <hr class="my-2">
+                    <div class="d-flex justify-content-between fs-6"><span>Total</span><strong id="builder-total">{{ 0|inr }}</strong></div>
+                </div>
+
+                <div id="builder-compatibility" class="builder-insights small mb-3"></div>
+
+                <p id="builder-missing" class="small text-muted mb-3">Select all categories to continue.</p>
+
+                <form method="POST" action="{{ url_for('custom_pc_checkout') }}" id="custom-pc-checkout-form">
+                    <input type="hidden" name="selected_product_ids" id="custom-selected-product-ids" value="">
+                    <input type="hidden" name="replace_group_id" value="{{ edit_group_id or '' }}">
+                    <button id="custom-proceed-btn" class="btn btn-dark w-100" type="submit" disabled>
+                        Proceed to Address & Payment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="custom-catalog-data" type="application/json">{{ custom_catalog|tojson }}</script>
+<script id="custom-preselected-data" type="application/json">{{ preselected_components|tojson }}</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .builder-panel {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 14px 30px rgba(34, 28, 22, 0.08);
+        padding: 16px;
+    }
+    .builder-progress-panel,
+    .builder-summary-panel {
+        top: 96px;
+        max-height: calc(100vh - 116px);
+        overflow-y: auto;
+    }
+    #builder-selected-list {
+        max-height: 220px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+    .builder-progress {
+        height: 10px;
+        border-radius: 999px;
+        background: #e9dfd1;
+    }
+    .builder-progress .progress-bar {
+        background: linear-gradient(120deg, var(--brand), #2ca091);
+    }
+    .builder-step-btn {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        padding: 10px 12px;
+        text-align: left;
+        transition: all .2s ease;
+    }
+    .builder-step-btn.active {
+        border-color: var(--brand);
+        background: #edf8f5;
+        box-shadow: 0 0 0 2px rgba(23, 124, 111, 0.15);
+    }
+    .builder-step-btn.done {
+        border-color: #c8e6dc;
+    }
+    .builder-product-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        box-shadow: 0 10px 20px rgba(25, 20, 16, 0.06);
+    }
+    .builder-product-card.selected {
+        border-color: var(--brand);
+        box-shadow: 0 0 0 2px rgba(23, 124, 111, 0.18);
+    }
+    .builder-product-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+    .builder-selected-item {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fffdfa;
+        padding: 10px;
+    }
+    .builder-selected-item .btn {
+        padding: 0.2rem 0.45rem;
+    }
+    .builder-insights {
+        border: 1px solid #e7ddcf;
+        border-radius: 12px;
+        padding: 10px;
+        background: #fff8ef;
+    }
+    @media (max-width: 991.98px) {
+        .builder-progress-panel,
+        .builder-summary-panel {
+            max-height: none;
+            overflow: visible;
+        }
+        #builder-selected-list {
+            max-height: none;
+            overflow: visible;
+            padding-right: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+    const catalogNode = document.getElementById('custom-catalog-data');
+    const preselectedNode = document.getElementById('custom-preselected-data');
+    if (!catalogNode) return;
+
+    let catalog = [];
+    let preselected = {};
+    try {
+        catalog = JSON.parse(catalogNode.textContent || '[]');
+        preselected = JSON.parse(preselectedNode?.textContent || '{}');
+    } catch (error) {
+        console.error('Unable to load custom builder data', error);
+        return;
+    }
+
+    if (!Array.isArray(catalog) || !catalog.length) return;
+
+    const stepList = document.getElementById('builder-step-list');
+    const productsWrap = document.getElementById('builder-products');
+    const stepBadge = document.getElementById('builder-step-badge');
+    const categoryTitle = document.getElementById('builder-category-title');
+    const categoryHelp = document.getElementById('builder-category-help');
+    const subtotalEl = document.getElementById('builder-subtotal');
+    const taxEl = document.getElementById('builder-tax');
+    const totalEl = document.getElementById('builder-total');
+    const powerEl = document.getElementById('builder-power');
+    const monthlyEl = document.getElementById('builder-monthly');
+    const selectedList = document.getElementById('builder-selected-list');
+    const missingEl = document.getElementById('builder-missing');
+    const selectedInput = document.getElementById('custom-selected-product-ids');
+    const proceedBtn = document.getElementById('custom-proceed-btn');
+    const checkoutForm = document.getElementById('custom-pc-checkout-form');
+    const prevBtn = document.getElementById('builder-prev');
+    const nextBtn = document.getElementById('builder-next');
+    const searchInput = document.getElementById('builder-product-search');
+    const sortSelect = document.getElementById('builder-sort');
+    const stockOnlyToggle = document.getElementById('builder-stock-only');
+    const autoFillBtn = document.getElementById('builder-auto-fill');
+    const clearCurrentBtn = document.getElementById('builder-clear-current');
+    const clearAllBtn = document.getElementById('builder-clear-all');
+    const progressCountEl = document.getElementById('builder-progress-count');
+    const progressBarEl = document.getElementById('builder-progress-bar');
+    const compatibilityEl = document.getElementById('builder-compatibility');
+
+    let activeIndex = 0;
+    const selectedByCategory = {};
+    let categorySearchQuery = '';
+    let sortMode = 'smart';
+    let inStockOnly = true;
+
+    const storageKey = 'custom_pc_builder_state_v2';
+
+    Object.entries(preselected || {}).forEach(([categoryCode, productId]) => {
+        const categoryEntry = catalog.find((entry) => entry.code === categoryCode);
+        const match = categoryEntry?.products?.find((product) => Number(product.id) === Number(productId));
+        if (match) {
+            selectedByCategory[categoryCode] = match;
+        }
+    });
+
+    const restoreDraft = () => {
+        try {
+            const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            if (!saved || !saved.selectedByCategory) return;
+            Object.entries(saved.selectedByCategory).forEach(([categoryCode, productId]) => {
+                if (selectedByCategory[categoryCode]) return;
+                const categoryEntry = catalog.find((entry) => entry.code === categoryCode);
+                const match = categoryEntry?.products?.find((product) => Number(product.id) === Number(productId));
+                if (match) {
+                    selectedByCategory[categoryCode] = match;
+                }
+            });
+            if (Number.isInteger(saved.activeIndex) && saved.activeIndex >= 0 && saved.activeIndex < catalog.length) {
+                activeIndex = saved.activeIndex;
+            }
+        } catch (error) {
+            console.warn('Unable to restore custom builder draft', error);
+        }
+    };
+
+    const persistDraft = () => {
+        try {
+            const payload = {
+                activeIndex,
+                selectedByCategory: Object.fromEntries(
+                    Object.entries(selectedByCategory).map(([categoryCode, product]) => [categoryCode, Number(product.id)])
+                ),
+            };
+            localStorage.setItem(storageKey, JSON.stringify(payload));
+        } catch (error) {
+            console.warn('Unable to persist custom builder draft', error);
+        }
+    };
+
+    restoreDraft();
+
+    const formatCurrency = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value || 0));
+    const fallbackImage = (seed) => {
+        const normalizedSeed = String(seed || 'custom-builder').toLowerCase();
+        let hash = 0;
+        for (let i = 0; i < normalizedSeed.length; i += 1) {
+            hash = ((hash << 5) - hash + normalizedSeed.charCodeAt(i)) | 0;
+        }
+        const lock = 700000 + (Math.abs(hash) % 300000);
+        return `https://loremflickr.com/1200/900/desktop-computer,pc-setup,monitor,keyboard,mouse?lock=${lock}`;
+    };
+    const orderedSelectedProducts = () => catalog
+        .map((entry) => selectedByCategory[entry.code])
+        .filter(Boolean);
+
+    const missingCategoryLabels = () => catalog
+        .filter((entry) => !selectedByCategory[entry.code])
+        .map((entry) => entry.label);
+
+    const estimatedPowerDraw = () => {
+        const cpuName = selectedByCategory.CPU?.name || '';
+        const gpuName = selectedByCategory.GPU?.name || '';
+
+        let watts = 140;
+        if (cpuName.includes('i9') || cpuName.includes('7950')) watts += 120;
+        else if (cpuName.includes('i7') || cpuName.includes('7800') || cpuName.includes('7700')) watts += 85;
+        else if (cpuName) watts += 60;
+
+        if (gpuName.includes('4080') || gpuName.includes('7800 XT')) watts += 320;
+        else if (gpuName.includes('4070') || gpuName.includes('7700 XT') || gpuName.includes('6750')) watts += 260;
+        else if (gpuName.includes('4060') || gpuName.includes('3060') || gpuName.includes('Arc A770')) watts += 190;
+        else if (gpuName) watts += 140;
+
+        return watts;
+    };
+
+    const compatibilityNotes = () => {
+        const notes = [];
+        const ramName = selectedByCategory.RAM?.name || '';
+        const storageName = selectedByCategory.STORAGE?.name || '';
+        const monitorName = selectedByCategory.MONITOR?.name || '';
+        const cpuName = selectedByCategory.CPU?.name || '';
+        const gpuName = selectedByCategory.GPU?.name || '';
+
+        if (ramName.includes('8GB')) {
+            notes.push('8GB RAM is entry-level. Consider 16GB+ for smoother multitasking.');
+        }
+        if (storageName.includes('256GB')) {
+            notes.push('256GB storage can fill quickly; 512GB or 1TB is safer for long-term usage.');
+        }
+        if ((cpuName.includes('i3') || cpuName.includes('5600')) && (gpuName.includes('4070') || gpuName.includes('4080'))) {
+            notes.push('High-end GPU with entry CPU may bottleneck some workloads.');
+        }
+        if (monitorName.includes('UltraSharp') && gpuName.includes('3050')) {
+            notes.push('4K-class monitor with entry GPU may need reduced graphics settings in heavy apps.');
+        }
+
+        if (!notes.length) {
+            notes.push('Your current component mix looks balanced for general use.');
+        }
+
+        return notes;
+    };
+
+    const productsForActiveCategory = () => {
+        const category = catalog[activeIndex];
+        if (!category) return [];
+
+        const q = categorySearchQuery.trim().toLowerCase();
+        let products = category.products.filter((product) => {
+            if (inStockOnly && Number(product.stock) <= 0) return false;
+            if (!q) return true;
+
+            const searchBlob = [
+                product.name,
+                product.description,
+                product.highlight,
+                product.brand,
+                product.size,
+                product.memory_type,
+            ]
+                .join(' ')
+                .toLowerCase();
+            return searchBlob.includes(q);
+        });
+
+        products = products.slice();
+        if (sortMode === 'price_low') {
+            products.sort((a, b) => Number(a.price) - Number(b.price));
+        } else if (sortMode === 'price_high') {
+            products.sort((a, b) => Number(b.price) - Number(a.price));
+        } else if (sortMode === 'stock_high') {
+            products.sort((a, b) => Number(b.stock) - Number(a.stock));
+        } else if (sortMode === 'name') {
+            products.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+        } else {
+            products.sort((a, b) => {
+                if (Number(a.stock) !== Number(b.stock)) return Number(b.stock) - Number(a.stock);
+                return Number(a.price) - Number(b.price);
+            });
+        }
+
+        return products;
+    };
+
+    const renderSteps = () => {
+        stepList.innerHTML = catalog.map((entry, index) => {
+            const isActive = index === activeIndex;
+            const selectedProduct = selectedByCategory[entry.code];
+            const isDone = Boolean(selectedProduct);
+            const classes = ['builder-step-btn'];
+            if (isActive) classes.push('active');
+            if (isDone) classes.push('done');
+            const statusText = selectedProduct ? selectedProduct.name : 'Pending';
+            return `
+                <button type="button" class="${classes.join(' ')}" data-step-index="${index}">
+                    <div class="fw-semibold">${index + 1}. ${entry.label}</div>
+                    <div class="small text-muted text-truncate">${statusText}</div>
+                </button>
+            `;
+        }).join('');
+
+        const selectedCount = orderedSelectedProducts().length;
+        progressCountEl.textContent = `${selectedCount}/${catalog.length}`;
+        progressBarEl.style.width = `${(selectedCount / catalog.length) * 100}%`;
+    };
+
+    const renderProducts = () => {
+        const category = catalog[activeIndex];
+        if (!category) return;
+
+        stepBadge.textContent = `Step ${activeIndex + 1} of ${catalog.length}`;
+        categoryTitle.textContent = category.label;
+        categoryHelp.textContent = `Choose one ${category.label.toLowerCase()} for this build.`;
+
+        const selectedProduct = selectedByCategory[category.code];
+        const products = productsForActiveCategory();
+
+        if (!products.length) {
+            productsWrap.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-secondary mb-0">
+                        No matching products in this category. Clear search or disable in-stock filter.
+                    </div>
+                </div>
+            `;
+        } else {
+            productsWrap.innerHTML = products.map((product) => {
+                const isSelected = selectedProduct && Number(selectedProduct.id) === Number(product.id);
+                const cardClass = `builder-product-card ${isSelected ? 'selected' : ''}`;
+                const stockLabel = Number(product.stock) > 0 ? `${product.stock} in stock` : 'Out of stock';
+                const chooseLabel = isSelected ? 'Selected' : 'Select';
+                const chooseClass = isSelected ? 'btn-success' : 'btn-outline-dark';
+                const disabledAttr = Number(product.stock) > 0 ? '' : 'disabled';
+                const helper = product.highlight ? `<div class="small text-muted mb-2">${product.highlight}</div>` : '';
+
+                return `
+                    <div class="col-md-6">
+                        <div class="${cardClass}">
+                            <img src="${product.image_url || fallbackImage('custom-' + product.id)}" alt="${product.name}" onerror="this.onerror=null;this.src='${fallbackImage('custom-' + product.id)}'">
+                            <div class="p-3 d-flex flex-column flex-grow-1">
+                                <div class="small text-muted mb-1">${category.label}</div>
+                                <h3 class="h6 mb-1">${product.name}</h3>
+                                ${helper}
+                                <p class="small text-muted mb-2">${product.description || ''}</p>
+                                <div class="mt-auto d-flex justify-content-between align-items-center">
+                                    <strong>${formatCurrency(product.price)}</strong>
+                                    <div class="text-end">
+                                        <div class="small ${Number(product.stock) > 0 ? 'text-success' : 'text-danger'}">${stockLabel}</div>
+                                        <button type="button" class="btn btn-sm ${chooseClass} mt-1" data-select-id="${product.id}" ${disabledAttr}>${chooseLabel}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        prevBtn.disabled = activeIndex === 0;
+        nextBtn.disabled = activeIndex === catalog.length - 1;
+    };
+
+    const renderSummary = () => {
+        const selectedProducts = orderedSelectedProducts();
+        const missing = missingCategoryLabels();
+
+        selectedList.innerHTML = catalog.map((entry) => {
+            const selectedProduct = selectedByCategory[entry.code];
+            if (!selectedProduct) {
+                return `
+                    <div class="builder-selected-item">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <div>
+                                <div class="fw-semibold">${entry.label}</div>
+                                <div class="small text-muted">Not selected</div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-dark" data-jump-category="${entry.code}">Choose</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="builder-selected-item">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <div class="fw-semibold">${entry.label}</div>
+                            <div class="small">${selectedProduct.name}</div>
+                            <div class="small text-muted">${formatCurrency(selectedProduct.price)}</div>
+                        </div>
+                        <div class="d-flex gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-dark" data-jump-category="${entry.code}">Change</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-remove-category="${entry.code}">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const subtotal = selectedProducts.reduce((sum, product) => sum + Number(product.price || 0), 0);
+        const tax = subtotal * 0.18;
+        const total = subtotal + tax;
+        const monthly = total / 6;
+        const power = estimatedPowerDraw();
+
+        subtotalEl.textContent = formatCurrency(subtotal);
+        taxEl.textContent = formatCurrency(tax);
+        totalEl.textContent = formatCurrency(total);
+        monthlyEl.textContent = formatCurrency(monthly);
+        powerEl.textContent = `${Math.round(power)} W`;
+
+        selectedInput.value = selectedProducts.map((product) => product.id).join(',');
+        proceedBtn.disabled = missing.length > 0;
+
+        if (missing.length) {
+            missingEl.textContent = `Missing: ${missing.join(', ')}`;
+        } else {
+            missingEl.textContent = 'All categories selected. Continue to address and payment.';
+        }
+
+        const notes = compatibilityNotes();
+        compatibilityEl.innerHTML = notes.map((note) => `<div class="mb-1">- ${note}</div>`).join('');
+
+        persistDraft();
+    };
+
+    const setActiveStep = (index) => {
+        if (index < 0 || index >= catalog.length) return;
+        activeIndex = index;
+        renderSteps();
+        renderProducts();
+        renderSummary();
+    };
+
+    stepList.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-step-index]');
+        if (!button) return;
+        setActiveStep(Number(button.dataset.stepIndex));
+    });
+
+    productsWrap.addEventListener('click', (event) => {
+        const button = event.target.closest('[data-select-id]');
+        if (!button) return;
+
+        const productId = Number(button.dataset.selectId);
+        const category = catalog[activeIndex];
+        if (!category) return;
+
+        const selectedProduct = category.products.find((product) => Number(product.id) === productId);
+        if (!selectedProduct) return;
+
+        selectedByCategory[category.code] = selectedProduct;
+        renderSteps();
+        renderProducts();
+        renderSummary();
+    });
+
+    selectedList.addEventListener('click', (event) => {
+        const removeButton = event.target.closest('[data-remove-category]');
+        if (removeButton) {
+            const categoryCode = removeButton.dataset.removeCategory;
+            if (!categoryCode) return;
+            delete selectedByCategory[categoryCode];
+            const nextStep = catalog.findIndex((entry) => entry.code === categoryCode);
+            if (nextStep >= 0) activeIndex = nextStep;
+            renderSteps();
+            renderProducts();
+            renderSummary();
+            return;
+        }
+
+        const jumpButton = event.target.closest('[data-jump-category]');
+        if (jumpButton) {
+            const categoryCode = jumpButton.dataset.jumpCategory;
+            const nextStep = catalog.findIndex((entry) => entry.code === categoryCode);
+            if (nextStep >= 0) setActiveStep(nextStep);
+        }
+    });
+
+    searchInput?.addEventListener('input', (event) => {
+        categorySearchQuery = event.target.value || '';
+        renderProducts();
+    });
+
+    sortSelect?.addEventListener('change', (event) => {
+        sortMode = event.target.value || 'smart';
+        renderProducts();
+    });
+
+    stockOnlyToggle?.addEventListener('change', (event) => {
+        inStockOnly = Boolean(event.target.checked);
+        renderProducts();
+    });
+
+    autoFillBtn?.addEventListener('click', () => {
+        catalog.forEach((entry) => {
+            if (selectedByCategory[entry.code]) return;
+            const sorted = entry.products
+                .filter((product) => Number(product.stock) > 0)
+                .sort((a, b) => Number(a.price) - Number(b.price));
+            if (sorted[0]) {
+                selectedByCategory[entry.code] = sorted[0];
+            }
+        });
+
+        const nextMissing = catalog.findIndex((entry) => !selectedByCategory[entry.code]);
+        if (nextMissing >= 0) activeIndex = nextMissing;
+        renderSteps();
+        renderProducts();
+        renderSummary();
+    });
+
+    clearCurrentBtn?.addEventListener('click', () => {
+        const currentCategory = catalog[activeIndex];
+        if (!currentCategory) return;
+        delete selectedByCategory[currentCategory.code];
+        renderSteps();
+        renderProducts();
+        renderSummary();
+    });
+
+    clearAllBtn?.addEventListener('click', () => {
+        Object.keys(selectedByCategory).forEach((key) => delete selectedByCategory[key]);
+        activeIndex = 0;
+        categorySearchQuery = '';
+        if (searchInput) searchInput.value = '';
+        renderSteps();
+        renderProducts();
+        renderSummary();
+    });
+
+    checkoutForm?.addEventListener('submit', () => {
+        localStorage.removeItem(storageKey);
+    });
+
+    prevBtn.addEventListener('click', () => setActiveStep(activeIndex - 1));
+    nextBtn.addEventListener('click', () => setActiveStep(activeIndex + 1));
+
+    renderSteps();
+    renderProducts();
+    renderSummary();
+})();
+</script>
+{% endblock %}
+
+
