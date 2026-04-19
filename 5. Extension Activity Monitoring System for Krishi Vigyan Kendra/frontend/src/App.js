@@ -14,12 +14,9 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
 import Manage from './pages/Manage'; // <-- add this
-import ImportData from './pages/ImportData';
+import DataEntry from './pages/DataEntry';
 import DataEntryForm from './pages/DataEntryForm';
 import AnalyticalPage from './pages/AnalyticalPage';
-import DashboardHome from './pages/DashboardHome';
-import DisciplinePage from './pages/DisciplinePage';
-import BackupPage from './pages/BackupPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -72,7 +69,8 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
-        <Route index element={<DashboardHome />} />
+        {/* index = /dashboard */}
+        <Route index element={<div />} />
 
         {/* /dashboard/admin-panel -> Manage module */}
         <Route path="admin-panel" element={<Manage />} />
@@ -81,15 +79,12 @@ const AppRoutes = () => {
             <Route path="activities" element={<ActivitiesPage />} />
             <Route path="data-entry" element={<DataEntryPage />} />
         */}
-        <Route path="data-entry" element={<DataEntryForm />} />
-        <Route path="data-entry/:disciplineCode" element={<DataEntryForm />} />
+        <Route path="data-entry" element={<DataEntry />} />
+        <Route path="data-entry/:disciplineCode" element={<DataEntry />} />
         <Route path="data-entry/new" element={<DataEntryForm />} />
         <Route path="data-entry/:disciplineCode/new" element={<DataEntryForm />} />
         <Route path="data-entry/:id/:mode" element={<DataEntryForm />} />
-        <Route path="import-data" element={<ImportData />} />
         <Route path="analytics" element={<AnalyticalPage />} />
-        <Route path="discipline/:disciplineCode" element={<DisciplinePage />} />
-        <Route path="backup" element={<BackupPage />} />
       </Route>
 
       {/* Profile Route */}

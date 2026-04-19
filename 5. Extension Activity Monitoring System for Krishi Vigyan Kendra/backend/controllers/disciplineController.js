@@ -16,9 +16,7 @@ const slugify = (value) => {
 // @access  Private (any authenticated user)
 const listDisciplines = async (req, res) => {
   try {
-    const { includeDeleted } = req.query;
-    const filter = includeDeleted === 'true' ? {} : { isDeleted: { $ne: true } };
-    const disciplines = await Discipline.find(filter).sort({ name: 1 });
+    const disciplines = await Discipline.find({ isDeleted: { $ne: true } }).sort({ name: 1 });
     res.json(disciplines);
   } catch (error) {
     res.status(500).json({ message: error.message });

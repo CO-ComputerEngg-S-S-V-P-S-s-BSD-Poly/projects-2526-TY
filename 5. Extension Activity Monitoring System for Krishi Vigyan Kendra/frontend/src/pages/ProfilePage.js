@@ -28,7 +28,7 @@ import {
 // Regex validations
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^[6-9]\d{9}$/;
-const nameRegex = /^[A-Za-z.\s]+$/;
+const nameRegex = /^[A-Za-z\s]+$/;
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,20}$/;
 
 const GENDERS = [
@@ -41,7 +41,7 @@ const validateProfileName = (value) => {
   const trimmed = value.trim();
   if (!trimmed) return 'Full name is required';
   if (!nameRegex.test(trimmed)) {
-    return 'Name should contain only letters, spaces, and dots';
+    return 'Name should contain only letters and spaces';
   }
   const parts = trimmed.split(' ').filter(Boolean);
   if (parts.length < 2) {
@@ -635,7 +635,6 @@ const ProfilePage = ({ onLogout, userRole }) => {
                             value={passwordConfirm}
                             onChange={(e) => setPasswordConfirm(e.target.value)}
                             placeholder="Enter your current password to save changes"
-                            autoComplete="new-password"
                             required
                           />
                           <button

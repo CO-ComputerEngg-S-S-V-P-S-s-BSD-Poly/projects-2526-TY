@@ -6,9 +6,7 @@ const User = require('../models/User');
 // @access  Private (any authenticated user)
 const listExtensionActivities = async (req, res) => {
   try {
-    const { includeDeleted } = req.query;
-    const filter = includeDeleted === 'true' ? {} : { isDeleted: { $ne: true } };
-    const activities = await ExtensionActivity.find(filter)
+    const activities = await ExtensionActivity.find({ isDeleted: { $ne: true } })
       .sort({ createdAt: -1 });
     res.json(activities);
   } catch (error) {

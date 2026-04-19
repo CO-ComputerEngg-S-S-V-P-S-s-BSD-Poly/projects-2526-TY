@@ -16,8 +16,9 @@ import {
   FaPhone
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../styles/Login.css";
-import "../styles/ManageEmployee.me.css";
 import Logo1 from "../Assets/Images/ICAR_logo.png";
 import Logo2 from "../Assets/Images/Logo2.png";
 
@@ -26,8 +27,8 @@ const emailRegex = /^\S+@\S+\.\S+$/;
 // 8–20 chars, 1 uppercase, 1 digit, 1 special char, no spaces
 const passwordRegex =
   /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
-// name: only letters, spaces, and dots
-const nameRegex = /^[A-Za-z.\s]+$/;
+// name: only letters and spaces
+const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
 // Indian-style mobile: 10 digits, starting with 6–9 [web:17][web:20]
 const phoneRegex = /^[6-9]\d{9}$/;
 
@@ -55,13 +56,6 @@ const Login = () => {
 
   // track focus for icon color
   const [focusedField, setFocusedField] = useState(null); // "name" | "email" | "password" | "phone" | null
-
-  const [modal, setModal] = useState({
-    open: false,
-    type: "success",
-    message: "",
-    onConfirm: null
-  });
 
   useEffect(() => {
     // no-op
@@ -95,7 +89,7 @@ const Login = () => {
       const trimmed = value.trim();
       if (!trimmed) return "Full name is required";
       if (!nameRegex.test(trimmed)) {
-        return "Name should contain only letters, spaces, and dots";
+        return "Name should contain only letters and spaces";
       }
       const parts = trimmed.split(" ").filter(Boolean);
       if (parts.length < 2) {
@@ -172,22 +166,29 @@ const Login = () => {
     return !emailError && !passwordError && !nameError && !phoneError;
   };
 
+  /* ================= TOAST HELPERS ================= */
   const showErrorToast = (message) => {
-    setModal({
-      open: true,
-      type: "error",
-      message,
-      onConfirm: null
-    });
+    toast.error(
+      <div className="toast-content">
+        <FaInfoCircle className="toast-icon toast-icon-error" />
+        <span>{message}</span>
+      </div>,
+      {
+        className: "custom-toast custom-toast-error"
+      }
+    );
   };
 
-  const showSuccessToast = (message, onConfirm = null) => {
-    setModal({
-      open: true,
-      type: "success",
-      message,
-      onConfirm
-    });
+  const showSuccessToast = (message) => {
+    toast.success(
+      <div className="toast-content">
+        <FaCheckCircle className="toast-icon toast-icon-success" />
+        <span>{message}</span>
+      </div>,
+      {
+        className: "custom-toast custom-toast-success"
+      }
+    );
   };
 
   /* ================= FORM SUBMIT ================= */
@@ -226,19 +227,10 @@ const Login = () => {
       // If your backend expects phone also for login, pass it here
       await login(email, password, role);
       saveEmail(email);
-      showSuccessToast("Login successful", () => navigate("/dashboard"));
+      showSuccessToast("Login successful");
+      navigate("/dashboard");
     } catch (err) {
-      const raw = err?.message || "Authentication failed";
-      let msg = raw;
-      if (loginType === "scientist") {
-        if (/rejected/i.test(raw)) {
-          msg = "Your request has been rejected by the admin. Please register again.";
-          setIsRegister(true);
-          setPassword("");
-          setShowPassword(false);
-        }
-      }
-      showErrorToast(msg);
+      showErrorToast(err?.message || "Authentication failed");
     } finally {
       setIsLoading(false);
     }
@@ -256,52 +248,12 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      {modal.open && (
-        <div className="me-modal-overlay" style={{ top: 0, left: 0 }} onClick={() => setModal((m) => ({ ...m, open: false }))}>
-          <div className="me-modal me-modal-small" onClick={(e) => e.stopPropagation()}>
-            <div className="me-modal-header">
-              <div className="me-modal-title">
-                {modal.type === "error" ? (
-                  <FaInfoCircle />
-                ) : (
-                  <FaCheckCircle />
-                )}
-                {modal.type === "error" ? "Error" : "Success"}
-              </div>
-              <button
-                className="me-icon-btn"
-                onClick={() => setModal((m) => ({ ...m, open: false }))}
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </div>
-            <div className="me-modal-body">
-              <p className="me-modal-message">{modal.message}</p>
-            </div>
-            <div className="me-modal-footer">
-              <button
-                className="me-btn me-btn-light"
-                onClick={() => setModal((m) => ({ ...m, open: false }))}
-              >
-                Close
-              </button>
-              {modal.type === "success" && (
-                <button
-                  className="me-btn me-btn-success"
-                  onClick={() => {
-                    const cb = modal.onConfirm;
-                    setModal((m) => ({ ...m, open: false }));
-                    if (cb) cb();
-                  }}
-                >
-                  Continue
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={true}
+        icon={false}
+      />
       <div className="login-card">
         {/* Header */}
         <div className="login-header">
@@ -583,7 +535,7 @@ const Login = () => {
                   ? "Processing..."
                   : isRegister
                   ? "Submit Registration Request"
-                  : "Login"}
+                  : "Login to Dashboard"}
               </button>
 
               {loginType === "scientist" && (

@@ -6,9 +6,7 @@ const User = require('../models/User');
 // @access  Private (any authenticated user)
 const listTrainings = async (req, res) => {
   try {
-    const { includeDeleted } = req.query;
-    const filter = includeDeleted === 'true' ? {} : { isDeleted: { $ne: true } };
-    const trainings = await Training.find(filter)
+    const trainings = await Training.find({ isDeleted: { $ne: true } })
       .sort({ createdAt: -1 });
     res.json(trainings);
   } catch (error) {

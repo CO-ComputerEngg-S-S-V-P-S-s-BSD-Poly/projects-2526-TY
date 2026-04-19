@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import '../styles/ManageEmployee.me.css';
 import { adminAPI, disciplineAPI, authAPI } from '../services/api';
 import {
@@ -24,7 +23,6 @@ import {
   Plus,
   RotateCcw,
   Eye,
-  EyeOff,
   Unlock,
   LayoutGrid,
   Table as TableIcon,
@@ -45,7 +43,6 @@ import {
 } from 'lucide-react';
 
 const ManageEmployee = () => {
-  const navigate = useNavigate();
   const [disciplines, setDisciplines] = useState([]);
   const [pendingUsers, setPendingUsers] = useState([]);
   const [users, setUsers] = useState([]);
@@ -117,7 +114,7 @@ const ManageEmployee = () => {
     setError('');
     try {
       const [discList, pendingList, allUsers] = await Promise.all([
-        disciplineAPI.list({ includeDeleted: true }),
+        disciplineAPI.list(),
         adminAPI.getPendingUsers(),
         adminAPI.getAllUsers()
       ]);
@@ -140,7 +137,7 @@ const ManageEmployee = () => {
     [users]
   );
   const blockedUsers = useMemo(
-    () => users.filter((u) => u.status === 'approved' && !u.isActive),
+    () => users.filter((u) => u.status === 'rejected'),
     [users]
   );
 
@@ -299,13 +296,15 @@ const ManageEmployee = () => {
       if (prev.discipline === code && !enabled) {
         next.assignedDisciplines[code] = true;
       }
-      if (enabled) {
+      if (enabled && !next.permissionsByDiscipline?.[code]) {
         next.permissionsByDiscipline = {
           ...next.permissionsByDiscipline,
           [code]: permissionOptions.reduce((acc, opt) => {
-            acc[opt.id] = true;
+            acc[opt.id] =
+              opt.id === 'view' ||
+              (opt.id === 'data_entry' && Boolean(prev.dataEntryEnabled));
             return acc;
-          }, next.permissionsByDiscipline?.[code] || {})
+          }, {})
         };
       }
       return next;
@@ -318,11 +317,13 @@ const ManageEmployee = () => {
       const nextAssigned = { ...(prev.assignedDisciplines || {}) };
       if (code) nextAssigned[code] = true;
       const nextPermissionsByDiscipline = { ...(prev.permissionsByDiscipline || {}) };
-      if (code) {
+      if (code && !nextPermissionsByDiscipline[code]) {
         nextPermissionsByDiscipline[code] = permissionOptions.reduce((acc, opt) => {
-          acc[opt.id] = true;
+          acc[opt.id] =
+            opt.id === 'view' ||
+            (opt.id === 'data_entry' && Boolean(prev.dataEntryEnabled));
           return acc;
-        }, nextPermissionsByDiscipline[code] || {});
+        }, {});
       }
       return {
         ...prev,
@@ -613,18 +614,18 @@ const ManageEmployee = () => {
     setDeleteReasonModal({
       user,
       title: 'Reject Signup Request',
-      message: 'Reject this signup request. Reason and admin password are required.',
+      message: 'Reject this signup request. You can provide a reason (optional).',
       type: 'reject',
-      onConfirm: async (reason, adminPassword) => {
+      onConfirm: async (reason) => {
         setActionLoading(true);
         try {
-          await adminAPI.rejectUser(user._id, reason, adminPassword);
+          await adminAPI.rejectUser(user._id, reason);
           await loadData();
           setDeleteReasonModal(null);
           setConfirmModal({
             type: 'success',
             title: 'Success',
-            message: 'User request rejected successfully',
+            message: 'User rejected and moved to blocked list',
             onConfirm: () => setConfirmModal(null)
           });
         } catch (e) {
@@ -647,25 +648,25 @@ const ManageEmployee = () => {
     setBlockPasswordError('');
     setDeleteReasonModal({
       user,
-      title: 'Inactivate User',
-      message: 'Set this user to inactive. Reason and admin password are required.',
-      type: 'inactivate',
+      title: 'Block User',
+      message: 'Block this user. You can provide a reason (optional) and must enter your admin password.',
+      type: 'block',
       onConfirm: async (reason, adminPassword) => {
         setActionLoading(true);
         setBlockReasonError('');
         setBlockPasswordError('');
         try {
-          await adminAPI.inactivateUser(user._id, { reason, adminPassword });
+          await adminAPI.deleteUser(user._id, { reason, adminPassword });
           await loadData();
           setDeleteReasonModal(null);
           setConfirmModal({
             type: 'success',
             title: 'Success',
-            message: 'User set to inactive',
+            message: 'User blocked successfully',
             onConfirm: () => setConfirmModal(null)
           });
         } catch (e) {
-          const msg = e.message || 'Failed to inactivate user';
+          const msg = e.message || 'Failed to block user';
           if (msg.toLowerCase().includes('password')) {
             setBlockPasswordError(msg);
           } else {
@@ -680,19 +681,13 @@ const ManageEmployee = () => {
   };
 
   const [unblockModal, setUnblockModal] = useState(null); // { user }
-  const [activateModal, setActivateModal] = useState(null); // { user }
   const [blockReasonError, setBlockReasonError] = useState('');
   const [blockPasswordError, setBlockPasswordError] = useState('');
   const [unblockPasswordError, setUnblockPasswordError] = useState('');
-  const [activatePasswordError, setActivatePasswordError] = useState('');
-  const [showBlockPassword, setShowBlockPassword] = useState(false);
-  const [showUnblockPassword, setShowUnblockPassword] = useState(false);
-  const [showActivatePassword, setShowActivatePassword] = useState(false);
-  const [showAdminRolePassword, setShowAdminRolePassword] = useState(false);
 
   const handleUnblockUser = async (user) => {
-    setActivatePasswordError('');
-    setActivateModal({ user });
+    setUnblockPasswordError('');
+    setUnblockModal({ user });
   };
 
   const handleUnblockConfirm = async () => {
@@ -771,28 +766,6 @@ const ManageEmployee = () => {
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
 
-  const handleNameClick = (userName) => {
-    navigate('/dashboard', {
-      state: {
-        restoreFilters: {
-          searchFields: {
-            discipline: '',
-            eventType: '',
-            eventCategory: '',
-            taluka: '',
-            targetGroup: '',
-            startDate: '',
-            endDate: '',
-            media: '',
-            contact: userName,
-            sortByDate: 'desc'
-          },
-          showFilters: true
-        }
-      }
-    });
-  };
-
   return (
     <div className="me-manage-employee-container">
   
@@ -864,14 +837,14 @@ const ManageEmployee = () => {
             setShowPendingTable(false);
           }}
           role="button"
-          title="View Inactive Users"
+          title="View Blocked Users"
         >
           <div className="me-stat-icon me-stat-blocked">
             <Ban size={24} />
           </div>
           <div className="me-stat-content">
             <span className="me-stat-value">{blockedUsers.length}</span>
-            <span className="me-stat-label">Inactive Users</span>
+            <span className="me-stat-label">Blocked Users</span>
           </div>
         </div>
       </div>
@@ -914,13 +887,7 @@ const ManageEmployee = () => {
                         <div className="me-user-cell">
                           <div className="me-avatar">{avatarText(u.name)}</div>
                           <div className="me-user-meta">
-                            <div 
-                              className="me-user-name clickable-name"
-                              onClick={() => handleNameClick(u.name)}
-                              title={`View records for ${capitalizeName(u.name)}`}
-                            >
-                              {capitalizeName(u.name)}
-                            </div>
+                            <div className="me-user-name">{capitalizeName(u.name)}</div>
                             <div className="me-user-sub">{u.email}</div>
                           </div>
                         </div>
@@ -972,13 +939,13 @@ const ManageEmployee = () => {
         </div>
       )}
 
-      {/* Inactive Users Table */}
+      {/* Blocked Table */}
       {showBlockedTable && (
         <div className="me-section">
           <div className="me-section-header">
             <h3 className="me-section-title">
               <Ban size={20} />
-              Inactive Users ({blockedUsers.length})
+              Blocked Users ({blockedUsers.length})
             </h3>
             <button className="me-btn me-btn-light" onClick={() => setShowBlockedTable(false)}>
               <X size={16} />
@@ -989,7 +956,7 @@ const ManageEmployee = () => {
           {blockedUsers.length === 0 ? (
             <div className="me-empty">
               <Ban size={48} />
-              <p>No inactive users</p>
+              <p>No blocked users</p>
             </div>
           ) : (
             <div className="me-table-wrap">
@@ -1011,13 +978,7 @@ const ManageEmployee = () => {
                         <div className="me-user-cell">
                           <div className="me-avatar">{avatarText(u.name)}</div>
                           <div className="me-user-meta">
-                            <div 
-                              className="me-user-name clickable-name"
-                              onClick={() => handleNameClick(u.name)}
-                              title={`View records for ${capitalizeName(u.name)}`}
-                            >
-                              {capitalizeName(u.name)}
-                            </div>
+                            <div className="me-user-name">{capitalizeName(u.name)}</div>
                             <div className="me-user-sub">{u.designation || '—'}</div>
                           </div>
                         </div>
@@ -1071,7 +1032,7 @@ const ManageEmployee = () => {
                             className="me-btn-icon me-btn-success"
                             onClick={() => handleUnblockUser(u)}
                             disabled={actionLoading}
-                            title="Activate"
+                            title="Unblock"
                           >
                             <Unlock size={16} />
                           </button>
@@ -1174,13 +1135,7 @@ const ManageEmployee = () => {
                   <div className="me-user-cell">
                     <div className="me-avatar">{avatarText(u.name)}</div>
                     <div className="me-user-meta">
-                      <div 
-                        className="me-user-name clickable-name" 
-                        onClick={() => handleNameClick(u.name)}
-                        title={`View records for ${capitalizeName(u.name)}`}
-                      >
-                        {capitalizeName(u.name)}
-                      </div>
+                      <div className="me-user-name">{capitalizeName(u.name)}</div>
                       <div className="me-user-sub">{u.designation || '—'}</div>
                     </div>
                   </div>
@@ -1233,16 +1188,14 @@ const ManageEmployee = () => {
                     <Edit size={16} />
                     Edit
                   </button>
-                  {u.isActive && (
-                    <button
-                      className="me-btn me-btn-danger"
-                      onClick={() => handleBlockUser(u)}
-                      disabled={actionLoading}
-                    >
-                      <Ban size={16} />
-                      Inactivate
-                    </button>
-                  )}
+                  <button
+                    className="me-btn me-btn-danger"
+                    onClick={() => handleBlockUser(u)}
+                    disabled={actionLoading}
+                  >
+                    <Ban size={16} />
+                    Block
+                  </button>
                 </div>
               </div>
             ))}
@@ -1407,13 +1360,7 @@ const ManageEmployee = () => {
                       <div className="me-user-cell">
                         <div className="me-avatar">{avatarText(u.name)}</div>
                         <div className="me-user-meta">
-                          <div 
-                            className="me-user-name clickable-name"
-                            onClick={() => handleNameClick(u.name)}
-                            title={`View records for ${capitalizeName(u.name)}`}
-                          >
-                            {capitalizeName(u.name)}
-                          </div>
+                          <div className="me-user-name">{capitalizeName(u.name)}</div>
                         </div>
                       </div>
                     </td>
@@ -1471,16 +1418,14 @@ const ManageEmployee = () => {
                         >
                           <Edit size={16} />
                         </button>
-                        {u.isActive && (
-                          <button
-                            className="me-btn-icon me-btn-danger"
-                            onClick={() => handleBlockUser(u)}
-                            disabled={actionLoading}
-                            title="Inactivate User"
-                          >
-                            <Ban size={16} />
-                          </button>
-                        )}
+                        <button
+                          className="me-btn-icon me-btn-danger"
+                          onClick={() => handleBlockUser(u)}
+                          disabled={actionLoading}
+                          title="Block User"
+                        >
+                          <Ban size={16} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -1577,43 +1522,24 @@ const ManageEmployee = () => {
                         <Key size={14} />
                         Password *
                       </label>
-                      <div style={{ position: 'relative' }}>
-                        <input
-                          className={`me-input ${passwordError ? 'me-input-error' : ''}`}
-                          type={showAdminRolePassword ? 'text' : 'password'}
-                          maxLength={20}
-                          value={modalData.password || ''}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            setModalData((p) => ({ ...p, password: val }));
-                            if (!val) {
-                              setPasswordError('Password is required');
-                            } else if (!passwordRegex.test(val)) {
-                              setPasswordError('8–20 chars with 1 uppercase, 1 digit, 1 special symbol');
-                            } else {
-                              setPasswordError('');
-                            }
-                          }}
-                          placeholder="8–20 chars with mix"
-                        />
-                        <button
-                          type="button"
-                          className="me-icon-btn"
-                          style={{
-                            position: 'absolute',
-                            right: '8px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            background: 'none',
-                            border: 'none',
-                            padding: '4px'
-                          }}
-                          onClick={() => setShowAdminRolePassword((s) => !s)}
-                          title={showAdminRolePassword ? 'Hide' : 'Show'}
-                        >
-                          {showAdminRolePassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
+                      <input
+                        className={`me-input ${passwordError ? 'me-input-error' : ''}`}
+                        type="password"
+                        maxLength={20}
+                        value={modalData.password || ''}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setModalData((p) => ({ ...p, password: val }));
+                          if (!val) {
+                            setPasswordError('Password is required');
+                          } else if (!passwordRegex.test(val)) {
+                            setPasswordError('8–20 chars with 1 uppercase, 1 digit, 1 special symbol');
+                          } else {
+                            setPasswordError('');
+                          }
+                        }}
+                        placeholder="8–20 chars with mix"
+                      />
                       {passwordError ? <p className="me-inline-error">{passwordError}</p> : null}
                     </div>
                   </div>
@@ -1648,35 +1574,20 @@ const ManageEmployee = () => {
                   </div>
 
                   {modalData.role === 'admin' && (
-                  <div className="me-form-group">
+                    <div className="me-form-group">
                       <label className="me-label">
                         <Key size={14} />
                         Confirm with Admin Password *
                       </label>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                       <input
                         className="me-input"
-                        type={showAdminRolePassword ? 'text' : 'password'}
+                        type="password"
                         value={modalData.adminPassword}
                         onChange={(e) =>
                           setModalData((p) => ({ ...p, adminPassword: e.target.value }))
                         }
                         placeholder="Enter your admin password"
-                        autoComplete="new-password"
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                        name="no-autofill"
-                        style={{ flex: 1 }}
                       />
-                      <button
-                        type="button"
-                        className="me-icon-btn"
-                        onClick={() => setShowAdminRolePassword((s) => !s)}
-                        title={showAdminRolePassword ? 'Hide' : 'Show'}
-                      >
-                        {showAdminRolePassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
                       <div className="me-hint">Required when assigning admin role</div>
                     </div>
                   )}
@@ -1693,13 +1604,11 @@ const ManageEmployee = () => {
                         onChange={(e) => setPrimaryDiscipline(e.target.value)}
                       >
                         <option value="">Select discipline</option>
-                        {disciplines
-                          .filter((d) => !d.isDeleted || modalData.discipline === d.code)
-                          .map((d) => (
-                            <option key={d._id} value={d.code}>
-                              {d.name} {d.isDeleted ? '(Deleted)' : ''}
-                            </option>
-                          ))}
+                        {disciplines.map((d) => (
+                          <option key={d._id} value={d.code}>
+                            {d.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   )}
@@ -1735,7 +1644,28 @@ const ManageEmployee = () => {
                     />
                   </div>
 
-              {/* Active toggle removed from forms */}
+                  <div className="me-form-group">
+                    <label className="me-label">
+                      <UserCheck size={14} />
+                      Active Status {modalData.role !== 'admin' ? '*' : ''}
+                    </label>
+                    <div className="me-toggle-row">
+                      <label className="me-toggle">
+                        <input
+                          type="checkbox"
+                          checked={modalData.isActive}
+                          onChange={(e) =>
+                            setModalData((p) => ({ ...p, isActive: e.target.checked }))
+                          }
+                        />
+                        <span className="me-toggle-slider" />
+                      </label>
+                      <div className="me-hint">
+                        <Info size={14} />
+                        Note: Without enabling Active, user cannot login.
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="me-form-group">
                     <label className="me-label">
@@ -1768,12 +1698,10 @@ const ManageEmployee = () => {
                   <div className="me-modal-section">
                     <div className="me-section-header-inline">
                       <GraduationCap size={18} />
-                      <h4 className="me-section-subtitle">Assign Discipline</h4>
+                      <h4 className="me-section-subtitle">Access Disciplines and Modules</h4>
                     </div>
                     <div className="me-grid">
-                      {disciplines
-                        .filter((d) => !d.isDeleted || modalData.assignedDisciplines?.[d.code])
-                        .map((d) => {
+                      {disciplines.map((d) => {
                         const enabled = Boolean(modalData.assignedDisciplines?.[d.code]);
 
                         return (
@@ -1781,9 +1709,7 @@ const ManageEmployee = () => {
                             <div className="me-discipline-left">
                               <span className="me-color" style={{ background: d.color }} aria-hidden />
                               <div>
-                                <div className="me-discipline-name">
-                                  {d.name} {d.isDeleted ? '(Deleted)' : ''}
-                                </div>
+                                <div className="me-discipline-name">{d.name}</div>
                               </div>
                             </div>
                             <label className="me-toggle">
@@ -1807,7 +1733,7 @@ const ManageEmployee = () => {
                   <div className="me-modal-section">
                     <div className="me-section-header-inline">
                       <Shield size={18} />
-                      <h4 className="me-section-subtitle">Assign Permission</h4>
+                      <h4 className="me-section-subtitle">Access Permission</h4>
                     </div>
                     <div className="me-per-discipline">
                       {disciplines
@@ -1816,7 +1742,7 @@ const ManageEmployee = () => {
                           <div key={d._id} className="me-perm-box">
                             <div className="me-perm-box-title">
                               <span className="me-color" style={{ background: d.color }} />
-                              {d.name} {d.isDeleted ? '(Deleted)' : ''}
+                              {d.name}
                             </div>
                             <div className="me-perm-grid">
                               {permissionOptions
@@ -1905,11 +1831,11 @@ const ManageEmployee = () => {
             <div className="me-modal-body">
               <p className="me-modal-message">{deleteReasonModal.message}</p>
               <div className="me-form-group">
-                <label className="me-label">Reason *</label>
+                <label className="me-label">Reason (Optional)</label>
                 <textarea
                   className={`me-input me-textarea ${blockReasonError ? 'me-input-error' : ''}`}
                   rows="4"
-                  placeholder="Enter the reason..."
+                  placeholder="Reason for blocking this user..."
                   id="blockReasonInput"
                   autoFocus
                   onChange={() => setBlockReasonError('')}
@@ -1923,28 +1849,13 @@ const ManageEmployee = () => {
                   <Key size={14} />
                   Admin Password *
                 </label>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <input
-                    id="blockAdminPassword"
-                    type={showBlockPassword ? 'text' : 'password'}
-                    className={`me-input ${blockPasswordError ? 'me-input-error' : ''}`}
-                    placeholder="Enter your admin password"
-                    autoComplete="new-password"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    name="no-autofill"
-                    onChange={() => setBlockPasswordError('')}
-                    style={{ flex: 1 }}
-                  />
-                  <button
-                    type="button"
-                    className="me-icon-btn"
-                    onClick={() => setShowBlockPassword((s) => !s)}
-                    title={showBlockPassword ? 'Hide' : 'Show'}
-                  >
-                    {showBlockPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
+                <input
+                  id="blockAdminPassword"
+                  type="password"
+                  className={`me-input ${blockPasswordError ? 'me-input-error' : ''}`}
+                  placeholder="Enter your admin password"
+                  onChange={() => setBlockPasswordError('')}
+                />
                 {blockPasswordError && (
                   <p className="me-inline-error">{blockPasswordError}</p>
                 )}
@@ -1965,11 +1876,7 @@ const ManageEmployee = () => {
                   const adminPassword = document.getElementById('blockAdminPassword')?.value?.trim();
                   setBlockReasonError('');
                   setBlockPasswordError('');
-                  if (!reason) {
-                    setBlockReasonError('Please enter a reason.');
-                    return;
-                  }
-                  if (deleteReasonModal?.type === 'block' || deleteReasonModal?.type === 'reject' || deleteReasonModal?.type === 'inactivate') {
+                  if (deleteReasonModal?.type === 'block') {
                     if (!adminPassword) {
                       setBlockPasswordError('Please enter your admin password.');
                       return;
@@ -2013,28 +1920,13 @@ const ManageEmployee = () => {
                   <Key size={14} />
                   Admin Password *
                 </label>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <input
-                    id="unblockAdminPassword"
-                    type={showUnblockPassword ? 'text' : 'password'}
-                    className={`me-input ${unblockPasswordError ? 'me-input-error' : ''}`}
-                    placeholder="Enter your admin password"
-                    autoComplete="new-password"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    name="no-autofill"
-                    onChange={() => setUnblockPasswordError('')}
-                    style={{ flex: 1 }}
-                  />
-                  <button
-                    type="button"
-                    className="me-icon-btn"
-                    onClick={() => setShowUnblockPassword((s) => !s)}
-                    title={showUnblockPassword ? 'Hide' : 'Show'}
-                  >
-                    {showUnblockPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
+                <input
+                  id="unblockAdminPassword"
+                  type="password"
+                  className={`me-input ${unblockPasswordError ? 'me-input-error' : ''}`}
+                  placeholder="Enter your admin password"
+                  onChange={() => setUnblockPasswordError('')}
+                />
                 {unblockPasswordError && (
                   <p className="me-inline-error">{unblockPasswordError}</p>
                 )}
@@ -2061,103 +1953,6 @@ const ManageEmployee = () => {
         </div>
       )}
 
-      {/* View User Details Modal */}
-      {activateModal && (
-        <div className="me-modal-overlay">
-          <div className="me-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="me-modal-header">
-              <div className="me-modal-title">
-                <Unlock size={20} />
-                Activate User
-              </div>
-              <button
-                className="me-icon-btn"
-                onClick={() => setActivateModal(null)}
-                aria-label="Close"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <div className="me-modal-body">
-              <p className="me-modal-message">
-                Activate <strong>{capitalizeName(activateModal.user.name)}</strong>? Enter your admin password to confirm.
-              </p>
-              <div className="me-form-group">
-                <label className="me-label">
-                  <Key size={14} />
-                  Admin Password *
-                </label>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <input
-                    id="activateAdminPassword"
-                    type={showActivatePassword ? 'text' : 'password'}
-                    className={`me-input ${activatePasswordError ? 'me-input-error' : ''}`}
-                    placeholder="Enter your admin password"
-                    autoComplete="new-password"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    name="no-autofill"
-                    onChange={() => setActivatePasswordError('')}
-                    autoFocus
-                    style={{ flex: 1 }}
-                  />
-                  <button
-                    type="button"
-                    className="me-icon-btn"
-                    onClick={() => setShowActivatePassword((s) => !s)}
-                    title={showActivatePassword ? 'Hide' : 'Show'}
-                  >
-                    {showActivatePassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                {activatePasswordError && (
-                  <p className="me-inline-error">{activatePasswordError}</p>
-                )}
-              </div>
-            </div>
-            <div className="me-modal-footer">
-              <button
-                className="me-btn me-btn-light"
-                onClick={() => setActivateModal(null)}
-                disabled={actionLoading}
-              >
-                Cancel
-              </button>
-              <button
-                className="me-btn me-btn-success"
-                onClick={async () => {
-                  const pwd = document.getElementById('activateAdminPassword')?.value?.trim();
-                  setActivatePasswordError('');
-                  if (!pwd) {
-                    setActivatePasswordError('Please enter your admin password.');
-                    return;
-                  }
-                  setActionLoading(true);
-                  try {
-                    await adminAPI.activateUser(activateModal.user._id, pwd);
-                    await loadData();
-                    setActivateModal(null);
-                    setConfirmModal({
-                      type: 'success',
-                      title: 'Success',
-                      message: 'User activated successfully',
-                      onConfirm: () => setConfirmModal(null)
-                    });
-                  } catch (e) {
-                    setActivatePasswordError(e.message || 'Incorrect admin password.');
-                  } finally {
-                    setActionLoading(false);
-                  }
-                }}
-                disabled={actionLoading}
-              >
-                <Unlock size={16} />
-                Activate
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       {/* View User Details Modal */}
       {viewUserModal && (
         <div className="me-modal-overlay" onClick={() => setViewUserModal(null)}>
@@ -2231,11 +2026,7 @@ const ManageEmployee = () => {
                       className="me-pill me-pill-discipline"
                       style={{ backgroundColor: hexToFaintRgba(getDisciplineColor(viewUserModal.discipline)) }}
                     >
-                      {(() => {
-                        const d = disciplines.find((d) => d.code === viewUserModal.discipline);
-                        if (!d) return viewUserModal.discipline || '—';
-                        return `${d.name}${d.isDeleted ? ' (Deleted)' : ''}`;
-                      })()}
+                      {viewUserModal.discipline ? (disciplines.find((d) => d.code === viewUserModal.discipline)?.name || viewUserModal.discipline) : '—'}
                     </span>
                   </div>
                 </div>
@@ -2331,7 +2122,7 @@ const ManageEmployee = () => {
                           {discObj ? discObj.name : disc}
                         </div>
                         <div className="me-perm-view-list">
-                          {permissionOptions.filter((opt) => opt.id !== 'export' && opt.id !== 'data_entry').map((opt) => {
+                          {permissionOptions.filter((opt) => opt.id !== 'export').map((opt) => {
                             const Icon = opt.icon;
                             const hasPermission = (Array.isArray(perms) ? perms : []).includes(opt.id);
                             return (
@@ -2355,11 +2146,11 @@ const ManageEmployee = () => {
                   )}
                 </div>
               </div>
-                {viewUserModal.blockReason && !viewUserModal.isActive && (
+                {viewUserModal.blockReason && (
                   <div className="me-view-item me-view-item-full">
                     <label>
                       <Ban size={16} />
-                      Inactive Reason
+                      Block Reason
                     </label>
                     <div className="me-block-reason">{viewUserModal.blockReason}</div>
                   </div>

@@ -69,7 +69,6 @@ const ManageDisciplines = () => {
   const [recoverPasswordError, setRecoverPasswordError] = useState('');
   const [permanentDeleteModal, setPermanentDeleteModal] = useState(null); // { discipline }
   const [permanentDeletePasswordError, setPermanentDeletePasswordError] = useState('');
-  const [deleteReasonError, setDeleteReasonError] = useState('');
 
   const loadDisciplines = async () => {
     setIsLoading(true);
@@ -98,7 +97,7 @@ const ManageDisciplines = () => {
     const map = {};
     disciplines.forEach((d) => {
       map[d.code] = (users || []).filter(
-        (u) => u.status === 'approved' && u.discipline === d.code
+        (u) => u.status === 'approved' && (u.discipline === d.code || (Array.isArray(u.assignedDisciplines) && u.assignedDisciplines.includes(d.code)))
       );
     });
     return map;
@@ -820,10 +819,6 @@ const ManageDisciplines = () => {
                   type="password"
                   className={`me-input ${recoverPasswordError ? 'me-input-error' : ''}`}
                   placeholder="Your admin password"
-                  autoComplete="new-password"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  name="no-autofill"
                   onChange={() => setRecoverPasswordError('')}
                 />
                 {recoverPasswordError && (
@@ -982,7 +977,7 @@ const ManageDisciplines = () => {
       {/* View modal - timeline + users + delete reason for deleted disciplines */}
       {viewingDiscipline && (
         <div className="me-modal-overlay" onClick={() => setViewingDiscipline(null)}>
-          <div className="me-modal me-modal-large me-modal-view" onClick={(e) => e.stopPropagation()}>
+          <div className="me-modal" onClick={(e) => e.stopPropagation()}>
             <div className="me-modal-header">
               <div className="me-modal-title">
                 <Eye size={20} />
@@ -1009,44 +1004,15 @@ const ManageDisciplines = () => {
 
               {(() => {
                 const userList = usersByDiscipline[viewingDiscipline.code] || [];
-                const formatRole = (r) => {
-                  if (!r) return '—';
-                  const str = String(r).replace(/_/g, ' ');
-                  return str.charAt(0).toUpperCase() + str.slice(1);
-                };
-                const getDiscName = (code) => {
-                  const d = disciplines.find((x) => x.code === code);
-                  return d ? d.name : code || '—';
-                };
-                return userList.length > 0 ? (
+                const userNames = userList.map((u) => u.name).filter(Boolean);
+                return userNames.length > 0 ? (
                   <>
                     <div className="me-form-group">
                       <label className="me-label">Users in this discipline</label>
-                      <div className="me-table-wrap" style={{ marginTop: '8px' }}>
-                        <table className="me-table">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th>Role</th>
-                              <th>Discipline</th>
-                              <th>Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {userList.map((u) => (
-                              <tr key={u._id}>
-                                <td>{u.name || '—'}</td>
-                                <td>{formatRole(u.role)}</td>
-                                <td>{getDiscName(u.discipline)}</td>
-                                <td>
-                                  <span className={`me-status-badge ${u.isActive ? 'active' : 'inactive'}`}>
-                                    {u.isActive ? 'Active' : 'Inactive'}
-                                  </span>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                      <div className="md-view-users-list" style={{ marginTop: '8px' }}>
+                        {userNames.map((name) => (
+                          <span key={name} className="md-view-user-chip">{name}</span>
+                        ))}
                       </div>
                     </div>
                     <div className="me-divider-dotted" />
@@ -1130,20 +1096,16 @@ const ManageDisciplines = () => {
             </div>
             <div className="me-modal-body">
               <p className="me-modal-message">
-                Delete <strong>{deleteConfirm.discipline.name}</strong>? This will move it to the deleted list. Reason and admin password are required to confirm.
+                Delete <strong>{deleteConfirm.discipline.name}</strong>? This will move it to the deleted list. You can provide a reason (optional) and your admin password to confirm.
               </p>
               <div className="me-form-group">
-                <label className="me-label">Reason *</label>
+                <label className="me-label">Reason for deletion (Optional)</label>
                 <textarea
                   id="deleteReasonInput"
-                  className={`me-input me-textarea ${deleteReasonError ? 'me-input-error' : ''}`}
+                  className="me-input me-textarea"
                   rows={3}
                   placeholder="Reason for deleting this discipline..."
-                  onChange={() => setDeleteReasonError('')}
                 />
-                {deleteReasonError && (
-                  <p className="me-inline-error">{deleteReasonError}</p>
-                )}
               </div>
               <div className="me-form-group">
                 <label className="me-label"><Key size={14} /> Admin Password *</label>
@@ -1165,11 +1127,6 @@ const ManageDisciplines = () => {
                 onClick={() => {
                   const reason = document.getElementById('deleteReasonInput')?.value?.trim();
                   const adminPassword = document.getElementById('deleteDisciplinePassword')?.value?.trim();
-                  setDeleteReasonError('');
-                  if (!reason) {
-                    setDeleteReasonError('Please enter a reason.');
-                    return;
-                  }
                   if (!adminPassword) {
                     setConfirmModal({
                       type: 'error',
