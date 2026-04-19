@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Search Result</title>
+<link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+<h2>Search Result : {{query}}</h2>
+
+{% if products %}
+
+<div class="products">
+
+{% for p in products %}
+
+<div class="card">
+
+<img src="{{ url_for('static', filename='uploads/' + p[7]) }}" width="200">
+
+<h3>{{p[2]}}</h3>
+
+<p> Price ₹ {{p[3]}}</p>
+
+<p>Category : {{p[5]}}</p>
+
+<p>ingredients:{{p[6]}}</p>
+
+<a href="/cart">Add</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<h3 style="color:white">❌ Product not found</h3>
+
+{% endif %}
+
+</body>
+</html>

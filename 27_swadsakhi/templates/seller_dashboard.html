@@ -1,0 +1,39 @@
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+<h2>My Products</h2>
+
+<a href="/add_product"> Product Add</a>
+<a href="/orders"> Orders</a>
+<a href="/"> Homepage</a>
+
+
+<hr>
+
+{% for p in products %}
+
+<div class="card">
+
+<img src="{{ url_for('static', filename='uploads/' + p[7]) }}" width="200">
+
+<h3>{{p[2]}}</h3>
+
+<p> seller_name : {{p[1]}}</p>
+<p> Price : ₹ {{p[4]}}</p>
+
+<p> per_pack : {{p[3]}}</p>
+
+<p>Category : {{p[5]}}</p>
+<p>ingredients : {{p[6]}}</p>
+
+
+
+<a href="/delete_product/{{p[0]}}"
+onclick="return confirm('Are you sure you want to delete this product?')"
+style="background:red;color:white;padding:8px;border-radius:5px;text-decoration:none;">
+Delete Product
+</a>
+
+</div>
+
+{% endfor %}

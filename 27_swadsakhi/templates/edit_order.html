@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Order</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>Edit Order</h2>
+
+    <form method="post" action="/update_order/{{order[0]}}">
+        
+        <input type="text" name="customer_name" value="{{order[3]}}" placeholder="Name">
+
+        <input type="text" name="phone" value="{{order[4]}}" placeholder="Phone">
+
+        <input type="text" name="address" value="{{order[6]}}" placeholder="Address">
+
+        <button type="submit">Update</button>
+
+    </form>
+</div>
+
+</body>
+</html>

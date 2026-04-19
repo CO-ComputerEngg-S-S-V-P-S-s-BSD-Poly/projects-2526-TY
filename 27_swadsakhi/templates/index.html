@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SwadSakhi</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI';
+    background:#f2f2f2;
+}
+
+/* HEADER */
+header{
+    background:linear-gradient(to right,#800000,#b30000);
+    color:white;
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+nav a{
+    color:white;
+    margin-left:15px;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+/* SLIDER */
+.slider{
+    width:100%;
+    height:500px;
+    position:relative;
+}
+
+.slide{
+    width:100%;
+    height:500px;
+    object-fit:cover;
+    position:absolute;
+    top:0;
+    left:0;
+    opacity:0;
+    transition:opacity 1s;
+}
+
+/* CATEGORY */
+.category-container{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:15px;
+    margin:20px;
+}
+
+.card{
+    background:white;
+    width:160px;
+    padding:8px;
+    border-radius:15px;
+    text-align:center;
+}
+
+.card img{
+    width:140px;
+    height:90px;
+}
+
+/* PRODUCTS */
+.products{
+    text-align:center;
+}
+
+.product-card{
+    display:inline-block;
+    background:white;
+    margin:10px;
+    padding:10px;
+    width:220px;
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+
+.product-card img{
+    width:180px;
+    height:120px;
+}
+
+.product-card a{
+    display:inline-block;
+    background:#800000;
+    color:white;
+    padding:6px 12px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+.product-card a:hover{
+    background:#b30000;
+}
+
+.product-desc{
+    text-align:center;
+    color:#555;
+    margin:15px;
+}
+
+.read-btn {
+    background: #8B3A3A;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+<h1>SwadSakhi 🍲</h1>
+<form action="/search" method="GET">
+<input type="text" name="query" placeholder="Search..." required>
+<button>🔍</button>
+</form>
+
+<nav>
+<a href="/buyer_login">Login</a>
+<a href="/seller_login">Seller</a>
+<a href="/admin_login">Admin</a>
+</nav>
+</header>
+
+<!-- SLIDER -->
+<div class="slider">
+    <img class="slide" src="{{ url_for('static', filename='images/banner1.jpg') }}">
+    <img class="slide" src="{{ url_for('static', filename='images/banner2.jpg') }}">
+    <img class="slide" src="{{ url_for('static', filename='images/banner3.jpg') }}">
+</div>
+
+<script>
+let slides = document.querySelectorAll(".slide");
+let index = 0;
+
+function showSlides() {
+    slides.forEach(s => s.style.opacity = "0");
+    slides[index].style.opacity = "1";
+
+    index++;
+    if(index >= slides.length){
+        index = 0;
+    }
+}
+
+setInterval(showSlides,2000);
+showSlides();
+</script>
+
+<div style="text-align:center;">
+<h2 class="overlay-text">
+Explore our homemade products made with hygiene and care 
+</h2>
+</div>
+
+<!-- CATEGORY -->
+
+<div class="category-container">
+
+<div class="card">
+<img src="/static/images/papad.jpg">
+<a href="/view_papad">Papad</a>
+</div>
+
+<div class="card">
+<img src="/static/images/lonche.jpg">
+<a href="/view_lonche">Lonche</a>
+</div>
+
+<div class="card">
+<img src="/static/images/snacks.jpg">
+<a href="/snacks">Snacks</a>
+</div>
+
+<div class="card">
+<img src="/static/images/upwas.jpg">
+<a href="/upwas">Upwas</a>
+</div>
+
+<div class="card">
+<img src="/static/images/kurdai.jpg">
+<a href="/view_kuradai">Kuradai</a>
+</div>
+</div>
+
+<div style="text-align:center;">
+<h2 class="overlay-text">
+Prepared with care in a home kitchen, ensuring freshness and traditional taste.
+</h2>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products">
+
+{% for p in products %}
+<div class="product-card">
+
+<img src="{{ url_for('static', filename='uploads/' + p[7]) }}">
+
+<h3>{{ p[2] }}</h3>
+
+<p><b>Seller:</b> {{ p[1] }}</p>
+
+<p>Price: ₹{{ p[4] }}</p>
+
+<p>Category: {{ p[5] }}</p>
+
+<!-- 🔥 FIXED INGREDIENTS -->
+<p class="short-text">
+    {{ p[6][:60] }}...
+</p>
+
+<p class="full-text" style="display:none;">
+    {{ p[6] }}
+</p>
+
+<button onclick="toggleText(this)" class="read-btn">Read More</button>
+
+<br><br>
+<a href="/buyer_login">Order Now</a>
+
+</div>
+{% endfor %}
+
+</div>
+
+<!-- 🔥 FINAL JS FIX -->
+<script>
+function toggleText(btn){
+
+    let card = btn.closest(".product-card");
+
+    let shortText = card.querySelector(".short-text");
+    let fullText = card.querySelector(".full-text");
+
+    if(fullText.style.display === "none"){
+        fullText.style.display = "block";
+        shortText.style.display = "none";
+        btn.innerText = "Read Less";
+    }
+    else{
+        fullText.style.display = "none";
+        shortText.style.display = "block";
+        btn.innerText = "Read More";
+    }
+}
+</script>
+
+</body>
+</html>

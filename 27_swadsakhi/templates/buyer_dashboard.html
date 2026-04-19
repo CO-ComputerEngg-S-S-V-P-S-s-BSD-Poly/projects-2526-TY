@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SwadSakhi Dashboard</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI';
+    background: #f2f2f2;
+}
+
+/* HEADER */
+.header {
+    background: linear-gradient(to right, #800000, #b30000);
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.header .right {
+    display: flex;
+    align-items: center;
+}
+
+.header a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* SEARCH */
+.search-box input {
+    padding: 8px;
+    border-radius: 20px;
+    border: none;
+    width: 200px;
+}
+
+/* CATEGORY */
+.category-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.card {
+    background: white;
+    margin: 10px;
+    padding: 10px;
+    width: 130px;
+    text-align: center;
+    border-radius: 15px;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.card:hover {
+    transform: scale(1.08);
+}
+
+.card img {
+    width: 100px;
+    height: 80px;
+}
+
+.card a {
+    text-decoration: none;
+    color: #800000;
+    font-weight: bold;
+}
+
+/* PRODUCTS */
+.products{
+    text-align:center;
+}
+
+.product-card{
+    display:inline-block;
+    background:white;
+    margin:10px;
+    padding:10px;
+    width:220px;
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+
+.product-card img{
+    width:180px;
+    height:120px;
+}
+
+.product-card a{
+    display:inline-block;
+    background:#800000;
+    color:white;
+    padding:6px 12px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+.product-card a:hover{
+    background:#b30000;
+}
+
+.product-desc{
+    text-align:center;
+    color:#555;
+    margin:15px;
+}
+
+.read-btn {
+    background: #8B3A3A;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h2>SwadSakhi 🍲</h2>
+
+    <div class="right">
+        <form method="get" action="/buyer_dashboard" class="search-box">
+            <input type="text" name="search" placeholder="Search food...">
+        </form>
+
+        <a href="/cart">🛒 Cart ({{cart_count}})</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<!-- WELCOME -->
+<h3 style="text-align:center;">Welcome {{username}} 👋</h3>
+
+<!-- CATEGORY -->
+<h2 class="section-title">Categories</h2>
+
+<div class="category-container">
+
+<div class="card">
+<img src="/static/images/papad.jpg">
+<a href="/view_papad">Papad</a>
+</div>
+
+<div class="card">
+<img src="/static/images/lonche.jpg">
+<a href="/view_lonche">Lonche</a>
+</div>
+
+<div class="card">
+<img src="/static/images/snacks.jpg">
+<a href="/snacks">Snacks</a>
+</div>
+
+<div class="card">
+<img src="/static/images/upwas.jpg">
+<a href="/upwas">Upwas</a>
+</div>
+
+<div class="card">
+<img src="/static/images/kurdai.jpg">
+<a href="/view_kuradai">Kuradai</a>
+</div>
+
+</div>
+
+<!-- PRODUCTS -->
+<h2 class="section-title">Products</h2>
+
+<div class="products">
+
+{% for p in products %}
+<div class="product-card">
+
+<img src="{{ url_for('static', filename='uploads/' + p[7]) }}">
+
+<h3>{{ p[2] }}</h3>
+
+<p><b>Seller:</b> {{ p[1] }}</p>
+
+<p>Price: ₹{{ p[4] }}</p>
+
+<p>Category: {{ p[5] }}</p>
+
+<!-- 🔥 FIXED INGREDIENTS -->
+<p class="short-text">
+    {{ p[6][:60] }}...
+</p>
+
+<p class="full-text" style="display:none;">
+    {{ p[6] }}
+</p>
+
+<button onclick="toggleText(this)" class="read-btn">Read More</button>
+
+<br><br>
+<a href="/add_to_cart/{{p[0]}}">Add to Cart</a>
+
+</div>
+{% endfor %}
+
+</div>
+
+<!-- 🔥 FINAL JS FIX -->
+<script>
+function toggleText(btn){
+
+    let card = btn.closest(".product-card");
+
+    let shortText = card.querySelector(".short-text");
+    let fullText = card.querySelector(".full-text");
+
+    if(fullText.style.display === "none"){
+        fullText.style.display = "block";
+        shortText.style.display = "none";
+        btn.innerText = "Read Less";
+    }
+    else{
+        fullText.style.display = "none";
+        shortText.style.display = "block";
+        btn.innerText = "Read More";
+    }
+}
+</script>
+
+</body>
+</html>
